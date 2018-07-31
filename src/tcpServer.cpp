@@ -3,3 +3,8 @@
 //
 
 #include "../include/tcpServer.h"
+
+void tcpServer::hello()
+{
+
+}

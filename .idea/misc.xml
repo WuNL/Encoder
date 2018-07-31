@@ -5,8 +5,12 @@
     <sourceRoots>
       <file path="$PROJECT_DIR$/common" />
       <file path="$PROJECT_DIR$/include" />
+      <file path="$PROJECT_DIR$/muduo" />
       <file path="$PROJECT_DIR$/src" />
     </sourceRoots>
+    <libraryRoots>
+      <file path="$PROJECT_DIR$/lib" />
+    </libraryRoots>
   </component>
   <component name="JavaScriptSettings">
     <option name="languageLevel" value="ES6" />

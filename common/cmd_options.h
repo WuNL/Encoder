@@ -37,9 +37,10 @@ struct CmdOptionsCtx
     // bitmask of the options accepted by the program
     unsigned int options;
     // program name, if not set will be corrected to argv[0]
-    const char* program;
+    const char *program;
+
     // function to print program usage, can be NULL
-    void (*usage)(CmdOptionsCtx* ctx);
+    void (*usage)(CmdOptionsCtx *ctx);
 };
 
 struct CmdOptionsValues
@@ -63,7 +64,7 @@ struct CmdOptionsValues
     bool MeasureLatency; // OPTION_MEASURE_LATENCY
     bool c10bit; // The flag for HEVC 10bit processing
 
-    mfxU32  CodecId;
+    mfxU32 CodecId;
     mfxU32 CaptureDevice;
 };
 
@@ -73,4 +74,4 @@ struct CmdOptions
     CmdOptionsValues values;
 };
 
-void ParseOptions(int argc, char** argv, CmdOptions* options);
+void ParseOptions(int argc, char **argv, CmdOptions *options);

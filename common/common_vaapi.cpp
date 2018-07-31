@@ -18,7 +18,7 @@ struct sharedResponse
     int refCount;
 };
 
-std::map<mfxMemId*, mfxHDL>      allocResponses;
+std::map<mfxMemId *, mfxHDL> allocResponses;
 std::map<mfxHDL, sharedResponse> allocDecodeResponses;
 
 
@@ -28,35 +28,35 @@ mfxStatus va_to_mfx_status(VAStatus va_res)
 
     switch (va_res)
     {
-    case VA_STATUS_SUCCESS:
-        mfxRes = MFX_ERR_NONE;
-        break;
-    case VA_STATUS_ERROR_ALLOCATION_FAILED:
-        mfxRes = MFX_ERR_MEMORY_ALLOC;
-        break;
-    case VA_STATUS_ERROR_ATTR_NOT_SUPPORTED:
-    case VA_STATUS_ERROR_UNSUPPORTED_PROFILE:
-    case VA_STATUS_ERROR_UNSUPPORTED_ENTRYPOINT:
-    case VA_STATUS_ERROR_UNSUPPORTED_RT_FORMAT:
-    case VA_STATUS_ERROR_UNSUPPORTED_BUFFERTYPE:
-    case VA_STATUS_ERROR_FLAG_NOT_SUPPORTED:
-    case VA_STATUS_ERROR_RESOLUTION_NOT_SUPPORTED:
-        mfxRes = MFX_ERR_UNSUPPORTED;
-        break;
-    case VA_STATUS_ERROR_INVALID_DISPLAY:
-    case VA_STATUS_ERROR_INVALID_CONFIG:
-    case VA_STATUS_ERROR_INVALID_CONTEXT:
-    case VA_STATUS_ERROR_INVALID_SURFACE:
-    case VA_STATUS_ERROR_INVALID_BUFFER:
-    case VA_STATUS_ERROR_INVALID_IMAGE:
-    case VA_STATUS_ERROR_INVALID_SUBPICTURE:
-        mfxRes = MFX_ERR_NOT_INITIALIZED;
-        break;
-    case VA_STATUS_ERROR_INVALID_PARAMETER:
-        mfxRes = MFX_ERR_INVALID_VIDEO_PARAM;
-    default:
-        mfxRes = MFX_ERR_UNKNOWN;
-        break;
+        case VA_STATUS_SUCCESS:
+            mfxRes = MFX_ERR_NONE;
+            break;
+        case VA_STATUS_ERROR_ALLOCATION_FAILED:
+            mfxRes = MFX_ERR_MEMORY_ALLOC;
+            break;
+        case VA_STATUS_ERROR_ATTR_NOT_SUPPORTED:
+        case VA_STATUS_ERROR_UNSUPPORTED_PROFILE:
+        case VA_STATUS_ERROR_UNSUPPORTED_ENTRYPOINT:
+        case VA_STATUS_ERROR_UNSUPPORTED_RT_FORMAT:
+        case VA_STATUS_ERROR_UNSUPPORTED_BUFFERTYPE:
+        case VA_STATUS_ERROR_FLAG_NOT_SUPPORTED:
+        case VA_STATUS_ERROR_RESOLUTION_NOT_SUPPORTED:
+            mfxRes = MFX_ERR_UNSUPPORTED;
+            break;
+        case VA_STATUS_ERROR_INVALID_DISPLAY:
+        case VA_STATUS_ERROR_INVALID_CONFIG:
+        case VA_STATUS_ERROR_INVALID_CONTEXT:
+        case VA_STATUS_ERROR_INVALID_SURFACE:
+        case VA_STATUS_ERROR_INVALID_BUFFER:
+        case VA_STATUS_ERROR_INVALID_IMAGE:
+        case VA_STATUS_ERROR_INVALID_SUBPICTURE:
+            mfxRes = MFX_ERR_NOT_INITIALIZED;
+            break;
+        case VA_STATUS_ERROR_INVALID_PARAMETER:
+            mfxRes = MFX_ERR_INVALID_VIDEO_PARAM;
+        default:
+            mfxRes = MFX_ERR_UNKNOWN;
+            break;
     }
     return mfxRes;
 }
@@ -67,10 +67,10 @@ mfxStatus va_to_mfx_status(VAStatus va_res)
 // VAAPI display handle
 VADisplay m_va_dpy = NULL;
 // gfx card file descriptor
-int m_fd = -1;
+int m_fd = - 1;
 // decoder surfaces chain shared between app and MSDK
 
-mfxStatus CreateVAEnvDRM(mfxHDL* displayHandle)
+mfxStatus CreateVAEnvDRM(mfxHDL *displayHandle)
 {
     VAStatus va_res = VA_STATUS_SUCCESS;
     mfxStatus sts = MFX_ERR_NONE;
@@ -87,7 +87,7 @@ mfxStatus CreateVAEnvDRM(mfxHDL* displayHandle)
 
         *displayHandle = m_va_dpy;
 
-        if (!m_va_dpy)
+        if (! m_va_dpy)
         {
             close(m_fd);
             sts = MFX_ERR_NULL_PTR;
@@ -100,7 +100,7 @@ mfxStatus CreateVAEnvDRM(mfxHDL* displayHandle)
         if (MFX_ERR_NONE != sts)
         {
             close(m_fd);
-            m_fd = -1;
+            m_fd = - 1;
         }
     }
     if (MFX_ERR_NONE != sts)
@@ -124,20 +124,20 @@ unsigned int ConvertMfxFourccToVAFormat(mfxU32 fourcc)
 {
     switch (fourcc)
     {
-    case MFX_FOURCC_NV12:
-        return VA_FOURCC_NV12;
-    case MFX_FOURCC_YUY2:
-        return VA_FOURCC_YUY2;
-    case MFX_FOURCC_YV12:
-        return VA_FOURCC_YV12;
-    case MFX_FOURCC_RGB4:
-        return VA_FOURCC_ARGB;
-    case MFX_FOURCC_P8:
-        return VA_FOURCC_P208;
+        case MFX_FOURCC_NV12:
+            return VA_FOURCC_NV12;
+        case MFX_FOURCC_YUY2:
+            return VA_FOURCC_YUY2;
+        case MFX_FOURCC_YV12:
+            return VA_FOURCC_YV12;
+        case MFX_FOURCC_RGB4:
+            return VA_FOURCC_ARGB;
+        case MFX_FOURCC_P8:
+            return VA_FOURCC_P208;
 
-    default:
-        assert(!"unsupported fourcc");
-        return 0;
+        default:
+            assert(! "unsupported fourcc");
+            return 0;
     }
 }
 
@@ -154,45 +154,45 @@ void ClearRGBSurfaceVAAPI(mfxMemId memId)
 // VAAPI Allocator internal Mem ID
 struct vaapiMemId
 {
-    VASurfaceID* m_surface;
+    VASurfaceID *m_surface;
     VAImage m_image;
     // variables for VAAPI Allocator inernal color convertion
     unsigned int m_fourcc;
-    mfxU8* m_sys_buffer;
-    mfxU8* m_va_buffer;
+    mfxU8 *m_sys_buffer;
+    mfxU8 *m_va_buffer;
 };
 
 //
 // Media SDK memory allocator entrypoints....
 //
 
-mfxStatus _simple_alloc(mfxFrameAllocRequest* request,
-                        mfxFrameAllocResponse* response)
+mfxStatus _simple_alloc(mfxFrameAllocRequest *request,
+                        mfxFrameAllocResponse *response)
 {
     mfxStatus mfx_res = MFX_ERR_NONE;
     VAStatus va_res = VA_STATUS_SUCCESS;
     unsigned int va_fourcc = 0;
-    VASurfaceID* surfaces = NULL;
+    VASurfaceID *surfaces = NULL;
     VASurfaceAttrib attrib;
-    vaapiMemId* vaapi_mids = NULL, *vaapi_mid = NULL;
-    mfxMemId* mids = NULL;
+    vaapiMemId *vaapi_mids = NULL, *vaapi_mid = NULL;
+    mfxMemId *mids = NULL;
     mfxU32 fourcc = request->Info.FourCC;
     mfxU16 surfaces_num = request->NumFrameSuggested, numAllocated = 0, i =
-                              0;
+            0;
     bool bCreateSrfSucceeded = false;
 
     memset(response, 0, sizeof(mfxFrameAllocResponse));
 
     va_fourcc = ConvertMfxFourccToVAFormat(fourcc);
-    if (!va_fourcc || ((VA_FOURCC_NV12 != va_fourcc) &&
-                       (VA_FOURCC_YV12 != va_fourcc) &&
-                       (VA_FOURCC_YUY2 != va_fourcc) &&
-                       (VA_FOURCC_ARGB != va_fourcc) &&
-                       (VA_FOURCC_P208 != va_fourcc)))
+    if (! va_fourcc || ((VA_FOURCC_NV12 != va_fourcc) &&
+                        (VA_FOURCC_YV12 != va_fourcc) &&
+                        (VA_FOURCC_YUY2 != va_fourcc) &&
+                        (VA_FOURCC_ARGB != va_fourcc) &&
+                        (VA_FOURCC_P208 != va_fourcc)))
     {
         return MFX_ERR_MEMORY_ALLOC;
     }
-    if (!surfaces_num)
+    if (! surfaces_num)
     {
         return MFX_ERR_MEMORY_ALLOC;
     }
@@ -200,12 +200,12 @@ mfxStatus _simple_alloc(mfxFrameAllocRequest* request,
     if (MFX_ERR_NONE == mfx_res)
     {
         surfaces =
-            (VASurfaceID*) calloc(surfaces_num, sizeof(VASurfaceID));
+                (VASurfaceID *) calloc(surfaces_num, sizeof(VASurfaceID));
         vaapi_mids =
-            (vaapiMemId*) calloc(surfaces_num, sizeof(vaapiMemId));
-        mids = (mfxMemId*) calloc(surfaces_num, sizeof(mfxMemId));
+                (vaapiMemId *) calloc(surfaces_num, sizeof(vaapiMemId));
+        mids = (mfxMemId *) calloc(surfaces_num, sizeof(mfxMemId));
         if ((NULL == surfaces) || (NULL == vaapi_mids)
-                || (NULL == mids))
+            || (NULL == mids))
             mfx_res = MFX_ERR_MEMORY_ALLOC;
     }
     if (MFX_ERR_NONE == mfx_res)
@@ -225,14 +225,13 @@ mfxStatus _simple_alloc(mfxFrameAllocRequest* request,
                                       &attrib, 1);
             mfx_res = va_to_mfx_status(va_res);
             bCreateSrfSucceeded = (MFX_ERR_NONE == mfx_res);
-        }
-        else
+        } else
         {
             VAContextID context_id = request->reserved[0];
             int codedbuf_size = (request->Info.Width * request->Info.Height) * 400 / (16 * 16);     //from libva spec
 
             for (numAllocated = 0; numAllocated < surfaces_num;
-                    numAllocated++)
+                 numAllocated ++)
             {
                 VABufferID coded_buf;
 
@@ -250,7 +249,7 @@ mfxStatus _simple_alloc(mfxFrameAllocRequest* request,
     }
     if (MFX_ERR_NONE == mfx_res)
     {
-        for (i = 0; i < surfaces_num; ++i)
+        for (i = 0; i < surfaces_num; ++ i)
         {
             vaapi_mid = &(vaapi_mids[i]);
             vaapi_mid->m_fourcc = fourcc;
@@ -262,8 +261,7 @@ mfxStatus _simple_alloc(mfxFrameAllocRequest* request,
     {
         response->mids = mids;
         response->NumFrameActual = surfaces_num;
-    }
-    else                    // i.e. MFX_ERR_NONE != mfx_res
+    } else                    // i.e. MFX_ERR_NONE != mfx_res
     {
         response->mids = NULL;
         response->NumFrameActual = 0;
@@ -272,10 +270,9 @@ mfxStatus _simple_alloc(mfxFrameAllocRequest* request,
             if (bCreateSrfSucceeded)
                 vaDestroySurfaces(m_va_dpy, surfaces,
                                   surfaces_num);
-        }
-        else
+        } else
         {
-            for (i = 0; i < numAllocated; i++)
+            for (i = 0; i < numAllocated; i ++)
                 vaDestroyBuffer(m_va_dpy, surfaces[i]);
         }
         if (mids)
@@ -297,8 +294,8 @@ mfxStatus _simple_alloc(mfxFrameAllocRequest* request,
     return mfx_res;
 }
 
-mfxStatus simple_alloc(mfxHDL pthis, mfxFrameAllocRequest* request,
-                       mfxFrameAllocResponse* response)
+mfxStatus simple_alloc(mfxHDL pthis, mfxFrameAllocRequest *request,
+                       mfxFrameAllocResponse *response)
 {
     mfxStatus sts = MFX_ERR_NONE;
 
@@ -310,10 +307,10 @@ mfxStatus simple_alloc(mfxHDL pthis, mfxFrameAllocRequest* request,
         return MFX_ERR_UNSUPPORTED;
 
     if (request->NumFrameSuggested <=
-            allocDecodeResponses[pthis].mfxResponse.NumFrameActual
-            && MFX_MEMTYPE_EXTERNAL_FRAME & request->Type
-            && MFX_MEMTYPE_FROM_DECODE & request->Type
-            &&allocDecodeResponses[pthis].mfxResponse.NumFrameActual != 0)
+        allocDecodeResponses[pthis].mfxResponse.NumFrameActual
+        && MFX_MEMTYPE_EXTERNAL_FRAME & request->Type
+        && MFX_MEMTYPE_FROM_DECODE & request->Type
+        && allocDecodeResponses[pthis].mfxResponse.NumFrameActual != 0)
     {
         // Memory for this request was already allocated during manual allocation stage. Return saved response
         //   When decode acceleration device (VAAPI) is created it requires a list of VAAPI surfaces to be passed.
@@ -321,24 +318,22 @@ mfxStatus simple_alloc(mfxHDL pthis, mfxFrameAllocRequest* request,
         //   (No such restriction applies to Encode or VPP)
 
         *response = allocDecodeResponses[pthis].mfxResponse;
-        allocDecodeResponses[pthis].refCount++;
+        allocDecodeResponses[pthis].refCount ++;
 
-    }
-    else
+    } else
     {
         sts = _simple_alloc(request, response);
 
         if (MFX_ERR_NONE == sts)
         {
             if (MFX_MEMTYPE_EXTERNAL_FRAME & request->Type &&
-                    MFX_MEMTYPE_FROM_DECODE & request->Type)
+                MFX_MEMTYPE_FROM_DECODE & request->Type)
             {
                 // Decode alloc response handling
                 allocDecodeResponses[pthis].mfxResponse = *response;
-                allocDecodeResponses[pthis].refCount++;
+                allocDecodeResponses[pthis].refCount ++;
                 //allocDecodeRefCount[pthis]++;
-            }
-            else
+            } else
             {
                 // Encode and VPP alloc response handling
                 allocResponses[response->mids] = pthis;
@@ -349,26 +344,25 @@ mfxStatus simple_alloc(mfxHDL pthis, mfxFrameAllocRequest* request,
     return sts;
 }
 
-mfxStatus simple_lock(mfxHDL pthis, mfxMemId mid, mfxFrameData* ptr)
+mfxStatus simple_lock(mfxHDL pthis, mfxMemId mid, mfxFrameData *ptr)
 {
     mfxStatus mfx_res = MFX_ERR_NONE;
     VAStatus va_res = VA_STATUS_SUCCESS;
-    vaapiMemId* vaapi_mid = (vaapiMemId*) mid;
-    mfxU8* pBuffer = 0;
+    vaapiMemId *vaapi_mid = (vaapiMemId *) mid;
+    mfxU8 *pBuffer = 0;
 
-    if (!vaapi_mid || !(vaapi_mid->m_surface))
+    if (! vaapi_mid || ! (vaapi_mid->m_surface))
         return MFX_ERR_INVALID_HANDLE;
 
     if (MFX_FOURCC_P8 == vaapi_mid->m_fourcc)       // bitstream processing
     {
-        VACodedBufferSegment* coded_buffer_segment;
+        VACodedBufferSegment *coded_buffer_segment;
         va_res =
-            vaMapBuffer(m_va_dpy, *(vaapi_mid->m_surface),
-                        (void**)(&coded_buffer_segment));
+                vaMapBuffer(m_va_dpy, *(vaapi_mid->m_surface),
+                            (void **) (&coded_buffer_segment));
         mfx_res = va_to_mfx_status(va_res);
-        ptr->Y = (mfxU8*) coded_buffer_segment->buf;
-    }
-    else                    // Image processing
+        ptr->Y = (mfxU8 *) coded_buffer_segment->buf;
+    } else                    // Image processing
     {
         va_res = vaSyncSurface(m_va_dpy, *(vaapi_mid->m_surface));
         mfx_res = va_to_mfx_status(va_res);
@@ -376,109 +370,104 @@ mfxStatus simple_lock(mfxHDL pthis, mfxMemId mid, mfxFrameData* ptr)
         if (MFX_ERR_NONE == mfx_res)
         {
             va_res =
-                vaDeriveImage(m_va_dpy, *(vaapi_mid->m_surface),
-                              &(vaapi_mid->m_image));
+                    vaDeriveImage(m_va_dpy, *(vaapi_mid->m_surface),
+                                  &(vaapi_mid->m_image));
             mfx_res = va_to_mfx_status(va_res);
         }
         if (MFX_ERR_NONE == mfx_res)
         {
             va_res =
-                vaMapBuffer(m_va_dpy, vaapi_mid->m_image.buf,
-                            (void**)&pBuffer);
+                    vaMapBuffer(m_va_dpy, vaapi_mid->m_image.buf,
+                                (void **) &pBuffer);
             mfx_res = va_to_mfx_status(va_res);
         }
         if (MFX_ERR_NONE == mfx_res)
         {
             switch (vaapi_mid->m_image.format.fourcc)
             {
-            case VA_FOURCC_NV12:
-                if (vaapi_mid->m_fourcc == MFX_FOURCC_NV12)
-                {
-                    ptr->Pitch =
-                        (mfxU16) vaapi_mid->
-                        m_image.pitches[0];
-                    ptr->Y =
-                        pBuffer +
-                        vaapi_mid->m_image.offsets[0];
-                    ptr->U =
-                        pBuffer +
-                        vaapi_mid->m_image.offsets[1];
-                    ptr->V = ptr->U + 1;
-                }
-                else
+                case VA_FOURCC_NV12:
+                    if (vaapi_mid->m_fourcc == MFX_FOURCC_NV12)
+                    {
+                        ptr->Pitch =
+                                (mfxU16) vaapi_mid->
+                                        m_image.pitches[0];
+                        ptr->Y =
+                                pBuffer +
+                                vaapi_mid->m_image.offsets[0];
+                        ptr->U =
+                                pBuffer +
+                                vaapi_mid->m_image.offsets[1];
+                        ptr->V = ptr->U + 1;
+                    } else
+                        mfx_res = MFX_ERR_LOCK_MEMORY;
+                    break;
+                case VA_FOURCC_YV12:
+                    if (vaapi_mid->m_fourcc == MFX_FOURCC_YV12)
+                    {
+                        ptr->Pitch =
+                                (mfxU16) vaapi_mid->
+                                        m_image.pitches[0];
+                        ptr->Y =
+                                pBuffer +
+                                vaapi_mid->m_image.offsets[0];
+                        ptr->V =
+                                pBuffer +
+                                vaapi_mid->m_image.offsets[1];
+                        ptr->U =
+                                pBuffer +
+                                vaapi_mid->m_image.offsets[2];
+                    } else
+                        mfx_res = MFX_ERR_LOCK_MEMORY;
+                    break;
+                case VA_FOURCC_YUY2:
+                    if (vaapi_mid->m_fourcc == MFX_FOURCC_YUY2)
+                    {
+                        ptr->Pitch =
+                                (mfxU16) vaapi_mid->
+                                        m_image.pitches[0];
+                        ptr->Y =
+                                pBuffer +
+                                vaapi_mid->m_image.offsets[0];
+                        ptr->U = ptr->Y + 1;
+                        ptr->V = ptr->Y + 3;
+                    } else
+                        mfx_res = MFX_ERR_LOCK_MEMORY;
+                    break;
+                case VA_FOURCC_ARGB:
+                    if (vaapi_mid->m_fourcc == MFX_FOURCC_RGB4)
+                    {
+                        ptr->Pitch =
+                                (mfxU16) vaapi_mid->
+                                        m_image.pitches[0];
+                        ptr->B =
+                                pBuffer +
+                                vaapi_mid->m_image.offsets[0];
+                        ptr->G = ptr->B + 1;
+                        ptr->R = ptr->B + 2;
+                        ptr->A = ptr->B + 3;
+                    } else
+                        mfx_res = MFX_ERR_LOCK_MEMORY;
+                    break;
+                default:
                     mfx_res = MFX_ERR_LOCK_MEMORY;
-                break;
-            case VA_FOURCC_YV12:
-                if (vaapi_mid->m_fourcc == MFX_FOURCC_YV12)
-                {
-                    ptr->Pitch =
-                        (mfxU16) vaapi_mid->
-                        m_image.pitches[0];
-                    ptr->Y =
-                        pBuffer +
-                        vaapi_mid->m_image.offsets[0];
-                    ptr->V =
-                        pBuffer +
-                        vaapi_mid->m_image.offsets[1];
-                    ptr->U =
-                        pBuffer +
-                        vaapi_mid->m_image.offsets[2];
-                }
-                else
-                    mfx_res = MFX_ERR_LOCK_MEMORY;
-                break;
-            case VA_FOURCC_YUY2:
-                if (vaapi_mid->m_fourcc == MFX_FOURCC_YUY2)
-                {
-                    ptr->Pitch =
-                        (mfxU16) vaapi_mid->
-                        m_image.pitches[0];
-                    ptr->Y =
-                        pBuffer +
-                        vaapi_mid->m_image.offsets[0];
-                    ptr->U = ptr->Y + 1;
-                    ptr->V = ptr->Y + 3;
-                }
-                else
-                    mfx_res = MFX_ERR_LOCK_MEMORY;
-                break;
-            case VA_FOURCC_ARGB:
-                if (vaapi_mid->m_fourcc == MFX_FOURCC_RGB4)
-                {
-                    ptr->Pitch =
-                        (mfxU16) vaapi_mid->
-                        m_image.pitches[0];
-                    ptr->B =
-                        pBuffer +
-                        vaapi_mid->m_image.offsets[0];
-                    ptr->G = ptr->B + 1;
-                    ptr->R = ptr->B + 2;
-                    ptr->A = ptr->B + 3;
-                }
-                else
-                    mfx_res = MFX_ERR_LOCK_MEMORY;
-                break;
-            default:
-                mfx_res = MFX_ERR_LOCK_MEMORY;
-                break;
+                    break;
             }
         }
     }
     return mfx_res;
 }
 
-mfxStatus simple_unlock(mfxHDL pthis, mfxMemId mid, mfxFrameData* ptr)
+mfxStatus simple_unlock(mfxHDL pthis, mfxMemId mid, mfxFrameData *ptr)
 {
-    vaapiMemId* vaapi_mid = (vaapiMemId*) mid;
+    vaapiMemId *vaapi_mid = (vaapiMemId *) mid;
 
-    if (!vaapi_mid || !(vaapi_mid->m_surface))
+    if (! vaapi_mid || ! (vaapi_mid->m_surface))
         return MFX_ERR_INVALID_HANDLE;
 
     if (MFX_FOURCC_P8 == vaapi_mid->m_fourcc)       // bitstream processing
     {
         vaUnmapBuffer(m_va_dpy, *(vaapi_mid->m_surface));
-    }
-    else                    // Image processing
+    } else                    // Image processing
     {
         vaUnmapBuffer(m_va_dpy, vaapi_mid->m_image.buf);
         vaDestroyImage(m_va_dpy, vaapi_mid->m_image.image_id);
@@ -495,28 +484,28 @@ mfxStatus simple_unlock(mfxHDL pthis, mfxMemId mid, mfxFrameData* ptr)
     return MFX_ERR_NONE;
 }
 
-mfxStatus simple_gethdl(mfxHDL pthis, mfxMemId mid, mfxHDL* handle)
+mfxStatus simple_gethdl(mfxHDL pthis, mfxMemId mid, mfxHDL *handle)
 {
-    vaapiMemId* vaapi_mid = (vaapiMemId*) mid;
+    vaapiMemId *vaapi_mid = (vaapiMemId *) mid;
 
-    if (!handle || !vaapi_mid || !(vaapi_mid->m_surface))
+    if (! handle || ! vaapi_mid || ! (vaapi_mid->m_surface))
         return MFX_ERR_INVALID_HANDLE;
 
     *handle = vaapi_mid->m_surface; //VASurfaceID* <-> mfxHDL
     return MFX_ERR_NONE;
 }
 
-mfxStatus _simple_free(mfxHDL pthis, mfxFrameAllocResponse* response)
+mfxStatus _simple_free(mfxHDL pthis, mfxFrameAllocResponse *response)
 {
-    vaapiMemId* vaapi_mids = NULL;
-    VASurfaceID* surfaces = NULL;
+    vaapiMemId *vaapi_mids = NULL;
+    VASurfaceID *surfaces = NULL;
     mfxU32 i = 0;
     bool isBitstreamMemory = false;
     bool actualFreeMemory = false;
     if (0 == memcmp(response, &(allocDecodeResponses[pthis].mfxResponse),
                     sizeof(*response)))
     {
-        allocDecodeResponses[pthis].refCount--;
+        allocDecodeResponses[pthis].refCount --;
         if (0 == allocDecodeResponses[pthis].refCount)
             actualFreeMemory = true;
     }; // else actualFreeMemory = true;
@@ -526,13 +515,13 @@ mfxStatus _simple_free(mfxHDL pthis, mfxFrameAllocResponse* response)
         if (response->mids)
         {
 
-            vaapi_mids = (vaapiMemId*) (response->mids[0]);
+            vaapi_mids = (vaapiMemId *) (response->mids[0]);
 
             isBitstreamMemory =
-                (MFX_FOURCC_P8 ==
-                 vaapi_mids->m_fourcc) ? true : false;
+                    (MFX_FOURCC_P8 ==
+                     vaapi_mids->m_fourcc) ? true : false;
             surfaces = vaapi_mids->m_surface;
-            for (i = 0; i < response->NumFrameActual; ++i)
+            for (i = 0; i < response->NumFrameActual; ++ i)
             {
                 if (MFX_FOURCC_P8 == vaapi_mids[i].m_fourcc)
                     vaDestroyBuffer(m_va_dpy, surfaces[i]);
@@ -544,7 +533,7 @@ mfxStatus _simple_free(mfxHDL pthis, mfxFrameAllocResponse* response)
             free(response->mids);
             response->mids = NULL;
 
-            if (!isBitstreamMemory)
+            if (! isBitstreamMemory)
                 vaDestroySurfaces(m_va_dpy, surfaces, response->NumFrameActual);
             free(surfaces);
         }
@@ -553,24 +542,23 @@ mfxStatus _simple_free(mfxHDL pthis, mfxFrameAllocResponse* response)
     return MFX_ERR_NONE;
 }
 
-mfxStatus simple_free(mfxHDL pthis, mfxFrameAllocResponse* response)
+mfxStatus simple_free(mfxHDL pthis, mfxFrameAllocResponse *response)
 {
-    if (!response) return MFX_ERR_NULL_PTR;
+    if (! response) return MFX_ERR_NULL_PTR;
 
     if (allocResponses.find(response->mids) == allocResponses.end())
     {
         // Decode free response handling
-        if (--allocDecodeResponses[pthis].refCount == 0)
+        if (-- allocDecodeResponses[pthis].refCount == 0)
         {
-            _simple_free(pthis,response);
+            _simple_free(pthis, response);
             allocDecodeResponses.erase(pthis);
         }
-    }
-    else
+    } else
     {
         // Encode and VPP free response handling
         allocResponses.erase(response->mids);
-        _simple_free(pthis,response);
+        _simple_free(pthis, response);
     }
 
     return MFX_ERR_NONE;

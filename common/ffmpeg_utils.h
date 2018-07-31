@@ -13,6 +13,7 @@ Copyright(c) 2005-2014 Intel Corporation. All Rights Reserved.
 #include <stdio.h>
 
 #include "mfxvideo++.h"
+
 extern "C" {
 //In Windows, Add "FFMPEG_ROOT" environment variable to point to the root directory of the FFmpeg Dev package.
 #include "libavformat/avformat.h"
@@ -22,16 +23,17 @@ extern "C" {
 #define STREAM_FRAME_RATE 25 /* 25 images/s */
 
 /* The control parameters for the demux/decoding process */
-struct demuxControl {
+struct demuxControl
+{
     int audioIdx;
-    FILE* audioOutPCM;
+    FILE *audioOutPCM;
     AVCodec *audioDec;
     AVCodecContext *audioDec_ctx;
     AVDictionary *opts;
     int videoIdx;
-    AVFormatContext* avfCtx;
+    AVFormatContext *avfCtx;
     bool enableFilter;
-    AVBSFContext* bsfCtx;
+    AVBSFContext *bsfCtx;
     mfxU32 videoType;
     mfxU16 width;
     mfxU16 height;
@@ -39,40 +41,41 @@ struct demuxControl {
 };
 
 /* The control parameters for the mux/encoding process */
-struct muxControl {
+struct muxControl
+{
     int audioIdx;
-    FILE* audioInPCM;
+    FILE *audioInPCM;
     AVCodec *audioCodec;
     AVCodecContext *audioEnc_ctx;
-    AVStream* audioStream;
-    AVFrame* audioFrame;
+    AVStream *audioStream;
+    AVFrame *audioFrame;
     AVPacket *audioPacket;
-    int64_t	currentPts;
+    int64_t currentPts;
     bool defaultFormat; //True: the default file format is MKV
-    AVFormatContext* avfCtx;
+    AVFormatContext *avfCtx;
     mfxU32 CodecId;
     mfxI32 frameRateD;
     mfxI32 frameRateN;
-    mfxU16 nBitRate;   
+    mfxU16 nBitRate;
     mfxU16 nDstWidth; // destination picture width, specified if resizing required
     mfxU16 nDstHeight; // destination picture height, specified if resizing required
     mfxU32 nProcessedFramesNum;
 };
 
 // Initialize the Demuxer controller based on the input file
-mfxStatus openDemuxControl(demuxControl* ffmpegCtrl, const char *filename);
+mfxStatus openDemuxControl(demuxControl *ffmpegCtrl, const char *filename);
 
 // Release and clear the Demuxer resources
-mfxStatus closeDemuxControl(demuxControl* ffmpegCtrl);
+mfxStatus closeDemuxControl(demuxControl *ffmpegCtrl);
 
 // Initialize the Demuxer controller based on the input file
-mfxStatus openMuxControl(muxControl* ffmpegCtrl, const char *filename);
+mfxStatus openMuxControl(muxControl *ffmpegCtrl, const char *filename);
 
 // Release and clear the Demuxer resources
-mfxStatus closeMuxControl(muxControl* ffmpegCtrl);
+mfxStatus closeMuxControl(muxControl *ffmpegCtrl);
 
 // Write bit stream data for frame to file through FFMpeg muxer
-mfxStatus ffmpegWriteFrame(mfxBitstream* pMfxBitstream, muxControl* muxCtrl);
+mfxStatus ffmpegWriteFrame(mfxBitstream *pMfxBitstream, muxControl *muxCtrl);
 
 // Read bit stream data from FFMpeg demuxer. Stream is read as large chunks (= many frames)
-mfxStatus ffmpegReadFrame(mfxBitstream* pBS, demuxControl* filterCtrl);
+mfxStatus ffmpegReadFrame(mfxBitstream *pBS, demuxControl *filterCtrl);

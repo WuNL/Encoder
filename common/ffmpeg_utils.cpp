@@ -399,11 +399,12 @@ static bool encode_close_audio(muxControl* audioCtrl)
 }
 #endif
 
-mfxStatus openDemuxControl(demuxControl* ffmpegCtrl, const char *filename) {
+mfxStatus openDemuxControl(demuxControl *ffmpegCtrl, const char *filename)
+{
     MSDK_CHECK_POINTER(ffmpegCtrl, MFX_ERR_NULL_PTR);
     MSDK_CHECK_POINTER(filename, MFX_ERR_NULL_PTR);
 
-    const AVBitStreamFilter* avBsf;
+    const AVBitStreamFilter *avBsf;
 
     //Create the AVFormatContext for the FFMpeg demuxer
     ffmpegCtrl->avfCtx = NULL;
@@ -414,14 +415,16 @@ mfxStatus openDemuxControl(demuxControl* ffmpegCtrl, const char *filename) {
 
     // Open input container
     int res = avformat_open_input(&ffmpegCtrl->avfCtx, filename, NULL, NULL);
-    if(res) {
+    if (res)
+    {
         printf("FFMPEG: Could not open input container\n");
         return MFX_ERR_UNKNOWN;
     }
 
     // Retrieve stream information
     res = avformat_find_stream_info(ffmpegCtrl->avfCtx, NULL);
-    if(res < 0) {
+    if (res < 0)
+    {
         printf("FFMPEG: Couldn't find stream information\n");
         return MFX_ERR_UNKNOWN;
     }
@@ -430,11 +433,11 @@ mfxStatus openDemuxControl(demuxControl* ffmpegCtrl, const char *filename) {
     av_dump_format(ffmpegCtrl->avfCtx, 0, filename, 0);
 
     // Find the streams in the container
-    ffmpegCtrl->videoIdx = -1;
-    ffmpegCtrl->audioIdx = -1;
-    for(unsigned int i=0; i<ffmpegCtrl->avfCtx->nb_streams; i++)
+    ffmpegCtrl->videoIdx = - 1;
+    ffmpegCtrl->audioIdx = - 1;
+    for (unsigned int i = 0; i < ffmpegCtrl->avfCtx->nb_streams; i ++)
     {
-        if(ffmpegCtrl->avfCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO && ffmpegCtrl->videoIdx == -1)
+        if (ffmpegCtrl->avfCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO && ffmpegCtrl->videoIdx == - 1)
         {
             ffmpegCtrl->videoIdx = i;
         }
@@ -448,33 +451,40 @@ mfxStatus openDemuxControl(demuxControl* ffmpegCtrl, const char *filename) {
 #endif
     }
 
-    if(ffmpegCtrl->videoIdx == -1) {
+    if (ffmpegCtrl->videoIdx == - 1)
+    {
         printf("Didn't find any video streams in container");
         return MFX_ERR_UNKNOWN; // Didn't find any video streams in container
     }
 
     //Search for libavcodec/avcodec.h for AVCodecID, Media SDK bitstream follows the Annex B for some streams.
-    if (ffmpegCtrl->avfCtx->streams[ffmpegCtrl->videoIdx]->codecpar->codec_id ==  AV_CODEC_ID_H264) {
+    if (ffmpegCtrl->avfCtx->streams[ffmpegCtrl->videoIdx]->codecpar->codec_id == AV_CODEC_ID_H264)
+    {
         avBsf = av_bsf_get_by_name("h264_mp4toannexb");
         ffmpegCtrl->enableFilter = true;
         ffmpegCtrl->videoType = MFX_CODEC_AVC;
-    } else if (ffmpegCtrl->avfCtx->streams[ffmpegCtrl->videoIdx]->codecpar->codec_id ==  AV_CODEC_ID_H265) {
+    } else if (ffmpegCtrl->avfCtx->streams[ffmpegCtrl->videoIdx]->codecpar->codec_id == AV_CODEC_ID_H265)
+    {
         avBsf = av_bsf_get_by_name("hevc_mp4toannexb");
         ffmpegCtrl->enableFilter = true;
         ffmpegCtrl->videoType = MFX_CODEC_HEVC;
-    } else if (ffmpegCtrl->avfCtx->streams[ffmpegCtrl->videoIdx]->codecpar->codec_id == AV_CODEC_ID_MPEG2VIDEO) {
+    } else if (ffmpegCtrl->avfCtx->streams[ffmpegCtrl->videoIdx]->codecpar->codec_id == AV_CODEC_ID_MPEG2VIDEO)
+    {
         ffmpegCtrl->videoType = MFX_CODEC_MPEG2;
-    } else {
+    } else
+    {
         //TODO: Currently we only tested 3 codecs for tutorial purpose, User may extend this code for other codecs.
         return MFX_ERR_UNDEFINED_BEHAVIOR;
     }
 
-    if (ffmpegCtrl->enableFilter) {
+    if (ffmpegCtrl->enableFilter)
+    {
         res = av_bsf_alloc(avBsf, &ffmpegCtrl->bsfCtx);
         if (res < 0)
             return MFX_ERR_UNDEFINED_BEHAVIOR;
 
-        res = avcodec_parameters_copy(ffmpegCtrl->bsfCtx->par_in, ffmpegCtrl->avfCtx->streams[ffmpegCtrl->videoIdx]->codecpar);
+        res = avcodec_parameters_copy(ffmpegCtrl->bsfCtx->par_in,
+                                      ffmpegCtrl->avfCtx->streams[ffmpegCtrl->videoIdx]->codecpar);
         if (res < 0)
             return MFX_ERR_UNDEFINED_BEHAVIOR;
 
@@ -494,18 +504,20 @@ mfxStatus openDemuxControl(demuxControl* ffmpegCtrl, const char *filename) {
     return MFX_ERR_NONE;
 }
 
-mfxStatus closeDemuxControl(demuxControl* ffmpegCtrl) {
+mfxStatus closeDemuxControl(demuxControl *ffmpegCtrl)
+{
     av_bsf_free(&ffmpegCtrl->bsfCtx);
     avformat_close_input(&ffmpegCtrl->avfCtx);
 
 #ifdef DECODE_AUDIO
-        decode_close_audio(ffmpegCtrl);
+    decode_close_audio(ffmpegCtrl);
 #endif
 
     return MFX_ERR_NONE;
 }
 
-mfxStatus openMuxControl(muxControl* ffmpegCtrl, const char *filename) {
+mfxStatus openMuxControl(muxControl *ffmpegCtrl, const char *filename)
+{
     MSDK_CHECK_POINTER(ffmpegCtrl, MFX_ERR_NULL_PTR);
     MSDK_CHECK_POINTER(filename, MFX_ERR_NULL_PTR);
 
@@ -513,72 +525,74 @@ mfxStatus openMuxControl(muxControl* ffmpegCtrl, const char *filename) {
     av_register_all();
     ffmpegCtrl->avfCtx = NULL;
 
-    AVOutputFormat*	outFormat;
+    AVOutputFormat *outFormat;
 
     //Decide the encode format and file format based on the user input
-    if(ffmpegCtrl->defaultFormat)
+    if (ffmpegCtrl->defaultFormat)
     {
         // Defaults to H.264 video and Vorbis audio
         outFormat = av_guess_format(NULL, "dummy.mkv", NULL);
-        
-        if(ffmpegCtrl->CodecId == MFX_CODEC_MPEG2) {
+
+        if (ffmpegCtrl->CodecId == MFX_CODEC_MPEG2)
+        {
             // Override codec to MPEG2
             outFormat->video_codec = AV_CODEC_ID_MPEG2VIDEO;
         }
 
         //TODO: The default audio codec is vorbis but the audio encoder has an error, so we force it to AC3
         outFormat->audio_codec = AV_CODEC_ID_AC3;
-    }
-    else if(ffmpegCtrl->CodecId == MFX_CODEC_AVC)
+    } else if (ffmpegCtrl->CodecId == MFX_CODEC_AVC)
     {
         // Defaults to H.264 video and AAC audio
         outFormat = av_guess_format("mp4", NULL, NULL);
         outFormat->video_codec = AV_CODEC_ID_H264;
     }
-    // TODO There is a runtime error with this format:
-    // "VBV buffer size not set, using default size of 130KB..." when calling avformat_write_header(),
-    // but this doesn't affect the result.
-    else if(ffmpegCtrl->CodecId == MFX_CODEC_MPEG2)
+        // TODO There is a runtime error with this format:
+        // "VBV buffer size not set, using default size of 130KB..." when calling avformat_write_header(),
+        // but this doesn't affect the result.
+    else if (ffmpegCtrl->CodecId == MFX_CODEC_MPEG2)
     {
         outFormat = av_guess_format("mpeg", NULL, NULL);
         // Defaults to MPEG-PS
         outFormat->video_codec = AV_CODEC_ID_MPEG2VIDEO;
         // TODO: the default audio codec is MP2 but the audio encoder doesn't work, we force it to AAC
         outFormat->audio_codec = AV_CODEC_ID_AAC;
-    }
-    else
+    } else
         return MFX_ERR_UNSUPPORTED;
 
-    if (!outFormat) {
+    if (! outFormat)
+    {
         printf("FFMPEG: Could not find suitable output format\n");
         return MFX_ERR_UNSUPPORTED;
     }
 
     // Allocate the output media context
     avformat_alloc_output_context2(&ffmpegCtrl->avfCtx, NULL, NULL, filename);
-    if (!ffmpegCtrl->avfCtx) {
+    if (! ffmpegCtrl->avfCtx)
+    {
         printf("FFMPEG: avformat_alloc_context error\n");
         return MFX_ERR_UNSUPPORTED;
     }
 
     ffmpegCtrl->avfCtx->oformat = outFormat;
-    
-    if (outFormat->video_codec == AV_CODEC_ID_NONE) 
+
+    if (outFormat->video_codec == AV_CODEC_ID_NONE)
         return MFX_ERR_UNSUPPORTED;
 
     // Allocate the video stream as the output video stream context
-    AVStream* videoStream = avformat_new_stream(ffmpegCtrl->avfCtx, NULL);
-    if (!videoStream) {
+    AVStream *videoStream = avformat_new_stream(ffmpegCtrl->avfCtx, NULL);
+    if (! videoStream)
+    {
         printf("FFMPEG: Could not alloc video stream\n");
         return MFX_ERR_UNKNOWN;
     }
 
     AVCodecParameters *cpar = videoStream->codecpar;
-    cpar->codec_id   = outFormat->video_codec;
+    cpar->codec_id = outFormat->video_codec;
     cpar->codec_type = AVMEDIA_TYPE_VIDEO;
-    cpar->bit_rate   = ffmpegCtrl->nBitRate*1000;
-    cpar->width	     = ffmpegCtrl->nDstWidth; 
-    cpar->height     = ffmpegCtrl->nDstHeight;
+    cpar->bit_rate = ffmpegCtrl->nBitRate * 1000;
+    cpar->width = ffmpegCtrl->nDstWidth;
+    cpar->height = ffmpegCtrl->nDstHeight;
 
 #ifdef ENCODE_AUDIO
     if (outFormat->audio_codec != AV_CODEC_ID_NONE) {
@@ -605,7 +619,8 @@ mfxStatus openMuxControl(muxControl* ffmpegCtrl, const char *filename) {
     // written into the file"
     // Page https://stackoverflow.com/questions/13595288/understanding-pts-and-dts-in-video-frames explained some details.
     // TODO: there is an error message "[mp4 @ 0x62eec0] track 1: codec frame size is not set", but won't affect the result.
-    if(avformat_write_header(ffmpegCtrl->avfCtx, NULL)) {
+    if (avformat_write_header(ffmpegCtrl->avfCtx, NULL))
+    {
         printf("FFMPEG: avformat_write_header error!\n");
         return MFX_ERR_UNKNOWN;
     }
@@ -617,7 +632,8 @@ mfxStatus openMuxControl(muxControl* ffmpegCtrl, const char *filename) {
     return MFX_ERR_NONE;
 }
 
-mfxStatus closeMuxControl(muxControl* ffmpegCtrl) {
+mfxStatus closeMuxControl(muxControl *ffmpegCtrl)
+{
     ffmpegCtrl->nProcessedFramesNum = 0;
 
 #ifdef ENCODE_AUDIO
@@ -634,7 +650,8 @@ mfxStatus closeMuxControl(muxControl* ffmpegCtrl) {
 #endif
 
     // Free the streams
-    for(unsigned int i = 0; i < ffmpegCtrl->avfCtx->nb_streams; i++) {
+    for (unsigned int i = 0; i < ffmpegCtrl->avfCtx->nb_streams; i ++)
+    {
         av_freep(&ffmpegCtrl->avfCtx->streams[i]);
     }
 
@@ -645,10 +662,11 @@ mfxStatus closeMuxControl(muxControl* ffmpegCtrl) {
     return MFX_ERR_NONE;
 }
 
-mfxStatus ffmpegWriteFrame(mfxBitstream* pMfxBitstream, muxControl* muxCtrl) {
+mfxStatus ffmpegWriteFrame(mfxBitstream *pMfxBitstream, muxControl *muxCtrl)
+{
     MSDK_CHECK_POINTER(pMfxBitstream, MFX_ERR_NULL_PTR);
 
-    AVStream* videoStream = muxCtrl->avfCtx->streams[0];
+    AVStream *videoStream = muxCtrl->avfCtx->streams[0];
 
     // Note for H.264 :
     //    At the moment the SPS/PPS will be written to container again for the first frame here
@@ -665,17 +683,18 @@ mfxStatus ffmpegWriteFrame(mfxBitstream* pMfxBitstream, muxControl* muxCtrl) {
     tb.num = muxCtrl->frameRateD;
     tb.den = muxCtrl->frameRateN;
     pkt.dts = av_rescale_q(pkt.dts, tb, videoStream->time_base);
-    pkt.pts				= pkt.dts;
-    pkt.stream_index	= videoStream->index;
-    pkt.data			= pMfxBitstream->Data;
-    pkt.size			= pMfxBitstream->DataLength;
+    pkt.pts = pkt.dts;
+    pkt.stream_index = videoStream->index;
+    pkt.data = pMfxBitstream->Data;
+    pkt.size = pMfxBitstream->DataLength;
 
-    if(pMfxBitstream->FrameType == (MFX_FRAMETYPE_I | MFX_FRAMETYPE_REF | MFX_FRAMETYPE_IDR))
+    if (pMfxBitstream->FrameType == (MFX_FRAMETYPE_I | MFX_FRAMETYPE_REF | MFX_FRAMETYPE_IDR))
         pkt.flags |= AV_PKT_FLAG_KEY;
 
     /* Write the compressed frame to the media file. */
     int64_t tmp = pkt.pts;
-    if (av_interleaved_write_frame(muxCtrl->avfCtx, &pkt)) {
+    if (av_interleaved_write_frame(muxCtrl->avfCtx, &pkt))
+    {
         printf("FFMPEG: Error while writing video frame\n");
         return MFX_ERR_UNKNOWN;
     }
@@ -690,7 +709,8 @@ mfxStatus ffmpegWriteFrame(mfxBitstream* pMfxBitstream, muxControl* muxCtrl) {
     return MFX_ERR_NONE;
 }
 
-mfxStatus ffmpegReadFrame(mfxBitstream* pBS, demuxControl* filterCtrl) {
+mfxStatus ffmpegReadFrame(mfxBitstream *pBS, demuxControl *filterCtrl)
+{
     MSDK_CHECK_POINTER(pBS, MFX_ERR_NULL_PTR);
 
     int res = 0;
@@ -698,26 +718,28 @@ mfxStatus ffmpegReadFrame(mfxBitstream* pBS, demuxControl* filterCtrl) {
     AVPacket packet;
 
     // Read until video frame is found or no more video frames in container.
-    while(!videoFrameFound)
+    while (! videoFrameFound)
     {
-        if(!av_read_frame(filterCtrl->avfCtx, &packet))
+        if (! av_read_frame(filterCtrl->avfCtx, &packet))
         {
-            if(packet.stream_index == filterCtrl->videoIdx)
+            if (packet.stream_index == filterCtrl->videoIdx)
             {
-                if(filterCtrl->enableFilter)
+                if (filterCtrl->enableFilter)
                 {
                     //
                     // Apply MP4 to H264 Annex B filter on buffer
                     //
                     res = av_bsf_send_packet(filterCtrl->bsfCtx, &packet);
-                    if (res < 0) {
+                    if (res < 0)
+                    {
                         return MFX_ERR_UNDEFINED_BEHAVIOR;
                     }
 
-                    while (!res)
+                    while (! res)
                         res = av_bsf_receive_packet(filterCtrl->bsfCtx, &packet);
 
-                    if (res < 0 && (res != AVERROR(EAGAIN) && res != AVERROR_EOF)) {
+                    if (res < 0 && (res != AVERROR(EAGAIN) && res != AVERROR_EOF))
+                    {
                         return MFX_ERR_UNDEFINED_BEHAVIOR;
                     }
                 }
@@ -726,9 +748,9 @@ mfxStatus ffmpegReadFrame(mfxBitstream* pBS, demuxControl* filterCtrl) {
                 // Copy filtered buffer to bitstream
                 //
                 memmove(pBS->Data, pBS->Data + pBS->DataOffset, pBS->DataLength);
-                        pBS->DataOffset = 0;
-                        memcpy(pBS->Data + pBS->DataLength, packet.data, packet.size);
-                        pBS->DataLength += packet.size; 
+                pBS->DataOffset = 0;
+                memcpy(pBS->Data + pBS->DataLength, packet.data, packet.size);
+                pBS->DataLength += packet.size;
 
                 av_packet_unref(&packet);
 
@@ -744,8 +766,8 @@ mfxStatus ffmpegReadFrame(mfxBitstream* pBS, demuxControl* filterCtrl) {
                 decode_write_audio(filterCtrl, &packet);
             }
 #endif
-        }
-        else {
+        } else
+        {
             return MFX_ERR_MORE_DATA;  // Indicates that we reached end of container and to stop video decode
         }
     }

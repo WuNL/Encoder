@@ -22,7 +22,8 @@ Copyright(c) 2005-2014 Intel Corporation. All Rights Reserved.
  * Windows implementation of OS-specific utility functions
  */
 
-mfxStatus Initialize(mfxIMPL impl, mfxVersion ver, MFXVideoSession* pSession, mfxFrameAllocator* pmfxAllocator, bool bCreateSharedHandles)
+mfxStatus Initialize(mfxIMPL impl, mfxVersion ver, MFXVideoSession *pSession, mfxFrameAllocator *pmfxAllocator,
+                     bool bCreateSharedHandles)
 {
     mfxStatus sts = MFX_ERR_NONE;
 
@@ -69,19 +70,19 @@ void Release()
 #endif
 }
 
-void mfxGetTime(mfxTime* timestamp)
+void mfxGetTime(mfxTime *timestamp)
 {
     QueryPerformanceCounter(timestamp);
 }
 
 double TimeDiffMsec(mfxTime tfinish, mfxTime tstart)
 {
-    static LARGE_INTEGER tFreq = { 0 };
+    static LARGE_INTEGER tFreq = {0};
 
-    if (!tFreq.QuadPart) QueryPerformanceFrequency(&tFreq);
+    if (! tFreq.QuadPart) QueryPerformanceFrequency(&tFreq);
 
-    double freq = (double)tFreq.QuadPart;
-    return 1000.0 * ((double)tfinish.QuadPart - (double)tstart.QuadPart) / freq;
+    double freq = (double) tFreq.QuadPart;
+    return 1000.0 * ((double) tfinish.QuadPart - (double) tstart.QuadPart) / freq;
 }
 
 void ClearYUVSurfaceVMem(mfxMemId memId)

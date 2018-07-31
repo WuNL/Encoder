@@ -19,126 +19,127 @@ Copyright(c) 2005-2014 Intel Corporation. All Rights Reserved.
 
 #define SIMPLE_MIN(a, b) (((a) < (b)) ? (a) : (b))
 
-void PrintErrString(int err,const char* filestr,int line)
+void PrintErrString(int err, const char *filestr, int line)
 {
     switch (err)
     {
-    case   0:
-        printf("\n No error.\n");
-        break;
-    case  -1:
-        printf("\n Unknown error: %s %d\n",filestr,line);
-        break;
-    case  -2:
-        printf("\n Null pointer.  Check filename/path + permissions? %s %d\n",filestr,line);
-        break;
-    case  -3:
-        printf("\n Unsupported feature/library load error. %s %d\n",filestr,line);
-        break;
-    case  -4:
-        printf("\n Could not allocate memory. %s %d\n",filestr,line);
-        break;
-    case  -5:
-        printf("\n Insufficient IO buffers. %s %d\n",filestr,line);
-        break;
-    case  -6:
-        printf("\n Invalid handle. %s %d\n",filestr,line);
-        break;
-    case  -7:
-        printf("\n Memory lock failure. %s %d\n",filestr,line);
-        break;
-    case  -8:
-        printf("\n Function called before initialization. %s %d\n",filestr,line);
-        break;
-    case  -9:
-        printf("\n Specified object not found. %s %d\n",filestr,line);
-        break;
-    case -10:
-        printf("\n More input data expected. %s %d\n",filestr,line);
-        break;
-    case -11:
-        printf("\n More output surfaces expected. %s %d\n",filestr,line);
-        break;
-    case -12:
-        printf("\n Operation aborted. %s %d\n",filestr,line);
-        break;
-    case -13:
-        printf("\n HW device lost. %s %d\n",filestr,line);
-        break;
-    case -14:
-        printf("\n Incompatible video parameters. %s %d\n",filestr,line);
-        break;
-    case -15:
-        printf("\n Invalid video parameters. %s %d\n",filestr,line);
-        break;
-    case -16:
-        printf("\n Undefined behavior. %s %d\n",filestr,line);
-        break;
-    case -17:
-        printf("\n Device operation failure. %s %d\n",filestr,line);
-        break;
-    case -18:
-        printf("\n More bitstream data expected. %s %d\n",filestr,line);
-        break;
-    case -19:
-        printf("\n Incompatible audio parameters. %s %d\n",filestr,line);
-        break;
-    case -20:
-        printf("\n Invalid audio parameters. %s %d\n",filestr,line);
-        break;
-    default:
-        printf("\nError code %d,\t%s\t%d\n\n", err, filestr, line);
+        case 0:
+            printf("\n No error.\n");
+            break;
+        case - 1:
+            printf("\n Unknown error: %s %d\n", filestr, line);
+            break;
+        case - 2:
+            printf("\n Null pointer.  Check filename/path + permissions? %s %d\n", filestr, line);
+            break;
+        case - 3:
+            printf("\n Unsupported feature/library load error. %s %d\n", filestr, line);
+            break;
+        case - 4:
+            printf("\n Could not allocate memory. %s %d\n", filestr, line);
+            break;
+        case - 5:
+            printf("\n Insufficient IO buffers. %s %d\n", filestr, line);
+            break;
+        case - 6:
+            printf("\n Invalid handle. %s %d\n", filestr, line);
+            break;
+        case - 7:
+            printf("\n Memory lock failure. %s %d\n", filestr, line);
+            break;
+        case - 8:
+            printf("\n Function called before initialization. %s %d\n", filestr, line);
+            break;
+        case - 9:
+            printf("\n Specified object not found. %s %d\n", filestr, line);
+            break;
+        case - 10:
+            printf("\n More input data expected. %s %d\n", filestr, line);
+            break;
+        case - 11:
+            printf("\n More output surfaces expected. %s %d\n", filestr, line);
+            break;
+        case - 12:
+            printf("\n Operation aborted. %s %d\n", filestr, line);
+            break;
+        case - 13:
+            printf("\n HW device lost. %s %d\n", filestr, line);
+            break;
+        case - 14:
+            printf("\n Incompatible video parameters. %s %d\n", filestr, line);
+            break;
+        case - 15:
+            printf("\n Invalid video parameters. %s %d\n", filestr, line);
+            break;
+        case - 16:
+            printf("\n Undefined behavior. %s %d\n", filestr, line);
+            break;
+        case - 17:
+            printf("\n Device operation failure. %s %d\n", filestr, line);
+            break;
+        case - 18:
+            printf("\n More bitstream data expected. %s %d\n", filestr, line);
+            break;
+        case - 19:
+            printf("\n Incompatible audio parameters. %s %d\n", filestr, line);
+            break;
+        case - 20:
+            printf("\n Invalid audio parameters. %s %d\n", filestr, line);
+            break;
+        default:
+            printf("\nError code %d,\t%s\t%d\n\n", err, filestr, line);
     }
 }
 
-mfxStatus ReadPlaneData(mfxU16 w, mfxU16 h, mfxU8* buf, mfxU8* ptr,
-                        mfxU16 pitch, mfxU16 offset, FILE* fSource)
+mfxStatus ReadPlaneData(mfxU16 w, mfxU16 h, mfxU8 *buf, mfxU8 *ptr,
+                        mfxU16 pitch, mfxU16 offset, FILE *fSource)
 {
     mfxU32 nBytesRead;
-    for (mfxU16 i = 0; i < h; i++)
+    for (mfxU16 i = 0; i < h; i ++)
     {
         nBytesRead = (mfxU32) fread(buf, 1, w, fSource);
         if (w != nBytesRead)
             return MFX_ERR_MORE_DATA;
-        for (mfxU16 j = 0; j < w; j++)
+        for (mfxU16 j = 0; j < w; j ++)
             ptr[i * pitch + j * 2 + offset] = buf[j];
     }
     return MFX_ERR_NONE;
 }
-mfxStatus ReadPlaneDataFromBuffer(mfxU16 w, mfxU16 h, mfxU8* buf, mfxU8* ptr,
-                                  mfxU16 pitch, mfxU16 offset, unsigned char* yuv420p)
+
+mfxStatus ReadPlaneDataFromBuffer(mfxU16 w, mfxU16 h, mfxU8 *buf, mfxU8 *ptr,
+                                  mfxU16 pitch, mfxU16 offset, unsigned char *yuv420p)
 {
-    for (mfxU16 i = 0; i < h; i++)
+    for (mfxU16 i = 0; i < h; i ++)
     {
-        memcpy(buf,yuv420p+i*w,w);
-        for (mfxU16 j = 0; j < w; j++)
+        memcpy(buf, yuv420p + i * w, w);
+        for (mfxU16 j = 0; j < w; j ++)
             ptr[i * pitch + j * 2 + offset] = buf[j];
     }
     return MFX_ERR_NONE;
 }
-mfxStatus LoadRawFrameFromV4l2(mfxFrameSurface1* pSurface, unsigned char* yuv420p)
+
+mfxStatus LoadRawFrameFromV4l2(mfxFrameSurface1 *pSurface, unsigned char *yuv420p)
 {
-    if (!yuv420p)
+    if (! yuv420p)
     {
         // Simulate instantaneous access to 1000 "empty" frames.
         static int frameCount = 0;
-        if (1000 == frameCount++)
+        if (1000 == frameCount ++)
             return MFX_ERR_MORE_DATA;
         else
             return MFX_ERR_NONE;
     }
     mfxStatus sts = MFX_ERR_NONE;
     mfxU16 w, h, i, pitch;
-    mfxU8* ptr;
-    mfxFrameInfo* pInfo = &pSurface->Info;
-    mfxFrameData* pData = &pSurface->Data;
+    mfxU8 *ptr;
+    mfxFrameInfo *pInfo = &pSurface->Info;
+    mfxFrameData *pData = &pSurface->Data;
 
     if (pInfo->CropH > 0 && pInfo->CropW > 0)
     {
         w = pInfo->CropW;
         h = pInfo->CropH;
-    }
-    else
+    } else
     {
         w = pInfo->Width;
         h = pInfo->Height;
@@ -148,9 +149,9 @@ mfxStatus LoadRawFrameFromV4l2(mfxFrameSurface1* pSurface, unsigned char* yuv420
     ptr = pData->Y + pInfo->CropX + pInfo->CropY * pData->Pitch;
 
     // read luminance plane
-    for (i = 0; i < h; i++)
+    for (i = 0; i < h; i ++)
     {
-        memcpy(ptr + i * pitch,yuv420p+i*w,w);
+        memcpy(ptr + i * pitch, yuv420p + i * w, w);
     }
     mfxU8 buf[2048];        // maximum supported chroma width for nv12
     w /= 2;
@@ -160,23 +161,24 @@ mfxStatus LoadRawFrameFromV4l2(mfxFrameSurface1* pSurface, unsigned char* yuv420
         return MFX_ERR_UNSUPPORTED;
 
     // load U
-    sts = ReadPlaneDataFromBuffer(w, h, buf, ptr, pitch, 0, yuv420p+h*w*4);
+    sts = ReadPlaneDataFromBuffer(w, h, buf, ptr, pitch, 0, yuv420p + h * w * 4);
     if (MFX_ERR_NONE != sts)
         return sts;
     // load V
-    ReadPlaneDataFromBuffer(w, h, buf, ptr, pitch, 1, yuv420p+h*w*5);
+    ReadPlaneDataFromBuffer(w, h, buf, ptr, pitch, 1, yuv420p + h * w * 5);
     if (MFX_ERR_NONE != sts)
         return sts;
 
     return MFX_ERR_NONE;
 }
-mfxStatus LoadRawFrame(mfxFrameSurface1* pSurface, FILE* fSource)
+
+mfxStatus LoadRawFrame(mfxFrameSurface1 *pSurface, FILE *fSource)
 {
-    if (!fSource)
+    if (! fSource)
     {
         // Simulate instantaneous access to 1000 "empty" frames.
         static int frameCount = 0;
-        if (1000 == frameCount++)
+        if (1000 == frameCount ++)
             return MFX_ERR_MORE_DATA;
         else
             return MFX_ERR_NONE;
@@ -185,16 +187,15 @@ mfxStatus LoadRawFrame(mfxFrameSurface1* pSurface, FILE* fSource)
     mfxStatus sts = MFX_ERR_NONE;
     mfxU32 nBytesRead;
     mfxU16 w, h, i, pitch;
-    mfxU8* ptr;
-    mfxFrameInfo* pInfo = &pSurface->Info;
-    mfxFrameData* pData = &pSurface->Data;
+    mfxU8 *ptr;
+    mfxFrameInfo *pInfo = &pSurface->Info;
+    mfxFrameData *pData = &pSurface->Data;
 
     if (pInfo->CropH > 0 && pInfo->CropW > 0)
     {
         w = pInfo->CropW;
         h = pInfo->CropH;
-    }
-    else
+    } else
     {
         w = pInfo->Width;
         h = pInfo->Height;
@@ -204,7 +205,7 @@ mfxStatus LoadRawFrame(mfxFrameSurface1* pSurface, FILE* fSource)
     ptr = pData->Y + pInfo->CropX + pInfo->CropY * pData->Pitch;
 
     // read luminance plane
-    for (i = 0; i < h; i++)
+    for (i = 0; i < h; i ++)
     {
         nBytesRead = (mfxU32) fread(ptr + i * pitch, 1, w, fSource);
         if (w != nBytesRead)
@@ -229,15 +230,15 @@ mfxStatus LoadRawFrame(mfxFrameSurface1* pSurface, FILE* fSource)
     return MFX_ERR_NONE;
 }
 
-mfxStatus ReadPlaneData10Bit(mfxU16 w, mfxU16 h, mfxU16* buf, mfxU8* ptr,
-                             mfxU16 pitch, mfxU16 shift, FILE* fSource)
+mfxStatus ReadPlaneData10Bit(mfxU16 w, mfxU16 h, mfxU16 *buf, mfxU8 *ptr,
+                             mfxU16 pitch, mfxU16 shift, FILE *fSource)
 {
     mfxU32 nBytesRead;
-    mfxU16* shortPtr;
+    mfxU16 *shortPtr;
 
-    for (mfxU16 i = 0; i < h; i++)
+    for (mfxU16 i = 0; i < h; i ++)
     {
-        nBytesRead = (mfxU32)fread(buf, 2, w, fSource); //Reading in 16bits per pixel.
+        nBytesRead = (mfxU32) fread(buf, 2, w, fSource); //Reading in 16bits per pixel.
         if (w != nBytesRead)
             return MFX_ERR_MORE_DATA;
         // Read data with P010 and convert it to MS-P010
@@ -247,21 +248,21 @@ mfxStatus ReadPlaneData10Bit(mfxU16 w, mfxU16 h, mfxU16* buf, mfxU8* ptr,
         //https://msdn.microsoft.com/en-us/library/windows/desktop/bb970578(v=vs.85).aspx#overview
         if (shift > 0)
         {
-            shortPtr = (mfxU16 *)(ptr + i * pitch);
-            for (mfxU16 j = 0; j < w; j++)
+            shortPtr = (mfxU16 * )(ptr + i * pitch);
+            for (mfxU16 j = 0; j < w; j ++)
                 shortPtr[j] = buf[j] << 6;
         }
     }
     return MFX_ERR_NONE;
 }
 
-mfxStatus LoadRaw10BitFrame(mfxFrameSurface1* pSurface, FILE* fSource)
+mfxStatus LoadRaw10BitFrame(mfxFrameSurface1 *pSurface, FILE *fSource)
 {
-    if (!fSource)
+    if (! fSource)
     {
         // Simulate instantaneous access to 1000 "empty" frames.
         static int frameCount = 0;
-        if (1000 == frameCount++)
+        if (1000 == frameCount ++)
             return MFX_ERR_MORE_DATA;
         else
             return MFX_ERR_NONE;
@@ -269,17 +270,16 @@ mfxStatus LoadRaw10BitFrame(mfxFrameSurface1* pSurface, FILE* fSource)
 
     mfxStatus sts = MFX_ERR_NONE;
     mfxU32 nBytesRead;
-    mfxU16 w, h,pitch;
-    mfxU8* ptr;
-    mfxFrameInfo* pInfo = &pSurface->Info;
-    mfxFrameData* pData = &pSurface->Data;
+    mfxU16 w, h, pitch;
+    mfxU8 *ptr;
+    mfxFrameInfo *pInfo = &pSurface->Info;
+    mfxFrameData *pData = &pSurface->Data;
 
     if (pInfo->CropH > 0 && pInfo->CropW > 0)
     {
         w = pInfo->CropW;
         h = pInfo->CropH;
-    }
-    else
+    } else
     {
         w = pInfo->Width;
         h = pInfo->Height;
@@ -306,13 +306,13 @@ mfxStatus LoadRaw10BitFrame(mfxFrameSurface1* pSurface, FILE* fSource)
     return MFX_ERR_NONE;
 }
 
-mfxStatus LoadRawRGBFrame(mfxFrameSurface1* pSurface, FILE* fSource)
+mfxStatus LoadRawRGBFrame(mfxFrameSurface1 *pSurface, FILE *fSource)
 {
-    if (!fSource)
+    if (! fSource)
     {
         // Simulate instantaneous access to 1000 "empty" frames.
         static int frameCount = 0;
-        if (1000 == frameCount++)
+        if (1000 == frameCount ++)
             return MFX_ERR_MORE_DATA;
         else
             return MFX_ERR_NONE;
@@ -320,38 +320,39 @@ mfxStatus LoadRawRGBFrame(mfxFrameSurface1* pSurface, FILE* fSource)
 
     size_t nBytesRead;
     mfxU16 w, h;
-    mfxFrameInfo* pInfo = &pSurface->Info;
+    mfxFrameInfo *pInfo = &pSurface->Info;
 
     if (pInfo->CropH > 0 && pInfo->CropW > 0)
     {
         w = pInfo->CropW;
         h = pInfo->CropH;
-    }
-    else
+    } else
     {
         w = pInfo->Width;
         h = pInfo->Height;
     }
 
-    for (mfxU16 i = 0; i < h; i++)
+    for (mfxU16 i = 0; i < h; i ++)
     {
         nBytesRead = fread(pSurface->Data.B + i * pSurface->Data.Pitch,
                            1, w * 4, fSource);
-        if ((size_t)(w * 4) != nBytesRead)
+        if ((size_t) (w * 4) != nBytesRead)
             return MFX_ERR_MORE_DATA;
     }
 
     return MFX_ERR_NONE;
 }
-mfxStatus SendFrameThroughRTP(mfxBitstream* pMfxBitstream)
+
+mfxStatus SendFrameThroughRTP(mfxBitstream *pMfxBitstream)
 {
     return MFX_ERR_NONE;
 }
-mfxStatus WriteBitStreamFrame(mfxBitstream* pMfxBitstream, FILE* fSink)
+
+mfxStatus WriteBitStreamFrame(mfxBitstream *pMfxBitstream, FILE *fSink)
 {
     mfxU32 nBytesWritten =
-        (mfxU32) fwrite(pMfxBitstream->Data + pMfxBitstream->DataOffset, 1,
-                        pMfxBitstream->DataLength, fSink);
+            (mfxU32) fwrite(pMfxBitstream->Data + pMfxBitstream->DataOffset, 1,
+                            pMfxBitstream->DataLength, fSink);
     if (nBytesWritten != pMfxBitstream->DataLength)
         return MFX_ERR_UNDEFINED_BEHAVIOR;
 
@@ -360,7 +361,7 @@ mfxStatus WriteBitStreamFrame(mfxBitstream* pMfxBitstream, FILE* fSink)
     return MFX_ERR_NONE;
 }
 
-mfxStatus ReadBitStreamData(mfxBitstream* pBS, FILE* fSource)
+mfxStatus ReadBitStreamData(mfxBitstream *pBS, FILE *fSource)
 {
     memmove(pBS->Data, pBS->Data + pBS->DataOffset, pBS->DataLength);
     pBS->DataOffset = 0;
@@ -377,25 +378,25 @@ mfxStatus ReadBitStreamData(mfxBitstream* pBS, FILE* fSource)
     return MFX_ERR_NONE;
 }
 
-mfxStatus WriteSection(mfxU8* plane, mfxU16 factor, mfxU16 chunksize,
-                       mfxFrameInfo* pInfo, mfxFrameData* pData, mfxU32 i,
-                       mfxU32 j, FILE* fSink)
+mfxStatus WriteSection(mfxU8 *plane, mfxU16 factor, mfxU16 chunksize,
+                       mfxFrameInfo *pInfo, mfxFrameData *pData, mfxU32 i,
+                       mfxU32 j, FILE *fSink)
 {
     if (chunksize !=
-            fwrite(plane +
-                   (pInfo->CropY * pData->Pitch / factor + pInfo->CropX) +
-                   i * pData->Pitch + j, 1, chunksize, fSink))
+        fwrite(plane +
+               (pInfo->CropY * pData->Pitch / factor + pInfo->CropX) +
+               i * pData->Pitch + j, 1, chunksize, fSink))
         return MFX_ERR_UNDEFINED_BEHAVIOR;
     return MFX_ERR_NONE;
 }
 
-mfxStatus WriteRawFrame(mfxFrameSurface1* pSurface, FILE* fSink)
+mfxStatus WriteRawFrame(mfxFrameSurface1 *pSurface, FILE *fSink)
 {
-    mfxFrameInfo* pInfo = &pSurface->Info;
-    mfxFrameData* pData = &pSurface->Data;
+    mfxFrameInfo *pInfo = &pSurface->Info;
+    mfxFrameData *pData = &pSurface->Data;
     mfxU32 i, j, h, w;
     mfxI32 pitch, nByteWrite;
-    mfxU8* ptr;
+    mfxU8 *ptr;
 
     mfxStatus sts = MFX_ERR_NONE;
     if (pInfo->FourCC == MFX_FOURCC_RGB4 || pInfo->FourCC == MFX_FOURCC_A2RGB10)
@@ -403,48 +404,47 @@ mfxStatus WriteRawFrame(mfxFrameSurface1* pSurface, FILE* fSink)
         pitch = pData->Pitch;
         ptr = SIMPLE_MIN(SIMPLE_MIN(pData->R, pData->G), pData->B);
 
-        for (i = 0; i < h; i++)
+        for (i = 0; i < h; i ++)
         {
             nByteWrite = fwrite(ptr + i * pitch, 1, w * 4, fSink);
-            if ((size_t)(w * 4) != nByteWrite)
+            if ((size_t) (w * 4) != nByteWrite)
             {
                 return MFX_ERR_MORE_DATA;
             }
         }
-    }
-    else
+    } else
     {
-        for (i = 0; i < pInfo->CropH; i++)
+        for (i = 0; i < pInfo->CropH; i ++)
             sts =
-                WriteSection(pData->Y, 1, pInfo->CropW, pInfo, pData, i, 0,
-                             fSink);
+                    WriteSection(pData->Y, 1, pInfo->CropW, pInfo, pData, i, 0,
+                                 fSink);
 
         h = pInfo->CropH / 2;
         w = pInfo->CropW;
-        for (i = 0; i < h; i++)
+        for (i = 0; i < h; i ++)
             for (j = 0; j < w; j += 2)
                 sts =
-                    WriteSection(pData->UV, 2, 1, pInfo, pData, i, j,
-                                 fSink);
-        for (i = 0; i < h; i++)
+                        WriteSection(pData->UV, 2, 1, pInfo, pData, i, j,
+                                     fSink);
+        for (i = 0; i < h; i ++)
             for (j = 1; j < w; j += 2)
                 sts =
-                    WriteSection(pData->UV, 2, 1, pInfo, pData, i, j,
-                                 fSink);
+                        WriteSection(pData->UV, 2, 1, pInfo, pData, i, j,
+                                     fSink);
     }
 
     return sts;
 }
 
-mfxStatus WriteSection10Bit(mfxU8* plane, mfxU16 factor, mfxU16 chunksize,
-                            mfxFrameInfo* pInfo, mfxFrameData* pData, mfxU32 i,
-                            /*mfxU32 j,*/ FILE* fSink)
+mfxStatus WriteSection10Bit(mfxU8 *plane, mfxU16 factor, mfxU16 chunksize,
+                            mfxFrameInfo *pInfo, mfxFrameData *pData, mfxU32 i,
+        /*mfxU32 j,*/ FILE *fSink)
 {
     // Temporary buffer to convert MS-P010 to P010
     std::vector<mfxU16> tmp;
-    mfxU16* shortPtr;
+    mfxU16 *shortPtr;
 
-    shortPtr = (mfxU16*)(plane + (pInfo->CropY * pData->Pitch / factor + pInfo->CropX) + i * pData->Pitch);
+    shortPtr = (mfxU16 * )(plane + (pInfo->CropY * pData->Pitch / factor + pInfo->CropX) + i * pData->Pitch);
     if (pInfo->Shift)
     {
         // Convert MS-P010 to P010 and write
@@ -454,14 +454,13 @@ mfxStatus WriteSection10Bit(mfxU8* plane, mfxU16 factor, mfxU16 chunksize,
         //Because each 10bit pixel channel takes 2 bytes with the LSB on the right side of the 16bits
         //See this web page for the description of 10bit YUV format
         //https://msdn.microsoft.com/en-us/library/windows/desktop/bb970578(v=vs.85).aspx#overview
-        for (int idx = 0; idx < pInfo->CropW; idx++)
+        for (int idx = 0; idx < pInfo->CropW; idx ++)
         {
             tmp[idx] = shortPtr[idx] >> 6;
         }
         if (chunksize != fwrite(&tmp[0], 1, chunksize, fSink))
             return MFX_ERR_UNDEFINED_BEHAVIOR;
-    }
-    else
+    } else
     {
         if (chunksize != fwrite(shortPtr, 1, chunksize, fSink))
             return MFX_ERR_UNDEFINED_BEHAVIOR;
@@ -470,19 +469,19 @@ mfxStatus WriteSection10Bit(mfxU8* plane, mfxU16 factor, mfxU16 chunksize,
     return MFX_ERR_NONE;
 }
 
-mfxStatus WriteRaw10BitFrame(mfxFrameSurface1* pSurface, FILE* fSink)
+mfxStatus WriteRaw10BitFrame(mfxFrameSurface1 *pSurface, FILE *fSink)
 {
-    mfxFrameInfo* pInfo = &pSurface->Info;
-    mfxFrameData* pData = &pSurface->Data;
+    mfxFrameInfo *pInfo = &pSurface->Info;
+    mfxFrameData *pData = &pSurface->Data;
     mfxStatus sts = MFX_ERR_NONE;
 
 
-    for (mfxU32 i = 0; i < pInfo->CropH; i++)
+    for (mfxU32 i = 0; i < pInfo->CropH; i ++)
     {
         sts = WriteSection10Bit(pData->Y, 1, pInfo->CropW * 2, pInfo, pData, i, fSink);
     }
 
-    for (mfxU32 i = 0; i < pInfo->CropH / 2; i++)
+    for (mfxU32 i = 0; i < pInfo->CropH / 2; i ++)
     {
         sts = WriteSection10Bit(pData->UV, 2, pInfo->CropW * 2, pInfo, pData, i, fSink);
     }
@@ -490,28 +489,28 @@ mfxStatus WriteRaw10BitFrame(mfxFrameSurface1* pSurface, FILE* fSink)
     return sts;
 }
 
-int GetFreeTaskIndex(Task* pTaskPool, mfxU16 nPoolSize)
+int GetFreeTaskIndex(Task *pTaskPool, mfxU16 nPoolSize)
 {
     if (pTaskPool)
-        for (int i = 0; i < nPoolSize; i++)
-            if (!pTaskPool[i].syncp)
+        for (int i = 0; i < nPoolSize; i ++)
+            if (! pTaskPool[i].syncp)
                 return i;
     return MFX_ERR_NOT_FOUND;
 }
 
-void ClearYUVSurfaceSysMem(mfxFrameSurface1* pSfc, mfxU16 width, mfxU16 height)
+void ClearYUVSurfaceSysMem(mfxFrameSurface1 *pSfc, mfxU16 width, mfxU16 height)
 {
     // In case simulating direct access to frames we initialize the allocated surfaces with default pattern
     memset(pSfc->Data.Y, 100, width * height);  // Y plane
-    memset(pSfc->Data.U, 50, (width * height)/2);  // UV plane
+    memset(pSfc->Data.U, 50, (width * height) / 2);  // UV plane
 }
 
 
 // Get free raw frame surface
-int GetFreeSurfaceIndex(mfxFrameSurface1** pSurfacesPool, mfxU16 nPoolSize)
+int GetFreeSurfaceIndex(mfxFrameSurface1 **pSurfacesPool, mfxU16 nPoolSize)
 {
     if (pSurfacesPool)
-        for (mfxU16 i = 0; i < nPoolSize; i++)
+        for (mfxU16 i = 0; i < nPoolSize; i ++)
             if (0 == pSurfacesPool[i]->Data.Locked)
                 return i;
     return MFX_ERR_NOT_FOUND;
@@ -523,17 +522,17 @@ char mfxFrameTypeString(mfxU16 FrameType)
     char FrameTypeOut;
     switch (FrameTmp)
     {
-    case MFX_FRAMETYPE_I:
-        FrameTypeOut = 'I';
-        break;
-    case MFX_FRAMETYPE_P:
-        FrameTypeOut = 'P';
-        break;
-    case MFX_FRAMETYPE_B:
-        FrameTypeOut = 'B';
-        break;
-    default:
-        FrameTypeOut = '*';
+        case MFX_FRAMETYPE_I:
+            FrameTypeOut = 'I';
+            break;
+        case MFX_FRAMETYPE_P:
+            FrameTypeOut = 'P';
+            break;
+        case MFX_FRAMETYPE_B:
+            FrameTypeOut = 'B';
+            break;
+        default:
+            FrameTypeOut = '*';
     }
     return FrameTypeOut;
 }
@@ -595,64 +594,63 @@ void showCPUInfo()
 }
 #endif
 
-const mfxPluginUID & msdkGetPluginUID(mfxIMPL impl, msdkComponentType type, mfxU32 uCodecid)
+const mfxPluginUID &msdkGetPluginUID(mfxIMPL impl, msdkComponentType type, mfxU32 uCodecid)
 {
     if (impl == MFX_IMPL_SOFTWARE)
     {
         switch (type)
         {
-        case MSDK_VDECODE:
-            switch (uCodecid)
-            {
-            case MFX_CODEC_HEVC:
-                return MFX_PLUGINID_HEVCD_SW;
-            }
-            break;
-        case MSDK_VENCODE:
-            switch (uCodecid)
-            {
-            case MFX_CODEC_HEVC:
-                return MFX_PLUGINID_HEVCE_SW;
-            }
-            break;
+            case MSDK_VDECODE:
+                switch (uCodecid)
+                {
+                    case MFX_CODEC_HEVC:
+                        return MFX_PLUGINID_HEVCD_SW;
+                }
+                break;
+            case MSDK_VENCODE:
+                switch (uCodecid)
+                {
+                    case MFX_CODEC_HEVC:
+                        return MFX_PLUGINID_HEVCE_SW;
+                }
+                break;
         }
-    }
-    else if (impl |= MFX_IMPL_HARDWARE)
+    } else if (impl |= MFX_IMPL_HARDWARE)
     {
         switch (type)
         {
-        case MSDK_VDECODE:
-            switch (uCodecid)
-            {
-            case MFX_CODEC_HEVC:
-                return MFX_PLUGINID_HEVCD_HW; // MFX_PLUGINID_HEVCD_SW for now
-            case MFX_CODEC_VP8:
-                return MFX_PLUGINID_VP8D_HW;
-            }
-            break;
-        case MSDK_VENCODE:
-            switch (uCodecid)
-            {
-            case MFX_CODEC_HEVC:
-                return MFX_PLUGINID_HEVCE_HW;
-            }
-            break;
-        case MSDK_VENC:
-            switch (uCodecid)
-            {
-            case MFX_CODEC_HEVC:
-                return MFX_PLUGINID_HEVCE_FEI_HW;   // HEVC FEI uses ENC interface
-            }
-            break;
+            case MSDK_VDECODE:
+                switch (uCodecid)
+                {
+                    case MFX_CODEC_HEVC:
+                        return MFX_PLUGINID_HEVCD_HW; // MFX_PLUGINID_HEVCD_SW for now
+                    case MFX_CODEC_VP8:
+                        return MFX_PLUGINID_VP8D_HW;
+                }
+                break;
+            case MSDK_VENCODE:
+                switch (uCodecid)
+                {
+                    case MFX_CODEC_HEVC:
+                        return MFX_PLUGINID_HEVCE_HW;
+                }
+                break;
+            case MSDK_VENC:
+                switch (uCodecid)
+                {
+                    case MFX_CODEC_HEVC:
+                        return MFX_PLUGINID_HEVCE_FEI_HW;   // HEVC FEI uses ENC interface
+                }
+                break;
         }
     }
 
     return MSDK_PLUGINGUID_NULL;
 }
 
-bool AreGuidsEqual(const mfxPluginUID& guid1, const mfxPluginUID& guid2)
+bool AreGuidsEqual(const mfxPluginUID &guid1, const mfxPluginUID &guid2)
 {
-    for (size_t i = 0; i != sizeof(mfxPluginUID); i++)
+    for (size_t i = 0; i != sizeof(mfxPluginUID); i ++)
     {
         if (guid1.Data[i] != guid2.Data[i])
             return false;
@@ -660,11 +658,11 @@ bool AreGuidsEqual(const mfxPluginUID& guid1, const mfxPluginUID& guid2)
     return true;
 }
 
-char* ConvertGuidToString(const mfxPluginUID& guid)
+char *ConvertGuidToString(const mfxPluginUID &guid)
 {
-    static char szGuid[256] = { 0 };
+    static char szGuid[256] = {0};
 
-    for (size_t i = 0; i != sizeof(mfxPluginUID); i++)
+    for (size_t i = 0; i != sizeof(mfxPluginUID); i ++)
     {
         sprintf(&szGuid[2 * i], "%02x", guid.Data[i]);
     }
@@ -672,7 +670,7 @@ char* ConvertGuidToString(const mfxPluginUID& guid)
     return szGuid;
 }
 
-mfxStatus ConvertFrameRate(mfxF64 dFrameRate, mfxU32* pnFrameRateExtN, mfxU32* pnFrameRateExtD)
+mfxStatus ConvertFrameRate(mfxF64 dFrameRate, mfxU32 *pnFrameRateExtN, mfxU32 *pnFrameRateExtD)
 {
     MSDK_CHECK_POINTER(pnFrameRateExtN, MFX_ERR_NULL_PTR);
     MSDK_CHECK_POINTER(pnFrameRateExtD, MFX_ERR_NULL_PTR);

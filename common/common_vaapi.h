@@ -25,9 +25,12 @@ Copyright(c) 2005-2014 Intel Corporation. All Rights Reserved.
 
 // =================================================================
 // VAAPI functionality required to manage VA surfaces
-mfxStatus CreateVAEnvDRM(mfxHDL* displayHandle);
+mfxStatus CreateVAEnvDRM(mfxHDL *displayHandle);
+
 void CleanupVAEnvDRM();
+
 void ClearYUVSurfaceVAAPI(mfxMemId memId);
+
 void ClearRGBSurfaceVAAPI(mfxMemId memId);
 
 // utility

@@ -9,6 +9,7 @@ Copyright(c) 2005-2014 Intel Corporation. All Rights Reserved.
 *****************************************************************************/
 
 #include "mfxvideo.h"
+
 #if (MFX_VERSION_MAJOR == 1) && (MFX_VERSION_MINOR < 8)
 #include "mfxlinux.h"
 #endif
@@ -20,7 +21,8 @@ Copyright(c) 2005-2014 Intel Corporation. All Rights Reserved.
  * Linux implementation of OS-specific utility functions
  */
 
-mfxStatus Initialize(mfxIMPL impl, mfxVersion ver, MFXVideoSession* pSession, mfxFrameAllocator* pmfxAllocator, bool bCreateSharedHandles)
+mfxStatus Initialize(mfxIMPL impl, mfxVersion ver, MFXVideoSession *pSession, mfxFrameAllocator *pmfxAllocator,
+                     bool bCreateSharedHandles)
 {
     mfxStatus sts = MFX_ERR_NONE;
 
@@ -29,7 +31,7 @@ mfxStatus Initialize(mfxIMPL impl, mfxVersion ver, MFXVideoSession* pSession, mf
     MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
 
     // Create VA display
-    mfxHDL displayHandle = { 0 };
+    mfxHDL displayHandle = {0};
     sts = CreateVAEnvDRM(&displayHandle);
     MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
 
@@ -40,10 +42,10 @@ mfxStatus Initialize(mfxIMPL impl, mfxVersion ver, MFXVideoSession* pSession, mf
     // If mfxFrameAllocator is provided it means we need to setup  memory allocator
     if (pmfxAllocator)
     {
-        pmfxAllocator->pthis  = *pSession; // We use Media SDK session ID as the allocation identifier
-        pmfxAllocator->Alloc  = simple_alloc;
-        pmfxAllocator->Free   = simple_free;
-        pmfxAllocator->Lock   = simple_lock;
+        pmfxAllocator->pthis = *pSession; // We use Media SDK session ID as the allocation identifier
+        pmfxAllocator->Alloc = simple_alloc;
+        pmfxAllocator->Free = simple_free;
+        pmfxAllocator->Lock = simple_lock;
         pmfxAllocator->Unlock = simple_unlock;
         pmfxAllocator->GetHDL = simple_gethdl;
 
@@ -60,7 +62,7 @@ void Release()
     CleanupVAEnvDRM();
 }
 
-void mfxGetTime(mfxTime* timestamp)
+void mfxGetTime(mfxTime *timestamp)
 {
     clock_gettime(CLOCK_REALTIME, timestamp);
 }
@@ -80,8 +82,8 @@ double TimeDiffMsec(mfxTime tfinish, mfxTime tstart)
         elapsed_nsec += 1000000000;
     }
     //return total converted to milliseconds
-    result = (double)elapsed_sec *1000.0;
-    result += (double)elapsed_nsec / 1000000;
+    result = (double) elapsed_sec * 1000.0;
+    result += (double) elapsed_nsec / 1000000;
 
     return result;
 }
