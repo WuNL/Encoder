@@ -16,6 +16,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src DIR_SRCS)
 
 link_directories(${PROJECT_SOURCE_DIR}/lib)
+link_libraries(libmuduo_base.a libmuduo_net.a libmuduo_http.a)
 
 option(USE_INTEL "option if use intel media sdk" OFF)
 
@@ -38,8 +39,8 @@ else (${USE_INTEL} STREQUAL "ON")
     target_link_libraries(Encoder muduo_base muduo_net muduo_http ${Boost_LIBRARIES} pthread)
 endif (${USE_INTEL} STREQUAL "ON")
 
-add_executable(server server.cpp ${DIR_SRCS})
+add_executable(server server.cpp)
 target_link_libraries(server muduo_base muduo_net muduo_http ${Boost_LIBRARIES} pthread)
 
-add_executable(jsonDemo jsonDemo.cpp ${DIR_SRCS})
+add_executable(jsonDemo jsonDemo.cpp)
 target_link_libraries(jsonDemo muduo_base muduo_net muduo_http ${Boost_LIBRARIES} pthread)
