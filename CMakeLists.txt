@@ -4,7 +4,12 @@ project(Encoder)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Boost REQUIRED COMPONENTS)
+configure_file(
+        "${PROJECT_SOURCE_DIR}/config.h.in"
+        "${PROJECT_SOURCE_DIR}/config.h"
+)
+
+find_package(Boost REQUIRED COMPONENTS system)
 if (NOT Boost_FOUND)
     MESSAGE(FATAL_ERROR "NOT FOUND BOOST")
 endif ()
@@ -21,8 +26,6 @@ link_libraries(libmuduo_base.a libmuduo_net.a libmuduo_http.a)
 option(USE_INTEL "option if use intel media sdk" OFF)
 
 if (${USE_INTEL} STREQUAL "ON")
-
-    add_definitions(-DUSE_INTEL="TRUE")
 
     include_directories(/opt/intel/mediasdk/include)
 
