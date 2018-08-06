@@ -8,6 +8,11 @@
 
 int main(int argc, char **argv)
 {
+#ifdef USE_INTEL
+    std::cout<<"USE_INTEL:"<<USE_INTEL<<std::endl;
+    return 0;
+#endif
+
     int port = 0;
     int numThreads = 0;
     if (argc < 3)

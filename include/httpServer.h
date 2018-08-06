@@ -15,12 +15,13 @@
 #include <memory>
 #include <utility>
 
-//#include <boost/any.hpp>
 #include <boost/utility.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/foreach.hpp>
 #include <string>
+
+#include "conductor.h"
 
 class encoder;
 
@@ -47,9 +48,9 @@ protected:
 
 private:
 //    std::vector<std::unique_ptr<encoder> > encoderVec_;
-    /// \brief 的的的
     muduo::net::EventLoop loop;
     std::unique_ptr<muduo::net::HttpServer> muduoHttpServer_;
+    std::unique_ptr<conductor> conductor_;
 };
 
 
