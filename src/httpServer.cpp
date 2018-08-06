@@ -125,7 +125,7 @@ void httpServer::onRequest(const muduo::net::HttpRequest &req, muduo::net::HttpR
     std::string out = s.str();
 
 
-    std::cout << "Headers " << req.methodString() << " " << req.path() << std::endl;
+    std::cout << "Headers " << req.methodString() << " " << req.path() << " --- " << req.query() << std::endl;
     if (! benchmark)
     {
         const std::map<string, string> &headers = req.headers();
