@@ -35,7 +35,7 @@ private:
     ErrHandleCallback errHandleCallback_;
     NotifyCloseCallback notifyCloseCallback_;
 
-    std::vector<std::unique_ptr<encoder> > encoderVec;
+    std::vector<std::unique_ptr<encoder> > encoderVec_;
 };
 
 

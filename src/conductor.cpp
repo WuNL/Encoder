@@ -4,6 +4,7 @@
 
 #include <include/conductor.h>
 #include <cstring>
+#include "videoEncoderFactory.h"
 
 const initParamsRet conductor::initEncoder(initParams& p)
 {
@@ -18,7 +19,9 @@ const initParamsRet conductor::initEncoder(initParams& p)
     }
     else
     {
-        std::unique_ptr<encoder> e
+        std::unique_ptr<encoder> e = video_encoder_factory::create(p.codec);
+        encoderVec_.push_back(std::move(e));
+        encoderVec_.back()->run();
     }
 
     return ret;
@@ -26,9 +29,9 @@ const initParamsRet conductor::initEncoder(initParams& p)
 
 int conductor::findEncoderByName(std::string& name)
 {
-    for(int i =0;i<encoderVec.size();++i)
+    for (int i = 0; i < encoderVec_.size(); ++ i)
     {
-        if(encoderVec[i]->getName()==name)
+        if (encoderVec_[i]->getName() == name)
             return i;
     }
     return -1;

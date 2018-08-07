@@ -3,3 +3,13 @@
 //
 
 #include "h265Encoder.h"
+
+void h265Encoder::run()
+{
+
+}
+
+int h265Encoder::join()
+{
+    return 0;
+}

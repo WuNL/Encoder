@@ -9,8 +9,19 @@
 #include <functional>
 #include <boost/utility.hpp>
 
+#include <pthread.h>
+
+enum
+{
+    h264,
+    h264_hw,
+    h265,
+    h265_hw
+};
+
 typedef struct InitParams{
     std::string encoder_name;
+    std::string codec;
     int v_width;
     int v_height;
     int v_gop;
@@ -30,15 +41,28 @@ public:
     typedef std::function<void()> ErrHandleCallback;
     typedef std::function<void()> NotifyCloseCallback;
 
-    /// \brief
-    /// \param cb
-    void setErrHandleCallback(const ErrHandleCallback& cb)
+    virtual ~encoder();
+
+    void setErrHandleCallback_(const ErrHandleCallback &errHandleCallback_)
     {
-        errHandleCallback_ = cb;
+        encoder::errHandleCallback_ = errHandleCallback_;
+    }
+
+    void setNotifyCloseCallback_(const NotifyCloseCallback &notifyCloseCallback_)
+    {
+        encoder::notifyCloseCallback_ = notifyCloseCallback_;
     }
     const std::string& getName(){
         return encoder_name;
     }
+
+    bool started() const { return started_; }
+
+    pid_t tid() const { return tid_; }
+
+    virtual void run() = 0;
+
+    virtual int join() = 0; // return pthread_join()
 
 private:
     /// \brief
@@ -53,6 +77,11 @@ private:
 
 private:
     std::string encoder_name;
+
+    bool started_;
+    bool joined_;
+    pthread_t pthreadId_;
+    pid_t tid_;
 };
 
 

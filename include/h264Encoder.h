@@ -10,6 +10,9 @@
 class h264Encoder:public encoder
 {
 public:
+    virtual void run() override;
+
+    virtual int join() override;
 
 private:
     int encodeBuffer(void* in, void* out){}
