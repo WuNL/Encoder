@@ -33,6 +33,10 @@
 #include <thread>
 #include <vector>
 
+#include "conductor.h"
+
+conductor g_conductor;
+
 using tcp = boost::asio::ip::tcp;               // from <boost/asio/ip/tcp.hpp>
 namespace http = boost::beast::http;            // from <boost/beast/http.hpp>
 namespace websocket = boost::beast::websocket;  // from <boost/beast/websocket.hpp>
@@ -165,8 +169,31 @@ handle_request(
 
     // Build the path to the requested file
     std::string path = path_cat(doc_root, req.target());
-    if (req.target().back() == '/')
-        path.append("index.html");
+    if (req.target().back() != '/')
+        return send(not_found(req.target()));
+
+//    std::cout<<req.target().data()<<std::endl;
+
+    if(!req.target().compare("/InitEncoder/")){
+        std::cout<<"receive request: InitEncoder"<<std::endl;
+        std::cout<<req.body()<<std::endl;
+
+        http::response<http::string_body> res{http::status::ok, req.version()};
+        res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+        res.set(http::field::content_type, "text/html");
+        res.keep_alive(req.keep_alive());
+        res.body() = "1234556";
+        res.prepare_payload();
+        return send(std::move(res));
+    }
+
+    if(!req.target().compare("/UpdateIFrame/")){
+        std::cout<<"receive request: UpdateIFrame"<<std::endl;
+    }
+
+    if(!req.target().compare("/CloseEncoder/")){
+        std::cout<<"receive request: CloseEncoder"<<std::endl;
+    }
 
     // Attempt to open the file
     boost::beast::error_code ec;

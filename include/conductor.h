@@ -5,10 +5,15 @@
 #ifndef ENCODER_CONDUCTOR_H
 #define ENCODER_CONDUCTOR_H
 
+#include <iostream>
+#include <vector>
+#include <memory>
 #include <functional>
 #include <boost/utility.hpp>
 
 #include "encoder.h"
+
+
 
 class conductor:public boost::noncopyable
 {
@@ -19,10 +24,18 @@ public:
     {
         errHandleCallback_ = cb;
     }
+
+    const initParamsRet initEncoder(initParams& p);
+
+private:
+    int findEncoderByName(std::string& name);
+
 private:
 
     ErrHandleCallback errHandleCallback_;
     NotifyCloseCallback notifyCloseCallback_;
+
+    std::vector<std::unique_ptr<encoder> > encoderVec;
 };
 
 

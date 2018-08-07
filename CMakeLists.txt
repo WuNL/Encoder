@@ -42,8 +42,8 @@ else (${USE_INTEL} STREQUAL "ON")
     target_link_libraries(Encoder muduo_base muduo_net muduo_http ${Boost_LIBRARIES} pthread)
 endif (${USE_INTEL} STREQUAL "ON")
 
-add_executable(server server.cpp)
+add_executable(server server.cpp ${DIR_SRCS})
 target_link_libraries(server muduo_base muduo_net muduo_http ${Boost_LIBRARIES} pthread)
 
-add_executable(jsonDemo jsonDemo.cpp)
+add_executable(jsonDemo jsonDemo.cpp ${DIR_SRCS})
 target_link_libraries(jsonDemo muduo_base muduo_net muduo_http ${Boost_LIBRARIES} pthread)
