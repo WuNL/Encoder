@@ -14,26 +14,42 @@
 #include "encoder.h"
 
 
-
-class conductor:public boost::noncopyable
+class conductor : public boost::noncopyable
 {
 public:
     typedef std::function<void()> ErrHandleCallback;
     typedef std::function<void()> NotifyCloseCallback;
-    void setErrHandleCallback(const ErrHandleCallback& cb)
+    typedef std::function<void ()> InitDoneCallback;
+
+    conductor ();
+
+    void setErrHandleCallback (const ErrHandleCallback &cb)
     {
         errHandleCallback_ = cb;
     }
 
-    const initParamsRet initEncoder(initParams& p);
+    void setInitDoneCallback_ (const InitDoneCallback &InitDoneCallback_)
+    {
+        conductor::InitDoneCallback_ = InitDoneCallback_;
+    }
+
+    const initParamsRet initEncoder (initParams &p);
+
+    const int getSize ()
+    {
+        return static_cast<const int>(encoderVec_.size());
+    }
 
 private:
-    int findEncoderByName(std::string& name);
+    int findEncoderByName (std::string &name);
 
 private:
 
     ErrHandleCallback errHandleCallback_;
     NotifyCloseCallback notifyCloseCallback_;
+    InitDoneCallback InitDoneCallback_;
+
+private:
 
     std::vector<std::unique_ptr<encoder> > encoderVec_;
 };

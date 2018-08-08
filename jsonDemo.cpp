@@ -22,8 +22,8 @@ int main(int argc, const char *argv[])
     object.put("e", "f");
 
     root.add_child("array", arr);
-    auto boolvalue = true;
-    root.put("boolean", boolvalue);
+    auto item = true;
+    root.put("boolean", item);
     root.put("null", "null");
     int num = 123;
     root.put("number", num);

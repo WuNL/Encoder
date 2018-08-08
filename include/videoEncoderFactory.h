@@ -13,7 +13,7 @@
 class video_encoder_factory
 {
 public:
-    static std::unique_ptr<encoder> create(std::string codec);
+    static std::unique_ptr<encoder> create (initParams &p);
 };
 
 

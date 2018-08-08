@@ -13,3 +13,8 @@ int h265Encoder::join()
 {
     return 0;
 }
+
+h265Encoder::h265Encoder (initParams p) : encoder(std::move(p))
+{
+
+}

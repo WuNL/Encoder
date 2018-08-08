@@ -34,12 +34,18 @@
 #include <vector>
 
 #include "conductor.h"
+#include "jsonParser.h"
 
 conductor g_conductor;
 
 using tcp = boost::asio::ip::tcp;               // from <boost/asio/ip/tcp.hpp>
 namespace http = boost::beast::http;            // from <boost/beast/http.hpp>
 namespace websocket = boost::beast::websocket;  // from <boost/beast/websocket.hpp>
+
+void initDone ()
+{
+    std::cout << "init done call back" << std::endl;
+}
 
 // Return a reasonable mime type based on the extension of a file.
 boost::beast::string_view
@@ -174,14 +180,13 @@ handle_request(
 
 //    std::cout<<req.target().data()<<std::endl;
 
-    if(!req.target().compare("/InitEncoder/")){
-        std::cout<<"receive request: InitEncoder"<<std::endl;
-        std::cout<<req.body()<<std::endl;
-
+    if (! req.target().compare("/InitEncoder/"))
+    {
         initParams p;
-        p.encoder_name = req.body();
-        p.codec = "h264";
+        jsonParser(req.body(), p);
+
         g_conductor.initEncoder(p);
+        std::cout << "after init, the vector size is :" << g_conductor.getSize() << std::endl;
 
         http::response<http::string_body> res{http::status::ok, req.version()};
         res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
@@ -192,12 +197,14 @@ handle_request(
         return send(std::move(res));
     }
 
-    if(!req.target().compare("/UpdateIFrame/")){
-        std::cout<<"receive request: UpdateIFrame"<<std::endl;
+    if (! req.target().compare("/UpdateIFrame/"))
+    {
+        std::cout << "receive request: UpdateIFrame" << std::endl;
     }
 
-    if(!req.target().compare("/CloseEncoder/")){
-        std::cout<<"receive request: CloseEncoder"<<std::endl;
+    if (! req.target().compare("/CloseEncoder/"))
+    {
+        std::cout << "receive request: CloseEncoder" << std::endl;
     }
 
     // Attempt to open the file
@@ -828,6 +835,11 @@ int main(int argc, char *argv[])
                   "    advanced-server 0.0.0.0 8080 . 1\n";
         return EXIT_FAILURE;
     }
+
+    g_conductor.setInitDoneCallback_(
+            [] { std::cout << "init done call back" << std::endl; }
+    );
+
     auto const address = boost::asio::ip::make_address(argv[1]);
     auto const port = static_cast<unsigned short>(std::atoi(argv[2]));
     std::string const doc_root = argv[3];

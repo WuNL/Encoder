@@ -12,6 +12,8 @@ class h265Encoder : public encoder
 public:
     virtual void run() override;
 
+    explicit h265Encoder (initParams p);
+
     virtual int join() override;
 
 private:

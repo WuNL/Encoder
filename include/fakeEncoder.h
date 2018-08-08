@@ -10,12 +10,18 @@
 class fakeEncoder : public encoder
 {
 public:
-    void run();
+    virtual void run () override;
+
+    explicit fakeEncoder (initParams p);
 
     virtual int join() override;
 
 private:
-    int encodeBuffer(void *in, void *out) {}
+    int encodeBuffer (void *in, void *out) override {}
+
+    static void *start (void *threadarg);
+
+    void encodeBuffer ();
 };
 
 
