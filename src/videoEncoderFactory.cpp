@@ -13,16 +13,16 @@ std::unique_ptr<encoder> video_encoder_factory::create (initParams &p)
 #ifdef USE_INTEL
     if (p.codec == std::string("h264"))
     {
-        ret = std::unique_ptr<encoder>(new h264Encoder(p.encoder_name));
+        ret = std::unique_ptr<encoder>(new h264Encoder(p));
         return ret;
     }
     if (p.codec == std::string("h265"))
     {
-        ret = std::unique_ptr<encoder>(new h265Encoder(p.encoder_name));
+        ret = std::unique_ptr<encoder>(new h265Encoder(p));
         return ret;
     } else
     {
-        ret = std::unique_ptr<encoder>(new fakeEncoder(p.encoder_name));
+        ret = std::unique_ptr<encoder>(new fakeEncoder(p));
         return ret;
     }
     return nullptr;

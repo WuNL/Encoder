@@ -6,6 +6,14 @@
 #define ENCODER_H264ENCODER_H
 
 #include "encoder.h"
+#include "config.h"
+
+#ifdef USE_INTEL
+
+#include "../common/common_utils.h"
+#include "../common/cmd_options.h"
+
+#endif
 
 class h264Encoder : public encoder
 {
@@ -16,12 +24,51 @@ public:
 
     virtual int join() override;
 
+    virtual int initEncoder () override;
+
 private:
     int encodeBuffer (void *in, void *out) override {}
 
     static void *start (void *threadarg);
 
     void encodeBuffer ();
+
+private:
+    mfxBitstream mfxBS;
+
+    mfxStatus sts;
+    mfxIMPL impl;
+    mfxVersion ver;
+    MFXVideoSession session;
+    MFXVideoENCODE *mfxENC;
+    MFXVideoVPP *mfxVPP;
+    mfxVideoParam mfxEncParams;
+    mfxVideoParam VPPParams;
+
+    mfxFrameAllocRequest EncRequest;
+    mfxFrameAllocRequest VPPRequest[2];     // [0] - in, [1] - out
+    mfxFrameAllocResponse mfxResponseVPPIn;
+    mfxFrameAllocResponse mfxResponseVPPOutEnc;
+    mfxVideoParam par;
+
+
+    mfxU16 nEncSurfNum;
+    mfxU16 nSurfNumVPPIn;
+    mfxU16 nSurfNumVPPOutEnc;
+
+    mfxU16 width;
+    mfxU16 height;
+    mfxU8 bitsPerPixel;
+    mfxU32 surfaceSize;
+    mfxU8 *surfaceBuffers;
+    mfxFrameSurface1 **pEncSurfaces;
+    mfxFrameSurface1 **pVPPSurfacesIn;
+    mfxFrameSurface1 **pVPPSurfacesOut;
+
+    FILE *fSink;
+
+    bool useVPP;
+    bool insertIDR;
 };
 
 

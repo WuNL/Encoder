@@ -9,12 +9,16 @@
 #include <string>
 #include <functional>
 #include <boost/utility.hpp>
-
+#include <vector>
+#include <errno.h>
+#include <stdlib.h>
 #include <pthread.h>
 
+#include "config.h"
 #include "shmfifo.h"
 
 #define BUFFERLEN 1920*1080*3/2
+#define BUFFERSIZE 30
 
 typedef struct videoBuffer
 {
@@ -42,6 +46,8 @@ typedef struct InitParams
     std::string codec;
     int v_width;
     int v_height;
+    int bitrate;
+    int framerate;
     int v_gop;
     int packetMode;
 } initParams;
@@ -87,6 +93,8 @@ public:
 
     virtual int join() = 0; // return pthread_join()
 
+    virtual int initEncoder () {};
+
 private:
     /// \brief
     /// \param in
@@ -99,12 +107,15 @@ private:
     NotifyCloseCallback notifyCloseCallback_;
 
 private:
+
+
+protected:
+    initParams params;
     std::string encoder_name;
 
     static int raw_shm_id;
     static int codeced_shm_id;
 
-protected:
     bool started_;
     bool joined_;
     pthread_t pthreadId_;
