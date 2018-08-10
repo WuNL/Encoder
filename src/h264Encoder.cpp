@@ -41,19 +41,19 @@ void h264Encoder::encodeBuffer ()
     initEncoder();
     while (started_)
     {
-        usleep(1000000);
-        std::cout << "sleeping!" << std::endl;
-
         memset(&raw_video_buffer_, 0, sizeof(raw_video_buffer));
         if (! raw_video_fifo_)
             continue;
-        shmfifo_get(raw_video_fifo_, &raw_video_buffer_);
-
-
         memset(&coded_video_buffer_, 0, sizeof(coded_video_buffer));
         if (! coded_video_fifo_)
             continue;
-        shmfifo_get(coded_video_fifo_, &coded_video_buffer_);
+        std::cout << "before get" << std::endl;
+        shmfifo_get(raw_video_fifo_, &raw_video_buffer_);
+        std::cout << "after get" << std::endl;
+        encodeBuffer(raw_video_buffer_, coded_video_buffer_);
+        getDataAndSetMfxBSLengthZero(coded_video_buffer_);
+        std::cout << "before put" << std::endl;
+        shmfifo_put(coded_video_fifo_, &coded_video_buffer_);
     }
 }
 
@@ -119,7 +119,8 @@ int h264Encoder::initEncoder ()
 
     if (mfxEncParams.mfx.CodecId == MFX_CODEC_AVC)
     {
-        MSDK_FOPEN(fSink, "test.264", "wb");
+        MSDK_FOPEN(fSink, "/home/sdt/Videos/encoder.264", "wb");
+        MSDK_FOPEN(fRawSink, "/home/sdt/Videos/encoder.yuv", "wb");
     }
 
 
@@ -235,11 +236,12 @@ int h264Encoder::initEncoder ()
         pVPPSurfacesIn[i]->Data.U = pVPPSurfacesIn[i]->Data.Y + width * height;
         pVPPSurfacesIn[i]->Data.V = pVPPSurfacesIn[i]->Data.U + 1;
         pVPPSurfacesIn[i]->Data.Pitch = width;
-        if (! 1)
+        if (1)
         {
             ClearYUVSurfaceSysMem(pVPPSurfacesIn[i], width, height);
         }
     }
+
 
     // Allocate surfaces for VPP: Out
     width = (mfxU16) MSDK_ALIGN32(MAX_WIDTH);
@@ -315,4 +317,137 @@ int h264Encoder::initEncoder ()
 
 
     return 1;
+}
+
+int h264Encoder::encodeBuffer (raw_video_buffer &raw, coded_video_buffer &codeced)
+{
+//    fwrite(raw.buffer, 1,raw.size, fRawSink);
+
+    int nSurfIdxIn = 0, nSurfIdxOut = 0;
+    static mfxU32 nFrame = 0;
+    mfxSyncPoint syncp;
+//    nEncSurfIdx = GetFreeSurfaceIndex(pEncSurfaces, nEncSurfNum);   // Find free frame surface
+//    MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, nEncSurfIdx, MFX_ERR_MEMORY_ALLOC);
+//
+//    sts = LoadRawFrameFromV4l2(pEncSurfaces[nEncSurfIdx], buffer);
+//
+//    MSDK_RETURN_ON_ERROR(sts);
+
+
+
+    nSurfIdxIn = GetFreeSurfaceIndex(pVPPSurfacesIn, nSurfNumVPPIn);        // Find free input frame surface
+    pVPPSurfacesIn[nSurfIdxIn]->Data.TimeStamp = nFrame * 90000 / VPPParams.vpp.Out.FrameRateExtN;
+
+    sts = LoadRawFrameFromV4l2(pVPPSurfacesIn[nSurfIdxIn], (unsigned char *) raw.buffer);
+    MSDK_RETURN_ON_ERROR(sts);
+
+    nSurfIdxOut = GetFreeSurfaceIndex(pVPPSurfacesOut, nSurfNumVPPOutEnc);     // Find free output frame surface
+    MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, nSurfIdxOut, MFX_ERR_MEMORY_ALLOC);
+
+    for (;;)
+    {
+        // Process a frame asychronously (returns immediately)
+        sts = mfxVPP->RunFrameVPPAsync(pVPPSurfacesIn[nSurfIdxIn], pVPPSurfacesOut[nSurfIdxOut], NULL, &syncp);
+
+        //skip a frame
+
+        if (MFX_ERR_MORE_DATA == sts)
+        {
+            nSurfIdxIn = GetFreeSurfaceIndex(pVPPSurfacesIn, nSurfNumVPPIn);
+            MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, nSurfIdxIn, MFX_ERR_MEMORY_ALLOC);
+            pVPPSurfacesIn[nSurfIdxIn]->Data.TimeStamp = nFrame * 90000 / VPPParams.vpp.Out.FrameRateExtN;
+            return sts;
+        }
+
+        //add (often duplicate) a frame
+        if (MFX_ERR_MORE_SURFACE == sts)
+        {
+            //todo
+        }
+
+
+        if (MFX_WRN_DEVICE_BUSY == sts)
+        {
+            MSDK_SLEEP(1);  // Wait if device is busy, then repeat the same call
+        } else
+            break;
+
+    }
+
+    for (;;)
+    {
+        // Encode a frame asychronously (returns immediately)
+        if (insertIDR)
+        {
+            mfxEncodeCtrl ctrl;
+            memset(&ctrl, 0, sizeof(ctrl));
+            if (mfxEncParams.mfx.CodecId == MFX_CODEC_AVC)
+                ctrl.FrameType = (MFX_FRAMETYPE_I | MFX_FRAMETYPE_IDR | MFX_FRAMETYPE_REF);
+            else if (mfxEncParams.mfx.CodecId == MFX_CODEC_HEVC)
+                ctrl.FrameType = (MFX_FRAMETYPE_I | MFX_FRAMETYPE_IDR | MFX_FRAMETYPE_REF);
+            sts = mfxENC->EncodeFrameAsync(&ctrl, pVPPSurfacesOut[nSurfIdxOut], &mfxBS, &syncp);
+            printf("IDR frame insert success\n");
+            insertIDR = false;
+        } else
+        {
+            sts = mfxENC->EncodeFrameAsync(NULL, pVPPSurfacesOut[nSurfIdxOut], &mfxBS, &syncp);
+        }
+
+        //printf("********************\n");
+        if (MFX_ERR_NONE < sts && ! syncp)       // Repeat the call if warning and no output
+        {
+            if (MFX_WRN_DEVICE_BUSY == sts) MSDK_SLEEP(1);  // Wait if device is busy, then repeat the same call
+        } else if (MFX_ERR_NONE < sts && syncp)
+        {
+            sts = MFX_ERR_NONE;     // Ignore warnings if output is available
+            break;
+        } else if (MFX_ERR_NOT_ENOUGH_BUFFER == sts)
+        {
+            // Allocate more bitstream buffer memory here if needed...
+            break;
+        } else
+            break;
+    }
+
+
+    if (MFX_ERR_NONE == sts)
+    {
+        sts = session.SyncOperation(syncp, 60000);      // Synchronize. Wait until encoded frame is ready
+        MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
+
+        ++ nFrame;
+        if (! 1)
+        {
+            //原版，将编码后的264存文件
+            int tmp = mfxBS.DataLength;
+            sts = WriteBitStreamFrame(&mfxBS, fSink);
+            MSDK_RETURN_ON_ERROR(sts);
+            mfxBS.DataLength = static_cast<mfxU32>(tmp);
+            fflush(stdout);
+        }
+    }
+}
+
+void h264Encoder::getDataAndSetMfxBSLengthZero (coded_video_buffer &codeced)
+{
+    codeced.size = mfxBS.DataLength;
+
+    memcpy(codeced.buffer, mfxBS.Data + mfxBS.DataOffset, (size_t) mfxBS.DataLength);
+
+    mfxBS.DataLength = 0;
+}
+
+h264Encoder::~h264Encoder ()
+{
+    printf("~h264Encoder\n");
+    mfxENC->Close();
+    delete mfxENC;
+    // session closed automatically on destruction
+
+    MSDK_SAFE_DELETE_ARRAY(mfxBS.Data);
+    if (! surfaceBuffers) MSDK_SAFE_DELETE_ARRAY(surfaceBuffers);
+    if (fSink)
+        fclose(fSink);
+    if (fRawSink)
+        fclose(fRawSink);
 }

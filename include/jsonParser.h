@@ -35,7 +35,7 @@ int jsonParser (std::string &rawJson, initParams &params)
         params.v_gop = pt.get<int>("v_gop");
         params.packetMode = pt.get<int>("packetMode");
         params.framerate = 30;
-        params.bitrate = 3000;
+        params.bitrate = 1000;
     }
     catch (...)
     {

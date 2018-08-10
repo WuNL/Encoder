@@ -26,12 +26,18 @@ public:
 
     virtual int initEncoder () override;
 
+    virtual ~h264Encoder ();
+
+    void getDataAndSetMfxBSLengthZero (coded_video_buffer &codeced);
+
 private:
     int encodeBuffer (void *in, void *out) override {}
 
     static void *start (void *threadarg);
 
     void encodeBuffer ();
+
+    int encodeBuffer (raw_video_buffer &raw, coded_video_buffer &codeced);
 
 private:
     mfxBitstream mfxBS;
@@ -66,6 +72,7 @@ private:
     mfxFrameSurface1 **pVPPSurfacesOut;
 
     FILE *fSink;
+    FILE *fRawSink;
 
     bool useVPP;
     bool insertIDR;
