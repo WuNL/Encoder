@@ -20,6 +20,10 @@ const initParamsRet conductor::initEncoder (initParams &p)
     {
         std::unique_ptr<encoder> e = video_encoder_factory::create(p);
         encoderVec_.push_back(std::move(e));
+        ret.encoder_name = p.encoder_name;
+        ret.yuv_shmID = encoderVec_.back()->getRawId();
+        ret.out_shmID = encoderVec_.back()->getCodecedId();
+        ret.success = true;
         encoderVec_.back()->run();
     }
 
@@ -27,6 +31,7 @@ const initParamsRet conductor::initEncoder (initParams &p)
     {
         InitDoneCallback_();
     }
+
     return ret;
 }
 
@@ -34,7 +39,7 @@ int conductor::findEncoderByName (std::string &name)
 {
     for (int i = 0; i < encoderVec_.size(); ++ i)
     {
-        std::cout << name << "-----------" << encoderVec_[i]->getName() << std::endl;
+        //std::cout << name << "-----------" << encoderVec_[i]->getName() << std::endl;
         if (encoderVec_[i]->getName() == name)
             return i;
     }

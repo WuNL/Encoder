@@ -182,19 +182,40 @@ handle_request(
 
     if (! req.target().compare("/InitEncoder/"))
     {
+//        std::cout<<"--------------"<<req.body()<<std::endl;
         initParams p;
         jsonParser(req.body(), p);
 
-        g_conductor.initEncoder(p);
+        initParamsRet ret = g_conductor.initEncoder(p);
         std::cout << "after init, the vector size is :" << g_conductor.getSize() << std::endl;
 
-        http::response<http::string_body> res{http::status::ok, req.version()};
-        res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-        res.set(http::field::content_type, "text/html");
-        res.keep_alive(req.keep_alive());
-        res.body() = "1234556";
-        res.prepare_payload();
-        return send(std::move(res));
+        if (ret.success)
+        {
+            http::response<http::string_body> res{http::status::ok, req.version()};
+            res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+            res.set(http::field::content_type, "text/html");
+            res.keep_alive(req.keep_alive());
+
+            char strbuf[200];
+            sprintf(strbuf, R"({"encoder_name": "%s", "raw_shm_id": "%d", "codeced_shm_id": "%d"})",
+                    ret.encoder_name.c_str(), ret.yuv_shmID, ret.out_shmID);
+
+
+            res.body() = strbuf;
+            res.prepare_payload();
+            return send(std::move(res));
+        } else
+        {
+            http::response<http::string_body> res{http::status::ok, req.version()};
+            res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+            res.set(http::field::content_type, "text/html");
+            res.keep_alive(req.keep_alive());
+            res.body() = "1234556";
+            res.prepare_payload();
+            return send(std::move(res));
+        }
+
+
     }
 
     if (! req.target().compare("/UpdateIFrame/"))

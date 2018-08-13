@@ -47,12 +47,12 @@ void h264Encoder::encodeBuffer ()
         memset(&coded_video_buffer_, 0, sizeof(coded_video_buffer));
         if (! coded_video_fifo_)
             continue;
-        std::cout << "before get" << std::endl;
+//        std::cout << "before get" << std::endl;
         shmfifo_get(raw_video_fifo_, &raw_video_buffer_);
-        std::cout << "after get" << std::endl;
+//        std::cout << "after get" << std::endl;
         encodeBuffer(raw_video_buffer_, coded_video_buffer_);
         getDataAndSetMfxBSLengthZero(coded_video_buffer_);
-        std::cout << "before put" << std::endl;
+//        std::cout << "before put" << std::endl;
         shmfifo_put(coded_video_fifo_, &coded_video_buffer_);
     }
 }

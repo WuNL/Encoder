@@ -95,6 +95,16 @@ public:
 
     virtual int initEncoder () {};
 
+    static int getRawId ()
+    {
+        return raw_shm_id;
+    }
+
+    static int getCodecedId ()
+    {
+        return codeced_shm_id;
+    }
+
 private:
     /// \brief
     /// \param in

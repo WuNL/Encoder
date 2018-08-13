@@ -39,6 +39,7 @@ int jsonParser (std::string &rawJson, initParams &params)
     }
     catch (...)
     {
+        printf("json parser error!\n");
         return 1;
     }
 

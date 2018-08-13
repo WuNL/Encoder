@@ -21,10 +21,10 @@ encoder::encoder (initParams p) : errHandleCallback_(nullptr), notifyCloseCallba
                                   coded_video_fifo_(nullptr)
 {
     // 创建共享内存相关内容
-    raw_video_fifo_ = shmfifo_init(1000, sizeof(raw_video_buffer), 30);
+    raw_video_fifo_ = shmfifo_init(raw_shm_id, sizeof(raw_video_buffer), 30);
     raw_shm_id += 10;
     assert(raw_shm_id < 1100);
-    coded_video_fifo_ = shmfifo_init(2000, sizeof(coded_video_buffer), 30);
+    coded_video_fifo_ = shmfifo_init(codeced_shm_id, sizeof(coded_video_buffer), 30);
     codeced_shm_id += 10;
     assert(raw_shm_id < 2100);
 }

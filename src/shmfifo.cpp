@@ -60,7 +60,7 @@ shmfifo_t *shmfifo_init (int key, int blksize, int blocks)
     }
     fifo->p_shm->wr_index = 0;
     fifo->p_shm->rd_index = 0;
-    printf("init wr idx=%d    rd idx = %d\n", fifo->p_shm->wr_index, fifo->p_shm->rd_index);
+//    printf("init wr idx=%d    rd idx = %d\n", fifo->p_shm->wr_index, fifo->p_shm->rd_index);
     return fifo;
 }
 
@@ -72,7 +72,7 @@ void shmfifo_put (shmfifo_t *fifo, const void *buf)
     memcpy(fifo->p_payload + fifo->p_shm->blksize * fifo->p_shm->wr_index,
            buf, fifo->p_shm->blksize);
     fifo->p_shm->wr_index = (fifo->p_shm->wr_index + 1) % fifo->p_shm->blocks;
-    printf("put wr idx=%d    rd idx = %d\n", fifo->p_shm->wr_index, fifo->p_shm->rd_index);
+//    printf("put wr idx=%d    rd idx = %d\n", fifo->p_shm->wr_index, fifo->p_shm->rd_index);
     sem_v(fifo->sem_mutex);
     sem_v(fifo->sem_empty);
 }
@@ -85,7 +85,7 @@ void shmfifo_get (shmfifo_t *fifo, void *buf)
     memcpy(buf, fifo->p_payload + fifo->p_shm->blksize * fifo->p_shm->rd_index,
            fifo->p_shm->blksize);
     fifo->p_shm->rd_index = (fifo->p_shm->rd_index + 1) % fifo->p_shm->blocks;
-    printf("get wr idx=%d    rd idx = %d\n", fifo->p_shm->wr_index, fifo->p_shm->rd_index);
+//    printf("get wr idx=%d    rd idx = %d\n", fifo->p_shm->wr_index, fifo->p_shm->rd_index);
     sem_v(fifo->sem_mutex);
     sem_v(fifo->sem_full);
 }
