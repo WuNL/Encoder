@@ -1,0 +1,13 @@
+权限问题：
+
+S_IRUSR：用户读权限
+
+S_IWUSR：用户写权限
+
+S_IRGRP：用户组读权限
+
+S_IWGRP：用户组写权限
+
+S_IROTH：其他组都权限
+
+S_IWOTH：其他组写权限

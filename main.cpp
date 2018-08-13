@@ -9,7 +9,7 @@
 int main(int argc, char **argv)
 {
 #ifdef USE_INTEL
-    std::cout<<"USE_INTEL:"<<USE_INTEL<<std::endl;
+    std::cout << "USE_INTEL:" << std::endl;
     return 0;
 #endif
 

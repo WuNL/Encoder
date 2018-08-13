@@ -16,6 +16,7 @@
 void h264Encoder::run()
 {
     started_ = true;
+    printf("----------------------------------------\n");
     pthread_create(&pthreadId_, nullptr, &h264Encoder::start, static_cast<void *>(this));
 }
 
@@ -47,14 +48,16 @@ void h264Encoder::encodeBuffer ()
         memset(&coded_video_buffer_, 0, sizeof(coded_video_buffer));
         if (! coded_video_fifo_)
             continue;
-        std::cout << "before get" << std::endl;
+
         shmfifo_get(raw_video_fifo_, &raw_video_buffer_);
-        std::cout << "after get" << std::endl;
+
         encodeBuffer(raw_video_buffer_, coded_video_buffer_);
         getDataAndSetMfxBSLengthZero(coded_video_buffer_);
-        std::cout << "before put" << std::endl;
+
         shmfifo_put(coded_video_fifo_, &coded_video_buffer_);
     }
+    std::cout << "--------------test------------" << std::endl;
+
 }
 
 int h264Encoder::initEncoder ()
@@ -440,9 +443,14 @@ void h264Encoder::getDataAndSetMfxBSLengthZero (coded_video_buffer &codeced)
 h264Encoder::~h264Encoder ()
 {
     printf("~h264Encoder\n");
-    mfxENC->Close();
-    delete mfxENC;
+    if (mfxENC)
+    {
+        mfxENC->Close();
+        delete mfxENC;
+    }
+
     // session closed automatically on destruction
+
 
     MSDK_SAFE_DELETE_ARRAY(mfxBS.Data);
     if (! surfaceBuffers) MSDK_SAFE_DELETE_ARRAY(surfaceBuffers);

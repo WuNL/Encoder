@@ -35,7 +35,7 @@ if (${USE_INTEL} STREQUAL "ON")
     link_directories(/opt/intel/mediasdk/lib/lin_x64)
 
     add_executable(Encoder main.cpp ${INTEL_COMMON} ${DIR_SRCS})
-    target_link_libraries(Encoder libmfx.a libva.so libva-drm.so muduo_base muduo_net muduo_http ${Boost_LIBRARIES} pthread)
+    target_link_libraries(Encoder libmfx.a libva.so libva-drm.so dl rt muduo_base muduo_net muduo_http ${Boost_LIBRARIES} pthread)
 
     add_executable(server server.cpp ${INTEL_COMMON} ${DIR_SRCS})
     target_link_libraries(server libmfx.a libva.so libva-drm.so dl rt muduo_base muduo_net muduo_http ${Boost_LIBRARIES} pthread)
@@ -49,5 +49,8 @@ else (${USE_INTEL} STREQUAL "ON")
 endif (${USE_INTEL} STREQUAL "ON")
 
 
-add_executable(jsonDemo jsonDemo.cpp ${DIR_SRCS})
-target_link_libraries(jsonDemo muduo_base muduo_net muduo_http ${Boost_LIBRARIES} pthread)
+add_executable(jsonDemo jsonDemo.cpp)
+target_link_libraries(jsonDemo ${Boost_LIBRARIES} pthread)
+
+add_executable(client client.cpp)
+target_link_libraries(client ${Boost_LIBRARIES} pthread)

@@ -43,4 +43,6 @@ void shmfifo_get (shmfifo_t *fifo, void *buf);
 
 void shmfifo_destroy (shmfifo_t *fifo);
 
+int getSemaphore (key_t semkey);
+
 #endif // SHMFIFO_H_INCLUDED

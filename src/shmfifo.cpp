@@ -30,9 +30,13 @@ shmfifo_t *shmfifo_init (int key, int blksize, int blocks)
         fifo->p_shm->wr_index = 0;
 
 
-        fifo->sem_mutex = sem_create(key);
-        fifo->sem_full = sem_create(key + 1);
-        fifo->sem_empty = sem_create(key + 2);
+//        fifo->sem_mutex = sem_create(key);
+//        fifo->sem_full = sem_create(key + 1);
+//        fifo->sem_empty = sem_create(key + 2);
+
+        fifo->sem_mutex = getSemaphore(key);
+        fifo->sem_full = getSemaphore(key + 1);
+        fifo->sem_empty = getSemaphore(key + 2);
 
         sem_setval(fifo->sem_mutex, 1);
         sem_setval(fifo->sem_full, blocks);
@@ -48,9 +52,9 @@ shmfifo_t *shmfifo_init (int key, int blksize, int blocks)
 
         fifo->p_payload = (char *) (fifo->p_shm + 1);
 
-        fifo->sem_mutex = sem_open(key);
-        fifo->sem_full = sem_open(key + 1);
-        fifo->sem_empty = sem_open(key + 2);
+        fifo->sem_mutex = getSemaphore(key);
+        fifo->sem_full = getSemaphore(key + 1);
+        fifo->sem_empty = getSemaphore(key + 2);
 
         sem_setval(fifo->sem_mutex, 1);
         sem_setval(fifo->sem_full, blocks);
@@ -60,7 +64,7 @@ shmfifo_t *shmfifo_init (int key, int blksize, int blocks)
     }
     fifo->p_shm->wr_index = 0;
     fifo->p_shm->rd_index = 0;
-    printf("init wr idx=%d    rd idx = %d\n", fifo->p_shm->wr_index, fifo->p_shm->rd_index);
+//    printf("init wr idx=%d    rd idx = %d\n", fifo->p_shm->wr_index, fifo->p_shm->rd_index);
     return fifo;
 }
 
@@ -72,7 +76,7 @@ void shmfifo_put (shmfifo_t *fifo, const void *buf)
     memcpy(fifo->p_payload + fifo->p_shm->blksize * fifo->p_shm->wr_index,
            buf, fifo->p_shm->blksize);
     fifo->p_shm->wr_index = (fifo->p_shm->wr_index + 1) % fifo->p_shm->blocks;
-    printf("put wr idx=%d    rd idx = %d\n", fifo->p_shm->wr_index, fifo->p_shm->rd_index);
+//    printf("put wr idx=%d    rd idx = %d\n", fifo->p_shm->wr_index, fifo->p_shm->rd_index);
     sem_v(fifo->sem_mutex);
     sem_v(fifo->sem_empty);
 }
@@ -85,16 +89,16 @@ void shmfifo_get (shmfifo_t *fifo, void *buf)
     memcpy(buf, fifo->p_payload + fifo->p_shm->blksize * fifo->p_shm->rd_index,
            fifo->p_shm->blksize);
     fifo->p_shm->rd_index = (fifo->p_shm->rd_index + 1) % fifo->p_shm->blocks;
-    printf("get wr idx=%d    rd idx = %d\n", fifo->p_shm->wr_index, fifo->p_shm->rd_index);
+//    printf("get wr idx=%d    rd idx = %d\n", fifo->p_shm->wr_index, fifo->p_shm->rd_index);
     sem_v(fifo->sem_mutex);
     sem_v(fifo->sem_full);
 }
 
 void shmfifo_destroy (shmfifo_t *fifo)
 {
-    sem_d(fifo->sem_mutex);
-    sem_d(fifo->sem_full);
-    sem_d(fifo->sem_empty);
+//    sem_d(fifo->sem_mutex);
+//    sem_d(fifo->sem_full);
+//    sem_d(fifo->sem_empty);
 
     shmdt(fifo->p_shm);
     shmctl(fifo->shmid, IPC_RMID, 0);
