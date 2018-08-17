@@ -25,7 +25,8 @@ int h264Encoder::join()
     return 0;
 }
 
-h264Encoder::h264Encoder (initParams p) : encoder(std::move(p))
+h264Encoder::h264Encoder (initParams p) : encoder(std::move(p)),
+                                          insertIDR(false)
 {
 
 }
@@ -57,6 +58,8 @@ void h264Encoder::encodeBuffer ()
         shmfifo_put(coded_video_fifo_, &coded_video_buffer_);
     }
     std::cout << "--------------test------------" << std::endl;
+    pthread_cond_signal(&finish_threshold_cv);
+    std::cout << "--------------test1------------" << std::endl;
 
 }
 
@@ -102,23 +105,6 @@ int h264Encoder::initEncoder ()
 
     mfxEncParams.ExtParam = m_InitExtParams_ENC.data();
     mfxEncParams.NumExtParam = (mfxU16) m_InitExtParams_ENC.size();
-
-
-//    std::vector<mfxExtBuffer*> m_InitExtParams_ENC;
-//
-//    mfxExtCodingOption2* pCodingOption2 = new mfxExtCodingOption2;
-//    MSDK_ZERO_MEMORY(*pCodingOption2);
-//    pCodingOption2->Header.BufferId = MFX_EXTBUFF_CODING_OPTION2;
-//    pCodingOption2->Header.BufferSz = sizeof(mfxExtCodingOption2);
-//    //pCodingOption2->MaxFrameSize = (size_t)1400;
-//    pCodingOption2->MaxSliceSize = (size_t)1400;
-
-//
-//
-//    m_InitExtParams_ENC.push_back(reinterpret_cast<mfxExtBuffer *>(pCodingOption2));
-//
-//    mfxEncParams.ExtParam    = m_InitExtParams_ENC.data();
-//    mfxEncParams.NumExtParam = (mfxU16)m_InitExtParams_ENC.size();
 
     if (mfxEncParams.mfx.CodecId == MFX_CODEC_AVC)
     {
@@ -318,7 +304,8 @@ int h264Encoder::initEncoder ()
     mfxBS.Data = new mfxU8[mfxBS.MaxLength];
     MSDK_CHECK_POINTER(mfxBS.Data, MFX_ERR_MEMORY_ALLOC);
 
-
+    initFinished = true;
+    pthread_cond_signal(&count_threshold_cv);
     return 1;
 }
 
@@ -429,6 +416,8 @@ int h264Encoder::encodeBuffer (raw_video_buffer &raw, coded_video_buffer &codece
             fflush(stdout);
         }
     }
+
+
 }
 
 void h264Encoder::getDataAndSetMfxBSLengthZero (coded_video_buffer &codeced)

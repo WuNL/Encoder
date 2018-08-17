@@ -13,6 +13,10 @@ const initParamsRet conductor::initEncoder (initParams &p)
     int index = findEncoderByName(p.encoder_name);
     if (index != - 1)
     {
+        //TODO 条件变量，等待初始化完成后再做析构
+        encoderVec_[index]->waitForInitFinish();
+        std::cout << "waitForInitFinish done" << std::endl;
+//        encoderVec_[index]->stop();
         encoderVec_.erase(encoderVec_.begin() + index);
 
         std::unique_ptr<encoder> e = video_encoder_factory::create(p);

@@ -87,6 +87,42 @@ public:
 
     bool started() const { return started_; }
 
+    bool ifInitFinished () const { return initFinished; }
+
+    void waitForInitFinish ()
+    {
+        while (! initFinished)
+        {
+            pthread_mutex_lock(&count_mutex);
+
+            pthread_cond_wait(&count_threshold_cv, &count_mutex);
+
+            pthread_mutex_unlock(&count_mutex);
+        }
+        std::cout << "waitForInitFinish" << std::endl;
+//        pthread_exit(NULL);
+    }
+
+    void stop ()
+    {
+        started_ = false;
+        std::cout << "start stop" << std::endl;
+        while (true)
+        {
+            pthread_mutex_lock(&count_mutex);
+
+            pthread_cond_wait(&finish_threshold_cv, &count_mutex);
+
+            pthread_mutex_unlock(&count_mutex);
+
+            break;
+        }
+
+        std::cout << "stop" << std::endl;
+        pthread_exit(NULL);
+
+    }
+
     pid_t tid() const { return tid_; }
 
     virtual void run() = 0;
@@ -131,8 +167,14 @@ protected:
 
     bool started_;
     bool joined_;
+    bool initFinished;
+    bool readyToEndThread;
     pthread_t pthreadId_;
     pid_t tid_;
+
+    pthread_mutex_t count_mutex;
+    pthread_cond_t count_threshold_cv;
+    pthread_cond_t finish_threshold_cv;
 
     shmfifo_t *raw_video_fifo_;
     shmfifo_t *coded_video_fifo_;

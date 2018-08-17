@@ -28,7 +28,8 @@ int jsonParser (std::string &rawJson, initParams &params)
     }
     try
     {
-        params.encoder_name = pt.get<std::string>("encoder_name");
+        params.encoder_name = pt.get<std::string>(
+                "encoder_name");// + "_" + pt.get<std::string>("v_width") + "_" + pt.get<std::string>("v_height");
         params.codec = pt.get<std::string>("codec");
         params.v_width = pt.get<int>("v_width");
         params.v_height = pt.get<int>("v_height");
