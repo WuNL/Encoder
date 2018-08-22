@@ -18,11 +18,11 @@ namespace muduo
     {
     public:
 
-        AsyncLogging(const string &basename,
-                     off_t rollSize,
-                     int flushInterval = 3);
+        AsyncLogging (const string &basename,
+                      off_t rollSize,
+                      int flushInterval = 3);
 
-        ~AsyncLogging()
+        ~AsyncLogging ()
         {
             if (running_)
             {
@@ -30,16 +30,16 @@ namespace muduo
             }
         }
 
-        void append(const char *logline, int len);
+        void append (const char *logline, int len);
 
-        void start()
+        void start ()
         {
             running_ = true;
             thread_.start();
             latch_.wait();
         }
 
-        void stop()
+        void stop ()
         {
             running_ = false;
             cond_.notify();
@@ -48,7 +48,7 @@ namespace muduo
 
     private:
 
-        void threadFunc();
+        void threadFunc ();
 
         typedef muduo::detail::FixedBuffer<muduo::detail::kLargeBuffer> Buffer;
         typedef std::vector<std::unique_ptr<Buffer>> BufferVector;

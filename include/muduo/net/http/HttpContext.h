@@ -33,7 +33,7 @@ namespace muduo
                 kGotAll,
             };
 
-            HttpContext()
+            HttpContext ()
                     : state_(kExpectRequestLine)
             {
             }
@@ -41,23 +41,23 @@ namespace muduo
             // default copy-ctor, dtor and assignment are fine
 
             // return false if any error
-            bool parseRequest(Buffer *buf, Timestamp receiveTime);
+            bool parseRequest (Buffer *buf, Timestamp receiveTime);
 
-            bool gotAll() const { return state_ == kGotAll; }
+            bool gotAll () const { return state_ == kGotAll; }
 
-            void reset()
+            void reset ()
             {
                 state_ = kExpectRequestLine;
                 HttpRequest dummy;
                 request_.swap(dummy);
             }
 
-            const HttpRequest &request() const { return request_; }
+            const HttpRequest &request () const { return request_; }
 
-            HttpRequest &request() { return request_; }
+            HttpRequest &request () { return request_; }
 
         private:
-            bool processRequestLine(const char *begin, const char *end);
+            bool processRequestLine (const char *begin, const char *end);
 
             HttpRequestParseState state_;
             HttpRequest request_;

@@ -24,13 +24,13 @@ namespace muduo
         class BufferOutputStream : public google::protobuf::io::ZeroCopyOutputStream
         {
         public:
-            BufferOutputStream(Buffer *buf)
+            BufferOutputStream (Buffer *buf)
                     : buffer_(CHECK_NOTNULL(buf)),
                       originalSize_(buffer_->readableBytes())
             {
             }
 
-            virtual bool Next(void **data, int *size) // override
+            virtual bool Next (void **data, int *size) // override
             {
                 buffer_->ensureWritableBytes(4096);
                 *data = buffer_->beginWrite();
@@ -39,12 +39,12 @@ namespace muduo
                 return true;
             }
 
-            virtual void BackUp(int count) // override
+            virtual void BackUp (int count) // override
             {
                 buffer_->unwrite(count);
             }
 
-            virtual int64_t ByteCount() const // override
+            virtual int64_t ByteCount () const // override
             {
                 return buffer_->readableBytes() - originalSize_;
             }

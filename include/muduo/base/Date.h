@@ -39,75 +39,75 @@ namespace muduo
         ///
         /// Constucts an invalid Date.
         ///
-        Date()
+        Date ()
                 : julianDayNumber_(0) {}
 
         ///
         /// Constucts a yyyy-mm-dd Date.
         ///
         /// 1 <= month <= 12
-        Date(int year, int month, int day);
+        Date (int year, int month, int day);
 
         ///
         /// Constucts a Date from Julian Day Number.
         ///
-        explicit Date(int julianDayNum)
+        explicit Date (int julianDayNum)
                 : julianDayNumber_(julianDayNum) {}
 
         ///
         /// Constucts a Date from struct tm
         ///
-        explicit Date(const struct tm &);
+        explicit Date (const struct tm &);
 
         // default copy/assignment/dtor are Okay
 
-        void swap(Date &that)
+        void swap (Date &that)
         {
             std::swap(julianDayNumber_, that.julianDayNumber_);
         }
 
-        bool valid() const { return julianDayNumber_ > 0; }
+        bool valid () const { return julianDayNumber_ > 0; }
 
         ///
         /// Converts to yyyy-mm-dd format.
         ///
-        string toIsoString() const;
+        string toIsoString () const;
 
-        struct YearMonthDay yearMonthDay() const;
+        struct YearMonthDay yearMonthDay () const;
 
-        int year() const
+        int year () const
         {
             return yearMonthDay().year;
         }
 
-        int month() const
+        int month () const
         {
             return yearMonthDay().month;
         }
 
-        int day() const
+        int day () const
         {
             return yearMonthDay().day;
         }
 
         // [0, 1, ..., 6] => [Sunday, Monday, ..., Saturday ]
-        int weekDay() const
+        int weekDay () const
         {
             return (julianDayNumber_ + 1) % kDaysPerWeek;
         }
 
-        int julianDayNumber() const { return julianDayNumber_; }
+        int julianDayNumber () const { return julianDayNumber_; }
 
     private:
         int julianDayNumber_;
     };
 
-    inline bool operator<(Date x, Date y)
+    inline bool operator< (Date x, Date y)
     {
         return x.julianDayNumber() < y.julianDayNumber();
     }
 
-    inline bool operator==(Date x, Date y)
+    inline bool operator== (Date x, Date y)
     {
         return x.julianDayNumber() == y.julianDayNumber();
     }

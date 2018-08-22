@@ -63,19 +63,19 @@ struct muxControl
 };
 
 // Initialize the Demuxer controller based on the input file
-mfxStatus openDemuxControl(demuxControl *ffmpegCtrl, const char *filename);
+mfxStatus openDemuxControl (demuxControl *ffmpegCtrl, const char *filename);
 
 // Release and clear the Demuxer resources
-mfxStatus closeDemuxControl(demuxControl *ffmpegCtrl);
+mfxStatus closeDemuxControl (demuxControl *ffmpegCtrl);
 
 // Initialize the Demuxer controller based on the input file
-mfxStatus openMuxControl(muxControl *ffmpegCtrl, const char *filename);
+mfxStatus openMuxControl (muxControl *ffmpegCtrl, const char *filename);
 
 // Release and clear the Demuxer resources
-mfxStatus closeMuxControl(muxControl *ffmpegCtrl);
+mfxStatus closeMuxControl (muxControl *ffmpegCtrl);
 
 // Write bit stream data for frame to file through FFMpeg muxer
-mfxStatus ffmpegWriteFrame(mfxBitstream *pMfxBitstream, muxControl *muxCtrl);
+mfxStatus ffmpegWriteFrame (mfxBitstream *pMfxBitstream, muxControl *muxCtrl);
 
 // Read bit stream data from FFMpeg demuxer. Stream is read as large chunks (= many frames)
-mfxStatus ffmpegReadFrame(mfxBitstream *pBS, demuxControl *filterCtrl);
+mfxStatus ffmpegReadFrame (mfxBitstream *pBS, demuxControl *filterCtrl);

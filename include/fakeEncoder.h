@@ -14,7 +14,7 @@ public:
 
     explicit fakeEncoder (initParams p);
 
-    virtual int join() override;
+    virtual int join () override;
 
 private:
     int encodeBuffer (void *in, void *out) override {}

@@ -16,13 +16,13 @@ namespace muduo
     {
     public:
 
-        explicit CountDownLatch(int count);
+        explicit CountDownLatch (int count);
 
-        void wait();
+        void wait ();
 
-        void countDown();
+        void countDown ();
 
-        int getCount() const;
+        int getCount () const;
 
     private:
         mutable MutexLock mutex_;

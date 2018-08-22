@@ -23,10 +23,10 @@ namespace muduo
         struct has_no_destroy
         {
             template<typename C>
-            static char test(decltype(&C::no_destroy));
+            static char test (decltype(&C::no_destroy));
 
             template<typename C>
-            static int32_t test(...);
+            static int32_t test (...);
 
             const static bool value = sizeof(test<T>(0)) == 1;
         };
@@ -36,7 +36,7 @@ namespace muduo
     class Singleton : noncopyable
     {
     public:
-        static T &instance()
+        static T &instance ()
         {
             pthread_once(&ponce_, &Singleton::init);
             assert(value_ != NULL);
@@ -44,11 +44,11 @@ namespace muduo
         }
 
     private:
-        Singleton();
+        Singleton ();
 
-        ~Singleton();
+        ~Singleton ();
 
-        static void init()
+        static void init ()
         {
             value_ = new T();
             if (! detail::has_no_destroy<T>::value)
@@ -57,7 +57,7 @@ namespace muduo
             }
         }
 
-        static void destroy()
+        static void destroy ()
         {
             typedef char T_must_be_complete_type[sizeof(T) == 0 ? - 1 : 1];
             T_must_be_complete_type dummy;

@@ -34,29 +34,29 @@ namespace muduo
         {
         public:
             typedef std::vector<string> ArgList;
-            typedef std::function<string(HttpRequest::Method, const ArgList &args)> Callback;
+            typedef std::function<string (HttpRequest::Method, const ArgList &args)> Callback;
 
-            Inspector(EventLoop *loop,
-                      const InetAddress &httpAddr,
-                      const string &name);
+            Inspector (EventLoop *loop,
+                       const InetAddress &httpAddr,
+                       const string &name);
 
-            ~Inspector();
+            ~Inspector ();
 
             /// Add a Callback for handling the special uri : /mudule/command
-            void add(const string &module,
-                     const string &command,
-                     const Callback &cb,
-                     const string &help);
+            void add (const string &module,
+                      const string &command,
+                      const Callback &cb,
+                      const string &help);
 
-            void remove(const string &module, const string &command);
+            void remove (const string &module, const string &command);
 
         private:
             typedef std::map<string, Callback> CommandList;
             typedef std::map<string, string> HelpList;
 
-            void start();
+            void start ();
 
-            void onRequest(const HttpRequest &req, HttpResponse *resp);
+            void onRequest (const HttpRequest &req, HttpResponse *resp);
 
             HttpServer server_;
             std::unique_ptr<ProcessInspector> processInspector_;

@@ -64,24 +64,24 @@ namespace muduo
             };
 
             // return false to stop parsing protobuf message
-            typedef std::function<bool(const TcpConnectionPtr &,
-                                       StringPiece,
-                                       Timestamp)> RawMessageCallback;
+            typedef std::function<bool (const TcpConnectionPtr &,
+                                        StringPiece,
+                                        Timestamp)> RawMessageCallback;
 
-            typedef std::function<void(const TcpConnectionPtr &,
-                                       const MessagePtr &,
-                                       Timestamp)> ProtobufMessageCallback;
+            typedef std::function<void (const TcpConnectionPtr &,
+                                        const MessagePtr &,
+                                        Timestamp)> ProtobufMessageCallback;
 
-            typedef std::function<void(const TcpConnectionPtr &,
-                                       Buffer *,
-                                       Timestamp,
-                                       ErrorCode)> ErrorCallback;
+            typedef std::function<void (const TcpConnectionPtr &,
+                                        Buffer *,
+                                        Timestamp,
+                                        ErrorCode)> ErrorCallback;
 
-            ProtobufCodecLite(const ::google::protobuf::Message *prototype,
-                              StringPiece tagArg,
-                              const ProtobufMessageCallback &messageCb,
-                              const RawMessageCallback &rawCb = RawMessageCallback(),
-                              const ErrorCallback &errorCb = defaultErrorCallback)
+            ProtobufCodecLite (const ::google::protobuf::Message *prototype,
+                               StringPiece tagArg,
+                               const ProtobufMessageCallback &messageCb,
+                               const RawMessageCallback &rawCb = RawMessageCallback(),
+                               const ErrorCallback &errorCb = defaultErrorCallback)
                     : prototype_(prototype),
                       tag_(tagArg.as_string()),
                       messageCallback_(messageCb),
@@ -91,38 +91,38 @@ namespace muduo
             {
             }
 
-            virtual ~ProtobufCodecLite() {}
+            virtual ~ProtobufCodecLite () {}
 
-            const string &tag() const { return tag_; }
+            const string &tag () const { return tag_; }
 
-            void send(const TcpConnectionPtr &conn,
-                      const ::google::protobuf::Message &message);
+            void send (const TcpConnectionPtr &conn,
+                       const ::google::protobuf::Message &message);
 
-            void onMessage(const TcpConnectionPtr &conn,
-                           Buffer *buf,
-                           Timestamp receiveTime);
+            void onMessage (const TcpConnectionPtr &conn,
+                            Buffer *buf,
+                            Timestamp receiveTime);
 
-            virtual bool parseFromBuffer(StringPiece buf, google::protobuf::Message *message);
+            virtual bool parseFromBuffer (StringPiece buf, google::protobuf::Message *message);
 
-            virtual int serializeToBuffer(const google::protobuf::Message &message, Buffer *buf);
+            virtual int serializeToBuffer (const google::protobuf::Message &message, Buffer *buf);
 
-            static const string &errorCodeToString(ErrorCode errorCode);
+            static const string &errorCodeToString (ErrorCode errorCode);
 
             // public for unit tests
-            ErrorCode parse(const char *buf, int len, ::google::protobuf::Message *message);
+            ErrorCode parse (const char *buf, int len, ::google::protobuf::Message *message);
 
-            void fillEmptyBuffer(muduo::net::Buffer *buf, const google::protobuf::Message &message);
+            void fillEmptyBuffer (muduo::net::Buffer *buf, const google::protobuf::Message &message);
 
-            static int32_t checksum(const void *buf, int len);
+            static int32_t checksum (const void *buf, int len);
 
-            static bool validateChecksum(const char *buf, int len);
+            static bool validateChecksum (const char *buf, int len);
 
-            static int32_t asInt32(const char *buf);
+            static int32_t asInt32 (const char *buf);
 
-            static void defaultErrorCallback(const TcpConnectionPtr &,
-                                             Buffer *,
-                                             Timestamp,
-                                             ErrorCode);
+            static void defaultErrorCallback (const TcpConnectionPtr &,
+                                              Buffer *,
+                                              Timestamp,
+                                              ErrorCode);
 
         private:
             const ::google::protobuf::Message *prototype_;
@@ -140,15 +140,15 @@ namespace muduo
                           "CODEC should be derived from ProtobufCodecLite");
         public:
             typedef std::shared_ptr<MSG> ConcreteMessagePtr;
-            typedef std::function<void(const TcpConnectionPtr &,
-                                       const ConcreteMessagePtr &,
-                                       Timestamp)> ProtobufMessageCallback;
+            typedef std::function<void (const TcpConnectionPtr &,
+                                        const ConcreteMessagePtr &,
+                                        Timestamp)> ProtobufMessageCallback;
             typedef ProtobufCodecLite::RawMessageCallback RawMessageCallback;
             typedef ProtobufCodecLite::ErrorCallback ErrorCallback;
 
-            explicit ProtobufCodecLiteT(const ProtobufMessageCallback &messageCb,
-                                        const RawMessageCallback &rawCb = RawMessageCallback(),
-                                        const ErrorCallback &errorCb = ProtobufCodecLite::defaultErrorCallback)
+            explicit ProtobufCodecLiteT (const ProtobufMessageCallback &messageCb,
+                                         const RawMessageCallback &rawCb = RawMessageCallback(),
+                                         const ErrorCallback &errorCb = ProtobufCodecLite::defaultErrorCallback)
                     : messageCallback_(messageCb),
                       codec_(&MSG::default_instance(),
                              TAG,
@@ -158,30 +158,30 @@ namespace muduo
             {
             }
 
-            const string &tag() const { return codec_.tag(); }
+            const string &tag () const { return codec_.tag(); }
 
-            void send(const TcpConnectionPtr &conn,
-                      const MSG &message)
+            void send (const TcpConnectionPtr &conn,
+                       const MSG &message)
             {
                 codec_.send(conn, message);
             }
 
-            void onMessage(const TcpConnectionPtr &conn,
-                           Buffer *buf,
-                           Timestamp receiveTime)
+            void onMessage (const TcpConnectionPtr &conn,
+                            Buffer *buf,
+                            Timestamp receiveTime)
             {
                 codec_.onMessage(conn, buf, receiveTime);
             }
 
             // internal
-            void onRpcMessage(const TcpConnectionPtr &conn,
-                              const MessagePtr &message,
-                              Timestamp receiveTime)
+            void onRpcMessage (const TcpConnectionPtr &conn,
+                               const MessagePtr &message,
+                               Timestamp receiveTime)
             {
                 messageCallback_(conn, ::muduo::down_pointer_cast<MSG>(message), receiveTime);
             }
 
-            void fillEmptyBuffer(muduo::net::Buffer *buf, const MSG &message)
+            void fillEmptyBuffer (muduo::net::Buffer *buf, const MSG &message)
             {
                 codec_.fillEmptyBuffer(buf, message);
             }

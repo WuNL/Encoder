@@ -85,7 +85,7 @@ char favicon[555] = {
 };
 
 
-httpServer::httpServer(int port, int numThreads) :
+httpServer::httpServer (int port, int numThreads) :
         muduoHttpServer_(new muduo::net::HttpServer(&loop, muduo::net::InetAddress(port), "noone"))
 {
     muduoHttpServer_->setThreadNum(numThreads);
@@ -93,13 +93,13 @@ httpServer::httpServer(int port, int numThreads) :
             std::bind(&httpServer::onRequest, this, std::placeholders::_1, std::placeholders::_2));
 }
 
-void httpServer::start()
+void httpServer::start ()
 {
     muduoHttpServer_->start();
     loop.loop();
 }
 
-void httpServer::onRequest(const muduo::net::HttpRequest &req, muduo::net::HttpResponse *resp)
+void httpServer::onRequest (const muduo::net::HttpRequest &req, muduo::net::HttpResponse *resp)
 {
     ptree root, arr, object;
     arr.push_back(std::make_pair("", ptree("1")));

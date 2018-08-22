@@ -51,44 +51,44 @@ namespace muduo
     class MutexLock : noncopyable
     {
     public:
-        MutexLock()
+        MutexLock ()
                 : holder_(0)
         {
             MCHECK(pthread_mutex_init(&mutex_, NULL));
         }
 
-        ~MutexLock()
+        ~MutexLock ()
         {
             assert(holder_ == 0);
             MCHECK(pthread_mutex_destroy(&mutex_));
         }
 
         // must be called when locked, i.e. for assertion
-        bool isLockedByThisThread() const
+        bool isLockedByThisThread () const
         {
             return holder_ == CurrentThread::tid();
         }
 
-        void assertLocked() const
+        void assertLocked () const
         {
             assert(isLockedByThisThread());
         }
 
         // internal usage
 
-        void lock()
+        void lock ()
         {
             MCHECK(pthread_mutex_lock(&mutex_));
             assignHolder();
         }
 
-        void unlock()
+        void unlock ()
         {
             unassignHolder();
             MCHECK(pthread_mutex_unlock(&mutex_));
         }
 
-        pthread_mutex_t *getPthreadMutex() /* non-const */
+        pthread_mutex_t *getPthreadMutex () /* non-const */
         {
             return &mutex_;
         }
@@ -99,13 +99,13 @@ namespace muduo
         class UnassignGuard : noncopyable
         {
         public:
-            UnassignGuard(MutexLock &owner)
+            UnassignGuard (MutexLock &owner)
                     : owner_(owner)
             {
                 owner_.unassignHolder();
             }
 
-            ~UnassignGuard()
+            ~UnassignGuard ()
             {
                 owner_.assignHolder();
             }
@@ -114,12 +114,12 @@ namespace muduo
             MutexLock &owner_;
         };
 
-        void unassignHolder()
+        void unassignHolder ()
         {
             holder_ = 0;
         }
 
-        void assignHolder()
+        void assignHolder ()
         {
             holder_ = CurrentThread::tid();
         }
@@ -137,13 +137,13 @@ namespace muduo
     class MutexLockGuard : noncopyable
     {
     public:
-        explicit MutexLockGuard(MutexLock &mutex)
+        explicit MutexLockGuard (MutexLock &mutex)
                 : mutex_(mutex)
         {
             mutex_.lock();
         }
 
-        ~MutexLockGuard()
+        ~MutexLockGuard ()
         {
             mutex_.unlock();
         }

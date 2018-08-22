@@ -17,8 +17,8 @@
 class conductor : public boost::noncopyable
 {
 public:
-    typedef std::function<void()> ErrHandleCallback;
-    typedef std::function<void()> NotifyCloseCallback;
+    typedef std::function<void ()> ErrHandleCallback;
+    typedef std::function<void ()> NotifyCloseCallback;
     typedef std::function<void ()> InitDoneCallback;
 
     conductor ();
@@ -34,6 +34,10 @@ public:
     }
 
     const initParamsRet initEncoder (initParams &p);
+
+    const bool destroyEncoder (destroyParams &p);
+
+    const bool updateBitrate (initParams &p);
 
     const int getSize ()
     {

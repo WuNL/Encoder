@@ -40,7 +40,7 @@ struct CmdOptionsCtx
     const char *program;
 
     // function to print program usage, can be NULL
-    void (*usage)(CmdOptionsCtx *ctx);
+    void (*usage) (CmdOptionsCtx *ctx);
 };
 
 struct CmdOptionsValues
@@ -74,4 +74,4 @@ struct CmdOptions
     CmdOptionsValues values;
 };
 
-void ParseOptions(int argc, char **argv, CmdOptions *options);
+void ParseOptions (int argc, char **argv, CmdOptions *options);

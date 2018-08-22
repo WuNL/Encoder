@@ -10,14 +10,14 @@
 class h265Encoder : public encoder
 {
 public:
-    virtual void run() override;
+    virtual void run () override;
 
     explicit h265Encoder (initParams p);
 
-    virtual int join() override;
+    virtual int join () override;
 
 private:
-    int encodeBuffer(void *in, void *out) {}
+    int encodeBuffer (void *in, void *out) {}
 };
 
 

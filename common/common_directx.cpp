@@ -43,7 +43,7 @@ const struct
 // DirectX functionality required to manage D3D surfaces
 //
 
-mfxU32 GetIntelDeviceAdapterNum(mfxSession session)
+mfxU32 GetIntelDeviceAdapterNum (mfxSession session)
 {
     mfxU32 adapterNum = 0;
     mfxIMPL impl;
@@ -66,7 +66,7 @@ mfxU32 GetIntelDeviceAdapterNum(mfxSession session)
 }
 
 // Create HW device context
-mfxStatus CreateHWDevice(mfxSession session, mfxHDL *deviceHandle, HWND window, bool bCreateSharedHandles)
+mfxStatus CreateHWDevice (mfxSession session, mfxHDL *deviceHandle, HWND window, bool bCreateSharedHandles)
 {
     // If window handle is not supplied, get window handle from coordinate 0,0
     if (window == NULL)
@@ -125,14 +125,14 @@ mfxStatus CreateHWDevice(mfxSession session, mfxHDL *deviceHandle, HWND window, 
     return MFX_ERR_NONE;
 }
 
-IDirect3DDevice9Ex *GetDevice()
+IDirect3DDevice9Ex *GetDevice ()
 {
     return pD3DD9;
 }
 
 
 // Free HW device context
-void CleanupHWDevice()
+void CleanupHWDevice ()
 {
     if (pDeviceManager9)
         pDeviceManager9->CloseDeviceHandle(pDeviceHandle);
@@ -143,7 +143,7 @@ void CleanupHWDevice()
     MSDK_SAFE_RELEASE(pD3D9);
 }
 
-void ClearYUVSurfaceD3D(mfxMemId memId)
+void ClearYUVSurfaceD3D (mfxMemId memId)
 {
     IDirect3DSurface9 *pSurface;
     D3DSURFACE_DESC desc;
@@ -156,7 +156,7 @@ void ClearYUVSurfaceD3D(mfxMemId memId)
     pSurface->UnlockRect();
 }
 
-void ClearRGBSurfaceD3D(mfxMemId memId)
+void ClearRGBSurfaceD3D (mfxMemId memId)
 {
     IDirect3DSurface9 *pSurface;
     D3DSURFACE_DESC desc;
@@ -171,7 +171,7 @@ void ClearRGBSurfaceD3D(mfxMemId memId)
 //
 // Media SDK memory allocator entrypoints....
 //
-mfxStatus _simple_alloc(mfxFrameAllocRequest *request, mfxFrameAllocResponse *response)
+mfxStatus _simple_alloc (mfxFrameAllocRequest *request, mfxFrameAllocResponse *response)
 {
     DWORD DxvaType;
     HRESULT hr = S_OK;
@@ -276,7 +276,7 @@ mfxStatus _simple_alloc(mfxFrameAllocRequest *request, mfxFrameAllocResponse *re
     return MFX_ERR_NONE;
 }
 
-mfxStatus simple_alloc(mfxHDL pthis, mfxFrameAllocRequest *request, mfxFrameAllocResponse *response)
+mfxStatus simple_alloc (mfxHDL pthis, mfxFrameAllocRequest *request, mfxFrameAllocResponse *response)
 {
     mfxStatus sts = MFX_ERR_NONE;
 
@@ -316,7 +316,7 @@ mfxStatus simple_alloc(mfxHDL pthis, mfxFrameAllocRequest *request, mfxFrameAllo
     return sts;
 }
 
-mfxStatus simple_lock(mfxHDL pthis, mfxMemId mid, mfxFrameData *ptr)
+mfxStatus simple_lock (mfxHDL pthis, mfxMemId mid, mfxFrameData *ptr)
 {
     pthis; // To suppress warning for this unused parameter
 
@@ -370,7 +370,7 @@ mfxStatus simple_lock(mfxHDL pthis, mfxMemId mid, mfxFrameData *ptr)
     return MFX_ERR_NONE;
 }
 
-mfxStatus simple_unlock(mfxHDL pthis, mfxMemId mid, mfxFrameData *ptr)
+mfxStatus simple_unlock (mfxHDL pthis, mfxMemId mid, mfxFrameData *ptr)
 {
     pthis; // To suppress warning for this unused parameter
 
@@ -392,7 +392,7 @@ mfxStatus simple_unlock(mfxHDL pthis, mfxMemId mid, mfxFrameData *ptr)
     return MFX_ERR_NONE;
 }
 
-mfxStatus simple_gethdl(mfxHDL pthis, mfxMemId mid, mfxHDL *handle)
+mfxStatus simple_gethdl (mfxHDL pthis, mfxMemId mid, mfxHDL *handle)
 {
     pthis; // To suppress warning for this unused parameter
 
@@ -403,7 +403,7 @@ mfxStatus simple_gethdl(mfxHDL pthis, mfxMemId mid, mfxHDL *handle)
 }
 
 
-mfxStatus _simple_free(mfxFrameAllocResponse *response)
+mfxStatus _simple_free (mfxFrameAllocResponse *response)
 {
     if (response->mids)
     {
@@ -423,7 +423,7 @@ mfxStatus _simple_free(mfxFrameAllocResponse *response)
     return MFX_ERR_NONE;
 }
 
-mfxStatus simple_free(mfxHDL pthis, mfxFrameAllocResponse *response)
+mfxStatus simple_free (mfxHDL pthis, mfxFrameAllocResponse *response)
 {
     if (! response) return MFX_ERR_NULL_PTR;
 

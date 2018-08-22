@@ -35,28 +35,28 @@ namespace muduo
                 k404NotFound = 404,
             };
 
-            explicit HttpResponse(bool close)
+            explicit HttpResponse (bool close)
                     : statusCode_(kUnknown),
                       closeConnection_(close)
             {
             }
 
-            void setStatusCode(HttpStatusCode code) { statusCode_ = code; }
+            void setStatusCode (HttpStatusCode code) { statusCode_ = code; }
 
-            void setStatusMessage(const string &message) { statusMessage_ = message; }
+            void setStatusMessage (const string &message) { statusMessage_ = message; }
 
-            void setCloseConnection(bool on) { closeConnection_ = on; }
+            void setCloseConnection (bool on) { closeConnection_ = on; }
 
-            bool closeConnection() const { return closeConnection_; }
+            bool closeConnection () const { return closeConnection_; }
 
-            void setContentType(const string &contentType) { addHeader("Content-Type", contentType); }
+            void setContentType (const string &contentType) { addHeader("Content-Type", contentType); }
 
             // FIXME: replace string with StringPiece
-            void addHeader(const string &key, const string &value) { headers_[key] = value; }
+            void addHeader (const string &key, const string &value) { headers_[key] = value; }
 
-            void setBody(const string &body) { body_ = body; }
+            void setBody (const string &body) { body_ = body; }
 
-            void appendToBuffer(Buffer *output) const;
+            void appendToBuffer (Buffer *output) const;
 
         private:
             std::map<string, string> headers_;

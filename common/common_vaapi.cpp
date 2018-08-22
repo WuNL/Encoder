@@ -22,7 +22,7 @@ std::map<mfxMemId *, mfxHDL> allocResponses;
 std::map<mfxHDL, sharedResponse> allocDecodeResponses;
 
 
-mfxStatus va_to_mfx_status(VAStatus va_res)
+mfxStatus va_to_mfx_status (VAStatus va_res)
 {
     mfxStatus mfxRes = MFX_ERR_NONE;
 
@@ -70,7 +70,7 @@ VADisplay m_va_dpy = NULL;
 int m_fd = - 1;
 // decoder surfaces chain shared between app and MSDK
 
-mfxStatus CreateVAEnvDRM(mfxHDL *displayHandle)
+mfxStatus CreateVAEnvDRM (mfxHDL *displayHandle)
 {
     VAStatus va_res = VA_STATUS_SUCCESS;
     mfxStatus sts = MFX_ERR_NONE;
@@ -107,7 +107,7 @@ mfxStatus CreateVAEnvDRM(mfxHDL *displayHandle)
         throw std::bad_alloc();
 }
 
-void CleanupVAEnvDRM()
+void CleanupVAEnvDRM ()
 {
     if (m_va_dpy)
     {
@@ -120,7 +120,7 @@ void CleanupVAEnvDRM()
 }
 
 //utiility function to convert MFX fourcc to VA format
-unsigned int ConvertMfxFourccToVAFormat(mfxU32 fourcc)
+unsigned int ConvertMfxFourccToVAFormat (mfxU32 fourcc)
 {
     switch (fourcc)
     {
@@ -141,12 +141,12 @@ unsigned int ConvertMfxFourccToVAFormat(mfxU32 fourcc)
     }
 }
 
-void ClearYUVSurfaceVAAPI(mfxMemId memId)
+void ClearYUVSurfaceVAAPI (mfxMemId memId)
 {
     // todo: clear VAAPI surface
 }
 
-void ClearRGBSurfaceVAAPI(mfxMemId memId)
+void ClearRGBSurfaceVAAPI (mfxMemId memId)
 {
     // todo: clear VAAPI surface
 }
@@ -166,8 +166,8 @@ struct vaapiMemId
 // Media SDK memory allocator entrypoints....
 //
 
-mfxStatus _simple_alloc(mfxFrameAllocRequest *request,
-                        mfxFrameAllocResponse *response)
+mfxStatus _simple_alloc (mfxFrameAllocRequest *request,
+                         mfxFrameAllocResponse *response)
 {
     mfxStatus mfx_res = MFX_ERR_NONE;
     VAStatus va_res = VA_STATUS_SUCCESS;
@@ -294,8 +294,8 @@ mfxStatus _simple_alloc(mfxFrameAllocRequest *request,
     return mfx_res;
 }
 
-mfxStatus simple_alloc(mfxHDL pthis, mfxFrameAllocRequest *request,
-                       mfxFrameAllocResponse *response)
+mfxStatus simple_alloc (mfxHDL pthis, mfxFrameAllocRequest *request,
+                        mfxFrameAllocResponse *response)
 {
     mfxStatus sts = MFX_ERR_NONE;
 
@@ -344,7 +344,7 @@ mfxStatus simple_alloc(mfxHDL pthis, mfxFrameAllocRequest *request,
     return sts;
 }
 
-mfxStatus simple_lock(mfxHDL pthis, mfxMemId mid, mfxFrameData *ptr)
+mfxStatus simple_lock (mfxHDL pthis, mfxMemId mid, mfxFrameData *ptr)
 {
     mfxStatus mfx_res = MFX_ERR_NONE;
     VAStatus va_res = VA_STATUS_SUCCESS;
@@ -457,7 +457,7 @@ mfxStatus simple_lock(mfxHDL pthis, mfxMemId mid, mfxFrameData *ptr)
     return mfx_res;
 }
 
-mfxStatus simple_unlock(mfxHDL pthis, mfxMemId mid, mfxFrameData *ptr)
+mfxStatus simple_unlock (mfxHDL pthis, mfxMemId mid, mfxFrameData *ptr)
 {
     vaapiMemId *vaapi_mid = (vaapiMemId *) mid;
 
@@ -484,7 +484,7 @@ mfxStatus simple_unlock(mfxHDL pthis, mfxMemId mid, mfxFrameData *ptr)
     return MFX_ERR_NONE;
 }
 
-mfxStatus simple_gethdl(mfxHDL pthis, mfxMemId mid, mfxHDL *handle)
+mfxStatus simple_gethdl (mfxHDL pthis, mfxMemId mid, mfxHDL *handle)
 {
     vaapiMemId *vaapi_mid = (vaapiMemId *) mid;
 
@@ -495,7 +495,7 @@ mfxStatus simple_gethdl(mfxHDL pthis, mfxMemId mid, mfxHDL *handle)
     return MFX_ERR_NONE;
 }
 
-mfxStatus _simple_free(mfxHDL pthis, mfxFrameAllocResponse *response)
+mfxStatus _simple_free (mfxHDL pthis, mfxFrameAllocResponse *response)
 {
     vaapiMemId *vaapi_mids = NULL;
     VASurfaceID *surfaces = NULL;
@@ -542,7 +542,7 @@ mfxStatus _simple_free(mfxHDL pthis, mfxFrameAllocResponse *response)
     return MFX_ERR_NONE;
 }
 
-mfxStatus simple_free(mfxHDL pthis, mfxFrameAllocResponse *response)
+mfxStatus simple_free (mfxHDL pthis, mfxFrameAllocResponse *response)
 {
     if (! response) return MFX_ERR_NULL_PTR;
 

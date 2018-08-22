@@ -28,7 +28,7 @@ namespace muduo
         {
         public:
             template<int N>
-            inline SourceFile(const char (&arr)[N])
+            inline SourceFile (const char (&arr)[N])
                     : data_(arr),
                       size_(N - 1)
             {
@@ -40,7 +40,7 @@ namespace muduo
                 }
             }
 
-            explicit SourceFile(const char *filename)
+            explicit SourceFile (const char *filename)
                     : data_(filename)
             {
                 const char *slash = strrchr(filename, '/');
@@ -55,31 +55,31 @@ namespace muduo
             int size_;
         };
 
-        Logger(SourceFile file, int line);
+        Logger (SourceFile file, int line);
 
-        Logger(SourceFile file, int line, LogLevel level);
+        Logger (SourceFile file, int line, LogLevel level);
 
-        Logger(SourceFile file, int line, LogLevel level, const char *func);
+        Logger (SourceFile file, int line, LogLevel level, const char *func);
 
-        Logger(SourceFile file, int line, bool toAbort);
+        Logger (SourceFile file, int line, bool toAbort);
 
-        ~Logger();
+        ~Logger ();
 
-        LogStream &stream() { return impl_.stream_; }
+        LogStream &stream () { return impl_.stream_; }
 
-        static LogLevel logLevel();
+        static LogLevel logLevel ();
 
-        static void setLogLevel(LogLevel level);
+        static void setLogLevel (LogLevel level);
 
-        typedef void (*OutputFunc)(const char *msg, int len);
+        typedef void (*OutputFunc) (const char *msg, int len);
 
-        typedef void (*FlushFunc)();
+        typedef void (*FlushFunc) ();
 
-        static void setOutput(OutputFunc);
+        static void setOutput (OutputFunc);
 
-        static void setFlush(FlushFunc);
+        static void setFlush (FlushFunc);
 
-        static void setTimeZone(const TimeZone &tz);
+        static void setTimeZone (const TimeZone &tz);
 
     private:
 
@@ -88,11 +88,11 @@ namespace muduo
         public:
             typedef Logger::LogLevel LogLevel;
 
-            Impl(LogLevel level, int old_errno, const SourceFile &file, int line);
+            Impl (LogLevel level, int old_errno, const SourceFile &file, int line);
 
-            void formatTime();
+            void formatTime ();
 
-            void finish();
+            void finish ();
 
             Timestamp time_;
             LogStream stream_;
@@ -107,7 +107,7 @@ namespace muduo
 
     extern Logger::LogLevel g_logLevel;
 
-    inline Logger::LogLevel Logger::logLevel()
+    inline Logger::LogLevel Logger::logLevel ()
     {
         return g_logLevel;
     }
@@ -140,7 +140,7 @@ namespace muduo
 #define LOG_SYSERR muduo::Logger(__FILE__, __LINE__, false).stream()
 #define LOG_SYSFATAL muduo::Logger(__FILE__, __LINE__, true).stream()
 
-    const char *strerror_tl(int savedErrno);
+    const char *strerror_tl (int savedErrno);
 
 // Taken from glog/logging.h
 //
@@ -152,7 +152,7 @@ namespace muduo
 
 // A small helper for CHECK_NOTNULL().
     template<typename T>
-    T *CheckNotNull(Logger::SourceFile file, int line, const char *names, T *ptr)
+    T *CheckNotNull (Logger::SourceFile file, int line, const char *names, T *ptr)
     {
         if (ptr == NULL)
         {

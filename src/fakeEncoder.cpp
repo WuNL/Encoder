@@ -10,13 +10,13 @@
 
 #include <utime.h>
 
-void fakeEncoder::run()
+void fakeEncoder::run ()
 {
     started_ = true;
     pthread_create(&pthreadId_, nullptr, &fakeEncoder::start, static_cast<void *>(this));
 }
 
-int fakeEncoder::join()
+int fakeEncoder::join ()
 {
     return 0;
 }

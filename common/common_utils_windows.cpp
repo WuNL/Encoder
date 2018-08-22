@@ -22,8 +22,8 @@ Copyright(c) 2005-2014 Intel Corporation. All Rights Reserved.
  * Windows implementation of OS-specific utility functions
  */
 
-mfxStatus Initialize(mfxIMPL impl, mfxVersion ver, MFXVideoSession *pSession, mfxFrameAllocator *pmfxAllocator,
-                     bool bCreateSharedHandles)
+mfxStatus Initialize (mfxIMPL impl, mfxVersion ver, MFXVideoSession *pSession, mfxFrameAllocator *pmfxAllocator,
+                      bool bCreateSharedHandles)
 {
     mfxStatus sts = MFX_ERR_NONE;
 
@@ -63,19 +63,19 @@ mfxStatus Initialize(mfxIMPL impl, mfxVersion ver, MFXVideoSession *pSession, mf
     return sts;
 }
 
-void Release()
+void Release ()
 {
 #if defined(DX9_D3D) || defined(DX11_D3D)
     CleanupHWDevice();
 #endif
 }
 
-void mfxGetTime(mfxTime *timestamp)
+void mfxGetTime (mfxTime *timestamp)
 {
     QueryPerformanceCounter(timestamp);
 }
 
-double TimeDiffMsec(mfxTime tfinish, mfxTime tstart)
+double TimeDiffMsec (mfxTime tfinish, mfxTime tstart)
 {
     static LARGE_INTEGER tFreq = {0};
 
@@ -85,14 +85,14 @@ double TimeDiffMsec(mfxTime tfinish, mfxTime tstart)
     return 1000.0 * ((double) tfinish.QuadPart - (double) tstart.QuadPart) / freq;
 }
 
-void ClearYUVSurfaceVMem(mfxMemId memId)
+void ClearYUVSurfaceVMem (mfxMemId memId)
 {
 #if defined(DX9_D3D) || defined(DX11_D3D)
     ClearYUVSurfaceD3D(memId);
 #endif
 }
 
-void ClearRGBSurfaceVMem(mfxMemId memId)
+void ClearRGBSurfaceVMem (mfxMemId memId)
 {
 #if defined(DX9_D3D) || defined(DX11_D3D)
     ClearRGBSurfaceD3D(memId);

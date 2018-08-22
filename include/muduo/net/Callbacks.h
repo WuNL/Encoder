@@ -26,13 +26,13 @@ namespace muduo
 // should really belong to base/Types.h, but <memory> is not included there.
 
     template<typename T>
-    inline T *get_pointer(const std::shared_ptr<T> &ptr)
+    inline T *get_pointer (const std::shared_ptr<T> &ptr)
     {
         return ptr.get();
     }
 
     template<typename T>
-    inline T *get_pointer(const std::unique_ptr<T> &ptr)
+    inline T *get_pointer (const std::unique_ptr<T> &ptr)
     {
         return ptr.get();
     }
@@ -40,7 +40,7 @@ namespace muduo
 // Adapted from google-protobuf stubs/common.h
 // see License in muduo/base/Types.h
     template<typename To, typename From>
-    inline ::std::shared_ptr<To> down_pointer_cast(const ::std::shared_ptr<From> &f)
+    inline ::std::shared_ptr<To> down_pointer_cast (const ::std::shared_ptr<From> &f)
     {
         if (false)
         {
@@ -63,22 +63,22 @@ namespace muduo
         class TcpConnection;
 
         typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;
-        typedef std::function<void()> TimerCallback;
-        typedef std::function<void(const TcpConnectionPtr &)> ConnectionCallback;
-        typedef std::function<void(const TcpConnectionPtr &)> CloseCallback;
-        typedef std::function<void(const TcpConnectionPtr &)> WriteCompleteCallback;
-        typedef std::function<void(const TcpConnectionPtr &, size_t)> HighWaterMarkCallback;
+        typedef std::function<void ()> TimerCallback;
+        typedef std::function<void (const TcpConnectionPtr &)> ConnectionCallback;
+        typedef std::function<void (const TcpConnectionPtr &)> CloseCallback;
+        typedef std::function<void (const TcpConnectionPtr &)> WriteCompleteCallback;
+        typedef std::function<void (const TcpConnectionPtr &, size_t)> HighWaterMarkCallback;
 
 // the data has been read to (buf, len)
-        typedef std::function<void(const TcpConnectionPtr &,
-                                   Buffer *,
-                                   Timestamp)> MessageCallback;
+        typedef std::function<void (const TcpConnectionPtr &,
+                                    Buffer *,
+                                    Timestamp)> MessageCallback;
 
-        void defaultConnectionCallback(const TcpConnectionPtr &conn);
+        void defaultConnectionCallback (const TcpConnectionPtr &conn);
 
-        void defaultMessageCallback(const TcpConnectionPtr &conn,
-                                    Buffer *buffer,
-                                    Timestamp receiveTime);
+        void defaultMessageCallback (const TcpConnectionPtr &conn,
+                                     Buffer *buffer,
+                                     Timestamp receiveTime);
 
     }
 }

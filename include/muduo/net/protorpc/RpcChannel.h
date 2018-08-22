@@ -94,18 +94,18 @@ namespace muduo
         class RpcChannel : public ::google::protobuf::RpcChannel
         {
         public:
-            RpcChannel();
+            RpcChannel ();
 
-            explicit RpcChannel(const TcpConnectionPtr &conn);
+            explicit RpcChannel (const TcpConnectionPtr &conn);
 
-            ~RpcChannel();
+            ~RpcChannel ();
 
-            void setConnection(const TcpConnectionPtr &conn)
+            void setConnection (const TcpConnectionPtr &conn)
             {
                 conn_ = conn;
             }
 
-            void setServices(const std::map<std::string, ::google::protobuf::Service *> *services)
+            void setServices (const std::map<std::string, ::google::protobuf::Service *> *services)
             {
                 services_ = services;
             }
@@ -115,22 +115,22 @@ namespace muduo
             // are less strict in one important way:  the request and response objects
             // need not be of any specific class as long as their descriptors are
             // method->input_type() and method->output_type().
-            void CallMethod(const ::google::protobuf::MethodDescriptor *method,
-                            ::google::protobuf::RpcController *controller,
-                            const ::google::protobuf::Message *request,
-                            ::google::protobuf::Message *response,
-                            ::google::protobuf::Closure *done);
+            void CallMethod (const ::google::protobuf::MethodDescriptor *method,
+                             ::google::protobuf::RpcController *controller,
+                             const ::google::protobuf::Message *request,
+                             ::google::protobuf::Message *response,
+                             ::google::protobuf::Closure *done);
 
-            void onMessage(const TcpConnectionPtr &conn,
-                           Buffer *buf,
-                           Timestamp receiveTime);
+            void onMessage (const TcpConnectionPtr &conn,
+                            Buffer *buf,
+                            Timestamp receiveTime);
 
         private:
-            void onRpcMessage(const TcpConnectionPtr &conn,
-                              const RpcMessagePtr &messagePtr,
-                              Timestamp receiveTime);
+            void onRpcMessage (const TcpConnectionPtr &conn,
+                               const RpcMessagePtr &messagePtr,
+                               Timestamp receiveTime);
 
-            void doneCallback(::google::protobuf::Message *response, int64_t id);
+            void doneCallback (::google::protobuf::Message *response, int64_t id);
 
             struct OutstandingCall
             {

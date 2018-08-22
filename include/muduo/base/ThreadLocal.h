@@ -18,17 +18,17 @@ namespace muduo
     class ThreadLocal : noncopyable
     {
     public:
-        ThreadLocal()
+        ThreadLocal ()
         {
             MCHECK(pthread_key_create(&pkey_, &ThreadLocal::destructor));
         }
 
-        ~ThreadLocal()
+        ~ThreadLocal ()
         {
             MCHECK(pthread_key_delete(pkey_));
         }
 
-        T &value()
+        T &value ()
         {
             T *perThreadValue = static_cast<T *>(pthread_getspecific(pkey_));
             if (! perThreadValue)
@@ -42,7 +42,7 @@ namespace muduo
 
     private:
 
-        static void destructor(void *x)
+        static void destructor (void *x)
         {
             T *obj = static_cast<T *>(x);
             typedef char T_must_be_complete_type[sizeof(T) == 0 ? - 1 : 1];

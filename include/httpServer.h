@@ -31,18 +31,18 @@ public:
     /// \brief
     /// \param port
     /// \param numThreads
-    httpServer(int port, int numThreads);
+    httpServer (int port, int numThreads);
 
     /// \brief
-    void start();
+    void start ();
 
-    httpServer();
+    httpServer ();
 
 private:
     /// \brief 1234
     /// \param req 45
     /// \param resp
-    void onRequest(const muduo::net::HttpRequest &req, muduo::net::HttpResponse *resp);
+    void onRequest (const muduo::net::HttpRequest &req, muduo::net::HttpResponse *resp);
 
 protected:
 

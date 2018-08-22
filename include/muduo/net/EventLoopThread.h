@@ -25,17 +25,17 @@ namespace muduo
         class EventLoopThread : noncopyable
         {
         public:
-            typedef std::function<void(EventLoop *)> ThreadInitCallback;
+            typedef std::function<void (EventLoop *)> ThreadInitCallback;
 
-            EventLoopThread(const ThreadInitCallback &cb = ThreadInitCallback(),
-                            const string &name = string());
+            EventLoopThread (const ThreadInitCallback &cb = ThreadInitCallback(),
+                             const string &name = string());
 
-            ~EventLoopThread();
+            ~EventLoopThread ();
 
-            EventLoop *startLoop();
+            EventLoop *startLoop ();
 
         private:
-            void threadFunc();
+            void threadFunc ();
 
             EventLoop *loop_;
             bool exiting_;

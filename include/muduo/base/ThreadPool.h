@@ -20,34 +20,34 @@ namespace muduo
     class ThreadPool : noncopyable
     {
     public:
-        typedef std::function<void()> Task;
+        typedef std::function<void ()> Task;
 
-        explicit ThreadPool(const string &nameArg = string("ThreadPool"));
+        explicit ThreadPool (const string &nameArg = string("ThreadPool"));
 
-        ~ThreadPool();
+        ~ThreadPool ();
 
         // Must be called before start().
-        void setMaxQueueSize(int maxSize) { maxQueueSize_ = maxSize; }
+        void setMaxQueueSize (int maxSize) { maxQueueSize_ = maxSize; }
 
-        void setThreadInitCallback(const Task &cb) { threadInitCallback_ = cb; }
+        void setThreadInitCallback (const Task &cb) { threadInitCallback_ = cb; }
 
-        void start(int numThreads);
+        void start (int numThreads);
 
-        void stop();
+        void stop ();
 
-        const string &name() const { return name_; }
+        const string &name () const { return name_; }
 
-        size_t queueSize() const;
+        size_t queueSize () const;
 
         // Could block if maxQueueSize > 0
-        void run(Task f);
+        void run (Task f);
 
     private:
-        bool isFull() const;
+        bool isFull () const;
 
-        void runInThread();
+        void runInThread ();
 
-        Task take();
+        Task take ();
 
         mutable MutexLock mutex_;
         Condition notEmpty_;

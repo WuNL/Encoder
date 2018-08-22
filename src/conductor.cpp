@@ -13,9 +13,8 @@ const initParamsRet conductor::initEncoder (initParams &p)
     int index = findEncoderByName(p.encoder_name);
     if (index != - 1)
     {
-        //TODO 条件变量，等待初始化完成后再做析构
         encoderVec_[index]->waitForInitFinish();
-        std::cout << "waitForInitFinish done" << std::endl;
+        std::cout << "initEncoder waitForInitFinish done" << std::endl;
 //        encoderVec_[index]->stop();
         encoderVec_.erase(encoderVec_.begin() + index);
 
@@ -49,7 +48,7 @@ int conductor::findEncoderByName (std::string &name)
 {
     for (int i = 0; i < encoderVec_.size(); ++ i)
     {
-        //std::cout << name << "-----------" << encoderVec_[i]->getName() << std::endl;
+        std::cout << "encoderVec name:" << encoderVec_[i]->getName() << std::endl;
         if (encoderVec_[i]->getName() == name)
             return i;
     }
@@ -59,3 +58,35 @@ int conductor::findEncoderByName (std::string &name)
 conductor::conductor () : errHandleCallback_(nullptr),
                           notifyCloseCallback_(nullptr),
                           InitDoneCallback_(nullptr) {}
+
+const bool conductor::destroyEncoder (destroyParams &p)
+{
+    int index = findEncoderByName(p.encoder_name);
+    if (- 1 != index)
+    {
+        encoderVec_[index]->waitForInitFinish();
+        std::cout << "destroyEncoder waitForInitFinish done" << std::endl;
+        encoderVec_.erase(encoderVec_.begin() + index);
+    } else
+    {
+        std::cout << "destroyEncoder not find encoder" << std::endl;
+    }
+    std::cout << "destroyEncoder finish" << std::endl;
+    return true;
+}
+
+const bool conductor::updateBitrate (initParams &p)
+{
+    int index = findEncoderByName(p.encoder_name);
+    if (- 1 != index)
+    {
+        encoderVec_[index]->waitForInitFinish();
+        std::cout << "updateBitrate waitForInitFinish done" << std::endl;
+        encoderVec_[index]->updateBitrate(p.bitrate);
+    } else
+    {
+        std::cout << "updateBitrate not find encoder" << std::endl;
+    }
+    std::cout << "updateBitrate finish" << std::endl;
+    return true;
+}

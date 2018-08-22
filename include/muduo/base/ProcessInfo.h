@@ -22,59 +22,59 @@ namespace muduo
 
     namespace ProcessInfo
     {
-        pid_t pid();
+        pid_t pid ();
 
-        string pidString();
+        string pidString ();
 
-        uid_t uid();
+        uid_t uid ();
 
-        string username();
+        string username ();
 
-        uid_t euid();
+        uid_t euid ();
 
-        Timestamp startTime();
+        Timestamp startTime ();
 
-        int clockTicksPerSecond();
+        int clockTicksPerSecond ();
 
-        int pageSize();
+        int pageSize ();
 
-        bool isDebugBuild();  // constexpr
+        bool isDebugBuild ();  // constexpr
 
-        string hostname();
+        string hostname ();
 
-        string procname();
+        string procname ();
 
-        StringPiece procname(const string &stat);
+        StringPiece procname (const string &stat);
 
         /// read /proc/self/status
-        string procStatus();
+        string procStatus ();
 
         /// read /proc/self/stat
-        string procStat();
+        string procStat ();
 
         /// read /proc/self/task/tid/stat
-        string threadStat();
+        string threadStat ();
 
         /// readlink /proc/self/exe
-        string exePath();
+        string exePath ();
 
-        int openedFiles();
+        int openedFiles ();
 
-        int maxOpenFiles();
+        int maxOpenFiles ();
 
         struct CpuTime
         {
             double userSeconds;
             double systemSeconds;
 
-            CpuTime() : userSeconds(0.0), systemSeconds(0.0) {}
+            CpuTime () : userSeconds(0.0), systemSeconds(0.0) {}
         };
 
-        CpuTime cpuTime();
+        CpuTime cpuTime ();
 
-        int numThreads();
+        int numThreads ();
 
-        std::vector<pid_t> threads();
+        std::vector<pid_t> threads ();
     }
 
 }

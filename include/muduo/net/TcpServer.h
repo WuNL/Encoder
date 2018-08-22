@@ -35,7 +35,7 @@ namespace muduo
         class TcpServer : noncopyable
         {
         public:
-            typedef std::function<void(EventLoop *)> ThreadInitCallback;
+            typedef std::function<void (EventLoop *)> ThreadInitCallback;
             enum Option
             {
                 kNoReusePort,
@@ -43,18 +43,18 @@ namespace muduo
             };
 
             //TcpServer(EventLoop* loop, const InetAddress& listenAddr);
-            TcpServer(EventLoop *loop,
-                      const InetAddress &listenAddr,
-                      const string &nameArg,
-                      Option option = kNoReusePort);
+            TcpServer (EventLoop *loop,
+                       const InetAddress &listenAddr,
+                       const string &nameArg,
+                       Option option = kNoReusePort);
 
-            ~TcpServer();  // force out-line dtor, for std::unique_ptr members.
+            ~TcpServer ();  // force out-line dtor, for std::unique_ptr members.
 
-            const string &ipPort() const { return ipPort_; }
+            const string &ipPort () const { return ipPort_; }
 
-            const string &name() const { return name_; }
+            const string &name () const { return name_; }
 
-            EventLoop *getLoop() const { return loop_; }
+            EventLoop *getLoop () const { return loop_; }
 
             /// Set the number of threads for handling input.
             ///
@@ -66,40 +66,40 @@ namespace muduo
             /// - 1 means all I/O in another thread.
             /// - N means a thread pool with N threads, new connections
             ///   are assigned on a round-robin basis.
-            void setThreadNum(int numThreads);
+            void setThreadNum (int numThreads);
 
-            void setThreadInitCallback(const ThreadInitCallback &cb) { threadInitCallback_ = cb; }
+            void setThreadInitCallback (const ThreadInitCallback &cb) { threadInitCallback_ = cb; }
 
             /// valid after calling start()
-            std::shared_ptr<EventLoopThreadPool> threadPool() { return threadPool_; }
+            std::shared_ptr<EventLoopThreadPool> threadPool () { return threadPool_; }
 
             /// Starts the server if it's not listenning.
             ///
             /// It's harmless to call it multiple times.
             /// Thread safe.
-            void start();
+            void start ();
 
             /// Set connection callback.
             /// Not thread safe.
-            void setConnectionCallback(const ConnectionCallback &cb) { connectionCallback_ = cb; }
+            void setConnectionCallback (const ConnectionCallback &cb) { connectionCallback_ = cb; }
 
             /// Set message callback.
             /// Not thread safe.
-            void setMessageCallback(const MessageCallback &cb) { messageCallback_ = cb; }
+            void setMessageCallback (const MessageCallback &cb) { messageCallback_ = cb; }
 
             /// Set write complete callback.
             /// Not thread safe.
-            void setWriteCompleteCallback(const WriteCompleteCallback &cb) { writeCompleteCallback_ = cb; }
+            void setWriteCompleteCallback (const WriteCompleteCallback &cb) { writeCompleteCallback_ = cb; }
 
         private:
             /// Not thread safe, but in loop
-            void newConnection(int sockfd, const InetAddress &peerAddr);
+            void newConnection (int sockfd, const InetAddress &peerAddr);
 
             /// Thread safe.
-            void removeConnection(const TcpConnectionPtr &conn);
+            void removeConnection (const TcpConnectionPtr &conn);
 
             /// Not thread safe, but in loop
-            void removeConnectionInLoop(const TcpConnectionPtr &conn);
+            void removeConnectionInLoop (const TcpConnectionPtr &conn);
 
             typedef std::map<string, TcpConnectionPtr> ConnectionMap;
 

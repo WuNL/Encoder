@@ -18,9 +18,9 @@ namespace muduo
         extern __thread int t_tidStringLength;
         extern __thread const char *t_threadName;
 
-        void cacheTid();
+        void cacheTid ();
 
-        inline int tid()
+        inline int tid ()
         {
             if (__builtin_expect(t_cachedTid == 0, 0))
             {
@@ -29,24 +29,24 @@ namespace muduo
             return t_cachedTid;
         }
 
-        inline const char *tidString() // for logging
+        inline const char *tidString () // for logging
         {
             return t_tidString;
         }
 
-        inline int tidStringLength() // for logging
+        inline int tidStringLength () // for logging
         {
             return t_tidStringLength;
         }
 
-        inline const char *name()
+        inline const char *name ()
         {
             return t_threadName;
         }
 
-        bool isMainThread();
+        bool isMainThread ();
 
-        void sleepUsec(int64_t usec);
+        void sleepUsec (int64_t usec);
     }
 }
 

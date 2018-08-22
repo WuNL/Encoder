@@ -60,22 +60,28 @@ typedef struct InitParamsRet
     int out_shmID;
 } initParamsRet;
 
+typedef struct DestroyParams
+{
+    std::string encoder_name;
+    bool success;
+} destroyParams;
+
 class encoder : public boost::noncopyable
 {
 public:
-    typedef std::function<void()> ErrHandleCallback;
-    typedef std::function<void()> NotifyCloseCallback;
+    typedef std::function<void ()> ErrHandleCallback;
+    typedef std::function<void ()> NotifyCloseCallback;
 
     explicit encoder (initParams p);
 
-    virtual ~encoder();
+    virtual ~encoder ();
 
-    void setErrHandleCallback_(const ErrHandleCallback &errHandleCallback_)
+    void setErrHandleCallback_ (const ErrHandleCallback &errHandleCallback_)
     {
         encoder::errHandleCallback_ = errHandleCallback_;
     }
 
-    void setNotifyCloseCallback_(const NotifyCloseCallback &notifyCloseCallback_)
+    void setNotifyCloseCallback_ (const NotifyCloseCallback &notifyCloseCallback_)
     {
         encoder::notifyCloseCallback_ = notifyCloseCallback_;
     }
@@ -85,7 +91,7 @@ public:
         return encoder_name;
     }
 
-    bool started() const { return started_; }
+    bool started () const { return started_; }
 
     bool ifInitFinished () const { return initFinished; }
 
@@ -99,8 +105,6 @@ public:
 
             pthread_mutex_unlock(&count_mutex);
         }
-        std::cout << "waitForInitFinish" << std::endl;
-//        pthread_exit(NULL);
     }
 
     void stop ()
@@ -123,13 +127,15 @@ public:
 
     }
 
-    pid_t tid() const { return tid_; }
+    pid_t tid () const { return tid_; }
 
-    virtual void run() = 0;
+    virtual void run () = 0;
 
-    virtual int join() = 0; // return pthread_join()
+    virtual int join () = 0; // return pthread_join()
 
     virtual int initEncoder () {};
+
+    virtual int updateBitrate (int target_kbps) {};
 
     virtual int getRawId ()
     {

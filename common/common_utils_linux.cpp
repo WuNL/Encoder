@@ -21,8 +21,8 @@ Copyright(c) 2005-2014 Intel Corporation. All Rights Reserved.
  * Linux implementation of OS-specific utility functions
  */
 
-mfxStatus Initialize(mfxIMPL impl, mfxVersion ver, MFXVideoSession *pSession, mfxFrameAllocator *pmfxAllocator,
-                     bool bCreateSharedHandles)
+mfxStatus Initialize (mfxIMPL impl, mfxVersion ver, MFXVideoSession *pSession, mfxFrameAllocator *pmfxAllocator,
+                      bool bCreateSharedHandles)
 {
     mfxStatus sts = MFX_ERR_NONE;
 
@@ -57,17 +57,17 @@ mfxStatus Initialize(mfxIMPL impl, mfxVersion ver, MFXVideoSession *pSession, mf
     return sts;
 }
 
-void Release()
+void Release ()
 {
     CleanupVAEnvDRM();
 }
 
-void mfxGetTime(mfxTime *timestamp)
+void mfxGetTime (mfxTime *timestamp)
 {
     clock_gettime(CLOCK_REALTIME, timestamp);
 }
 
-double TimeDiffMsec(mfxTime tfinish, mfxTime tstart)
+double TimeDiffMsec (mfxTime tfinish, mfxTime tstart)
 {
     double result;
     long long elapsed_nsec = tfinish.tv_nsec - tstart.tv_nsec;
@@ -88,12 +88,12 @@ double TimeDiffMsec(mfxTime tfinish, mfxTime tstart)
     return result;
 }
 
-void ClearYUVSurfaceVMem(mfxMemId memId)
+void ClearYUVSurfaceVMem (mfxMemId memId)
 {
     ClearYUVSurfaceVAAPI(memId);
 }
 
-void ClearRGBSurfaceVMem(mfxMemId memId)
+void ClearRGBSurfaceVMem (mfxMemId memId)
 {
     ClearRGBSurfaceVAAPI(memId);
 }

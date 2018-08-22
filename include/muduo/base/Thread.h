@@ -20,28 +20,28 @@ namespace muduo
     class Thread : noncopyable
     {
     public:
-        typedef std::function<void()> ThreadFunc;
+        typedef std::function<void ()> ThreadFunc;
 
-        explicit Thread(ThreadFunc, const string &name = string());
+        explicit Thread (ThreadFunc, const string &name = string());
 
         // FIXME: make it movable in C++11
-        ~Thread();
+        ~Thread ();
 
-        void start();
+        void start ();
 
-        int join(); // return pthread_join()
+        int join (); // return pthread_join()
 
-        bool started() const { return started_; }
+        bool started () const { return started_; }
 
         // pthread_t pthreadId() const { return pthreadId_; }
-        pid_t tid() const { return tid_; }
+        pid_t tid () const { return tid_; }
 
-        const string &name() const { return name_; }
+        const string &name () const { return name_; }
 
-        static int numCreated() { return numCreated_.get(); }
+        static int numCreated () { return numCreated_.get(); }
 
     private:
-        void setDefaultName();
+        void setDefaultName ();
 
         bool started_;
         bool joined_;

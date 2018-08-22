@@ -36,7 +36,61 @@ int jsonParser (std::string &rawJson, initParams &params)
         params.v_gop = pt.get<int>("v_gop");
         params.packetMode = pt.get<int>("packetMode");
         params.framerate = 30;
-        params.bitrate = 4000;
+        params.bitrate = pt.get<int>("target_kbps");
+    }
+    catch (...)
+    {
+        printf("json parser error!\n");
+        return 1;
+    }
+
+
+}
+
+int jsonParserDestroy (std::string &rawJson, destroyParams &params)
+{
+    ptree pt;                       //define property_tree object
+    std::stringstream ss(rawJson);
+    try
+    {
+        read_json(ss, pt);          //parse json
+    } catch (ptree_error &e)
+    {
+        return 1;
+    }
+    try
+    {
+        params.encoder_name = pt.get<std::string>(
+                "encoder_name");// + "_" + pt.get<std::string>("v_width") + "_" + pt.get<std::string>("v_height");
+        params.success = true;
+    }
+    catch (...)
+    {
+        printf("json parser error!\n");
+        params.success = false;
+        return 1;
+    }
+
+
+}
+
+int jsonParserUpdateBitrate (std::string &rawJson, initParams &params)
+{
+    ptree pt;                       //define property_tree object
+    std::stringstream ss(rawJson);
+    try
+    {
+        read_json(ss, pt);          //parse json
+    } catch (ptree_error &e)
+    {
+        return 1;
+    }
+    try
+    {
+        params.encoder_name = pt.get<std::string>(
+                "encoder_name");// + "_" + pt.get<std::string>("v_width") + "_" + pt.get<std::string>("v_height");
+        params.bitrate = pt.get<int>("target_kbps");
+        return 0;
     }
     catch (...)
     {

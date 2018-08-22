@@ -33,13 +33,13 @@ Copyright(c) 2005-2014 Intel Corporation. All Rights Reserved.
 //     - Device must be active. Normally means a monitor has to be physically attached to device
 //     - Device must be enabled in BIOS. Required for the case when used together with a discrete graphics card
 //     - For switchable graphics solutions (mobile) make sure that Intel device is the active device
-mfxStatus CreateHWDevice(mfxSession session, mfxHDL *deviceHandle, HWND hWnd, bool bCreateSharedHandles = false);
+mfxStatus CreateHWDevice (mfxSession session, mfxHDL *deviceHandle, HWND hWnd, bool bCreateSharedHandles = false);
 
-void CleanupHWDevice();
+void CleanupHWDevice ();
 
-IDirect3DDevice9Ex *GetDevice();
+IDirect3DDevice9Ex *GetDevice ();
 
-void ClearYUVSurfaceD3D(mfxMemId memId);
+void ClearYUVSurfaceD3D (mfxMemId memId);
 
-void ClearRGBSurfaceD3D(mfxMemId memId);
+void ClearRGBSurfaceD3D (mfxMemId memId);
 

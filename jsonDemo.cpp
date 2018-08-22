@@ -7,7 +7,7 @@
 using namespace std;
 using namespace boost::property_tree;
 
-int main(int argc, const char *argv[])
+int main (int argc, const char *argv[])
 {
 //    std::string str_json0 = "{\"array\":[1,2,3],\"boolean\":true,\"null\":null,\"number\":123,\"object\":{\"a\":\"b\",\"c\":\"d\",\"e\":\"f\"},\"string\":\"Hello World\"}";
     std::string str_json = R"({"array":[1,2,3],"boolean":true,"null":null,"number":123,"object":{"a":"b","c":"d","e":"f"},"string":"Hello World"})";

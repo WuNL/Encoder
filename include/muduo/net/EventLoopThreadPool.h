@@ -31,28 +31,28 @@ namespace muduo
         class EventLoopThreadPool : noncopyable
         {
         public:
-            typedef std::function<void(EventLoop *)> ThreadInitCallback;
+            typedef std::function<void (EventLoop *)> ThreadInitCallback;
 
-            EventLoopThreadPool(EventLoop *baseLoop, const string &nameArg);
+            EventLoopThreadPool (EventLoop *baseLoop, const string &nameArg);
 
-            ~EventLoopThreadPool();
+            ~EventLoopThreadPool ();
 
-            void setThreadNum(int numThreads) { numThreads_ = numThreads; }
+            void setThreadNum (int numThreads) { numThreads_ = numThreads; }
 
-            void start(const ThreadInitCallback &cb = ThreadInitCallback());
+            void start (const ThreadInitCallback &cb = ThreadInitCallback());
 
             // valid after calling start()
             /// round-robin
-            EventLoop *getNextLoop();
+            EventLoop *getNextLoop ();
 
             /// with the same hash code, it will always return the same EventLoop
-            EventLoop *getLoopForHash(size_t hashCode);
+            EventLoop *getLoopForHash (size_t hashCode);
 
-            std::vector<EventLoop *> getAllLoops();
+            std::vector<EventLoop *> getAllLoops ();
 
-            bool started() const { return started_; }
+            bool started () const { return started_; }
 
-            const string &name() const { return name_; }
+            const string &name () const { return name_; }
 
         private:
 

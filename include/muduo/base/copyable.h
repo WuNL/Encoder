@@ -10,9 +10,9 @@ namespace muduo
     class copyable
     {
     protected:
-        copyable() = default;
+        copyable () = default;
 
-        ~copyable() = default;
+        ~copyable () = default;
     };
 
 };

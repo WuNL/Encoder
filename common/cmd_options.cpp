@@ -16,7 +16,7 @@ Copyright(c) 2005-2014 Intel Corporation. All Rights Reserved.
 static const char *version =
         "Intel(r) Media SDK Tutorials " MSDK_TUTORIALS_VERSION;
 
-void PrintHelp(CmdOptions *cmd_options)
+void PrintHelp (CmdOptions *cmd_options)
 {
     const char *program = cmd_options->ctx.program;
 
@@ -62,7 +62,7 @@ void PrintHelp(CmdOptions *cmd_options)
     }
 }
 
-void ParseOptions(int argc, char **argv, CmdOptions *cmd_options)
+void ParseOptions (int argc, char **argv, CmdOptions *cmd_options)
 {
     int i;
 

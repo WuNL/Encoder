@@ -18,17 +18,19 @@
 class h264Encoder : public encoder
 {
 public:
-    virtual void run() override;
+    virtual void run () override;
 
     explicit h264Encoder (initParams p);
 
-    virtual int join() override;
+    virtual int join () override;
 
     virtual int initEncoder () override;
 
     virtual ~h264Encoder ();
 
     void getDataAndSetMfxBSLengthZero (coded_video_buffer &codeced);
+
+    virtual int updateBitrate (int target_kbps) override;
 
 private:
     int encodeBuffer (void *in, void *out) override {}
@@ -76,6 +78,7 @@ private:
 
     bool useVPP;
     bool insertIDR;
+    bool updateBitrate_;
 };
 
 

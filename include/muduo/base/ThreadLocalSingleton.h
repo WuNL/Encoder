@@ -19,7 +19,7 @@ namespace muduo
     {
     public:
 
-        static T &instance()
+        static T &instance ()
         {
             if (! t_value_)
             {
@@ -29,17 +29,17 @@ namespace muduo
             return *t_value_;
         }
 
-        static T *pointer()
+        static T *pointer ()
         {
             return t_value_;
         }
 
     private:
-        ThreadLocalSingleton();
+        ThreadLocalSingleton ();
 
-        ~ThreadLocalSingleton();
+        ~ThreadLocalSingleton ();
 
-        static void destructor(void *obj)
+        static void destructor (void *obj)
         {
             assert(obj == t_value_);
             typedef char T_must_be_complete_type[sizeof(T) == 0 ? - 1 : 1];
@@ -52,17 +52,17 @@ namespace muduo
         class Deleter
         {
         public:
-            Deleter()
+            Deleter ()
             {
                 pthread_key_create(&pkey_, &ThreadLocalSingleton::destructor);
             }
 
-            ~Deleter()
+            ~Deleter ()
             {
                 pthread_key_delete(pkey_);
             }
 
-            void set(T *newObj)
+            void set (T *newObj)
             {
                 assert(pthread_getspecific(pkey_) == NULL);
                 pthread_setspecific(pkey_, newObj);

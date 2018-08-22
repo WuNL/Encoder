@@ -26,28 +26,28 @@ typedef struct _oclBuffers
 class OCLProcess
 {
 public:
-    OCLProcess();
+    OCLProcess ();
 
-    ~OCLProcess();
+    ~OCLProcess ();
 
     // Create and setup components required for OpenCL processing
-    cl_int OCLInit(IDirect3DDevice9Ex *pD3DDevice);
+    cl_int OCLInit (IDirect3DDevice9Ex *pD3DDevice);
 
     // Setup shared OpenCL buffers
-    cl_int OCLPrepare(int width,
-                      int height,
-                      mfxMemId *midsIn,
-                      mfxU16 numSurfacesIn,
-                      mfxMemId *midsOut,
-                      mfxU16 numSurfacesOut);
+    cl_int OCLPrepare (int width,
+                       int height,
+                       mfxMemId *midsIn,
+                       mfxU16 numSurfacesIn,
+                       mfxMemId *midsOut,
+                       mfxU16 numSurfacesOut);
 
     // Process a surface using OpenCL kernel
-    cl_int OCLProcessSurface(int midIdxIn,
-                             int midIdxOut,
-                             cl_event *pclEventDone = NULL);
+    cl_int OCLProcessSurface (int midIdxIn,
+                              int midIdxOut,
+                              cl_event *pclEventDone = NULL);
 
     // Release OpenCL resources
-    void OCLRelease();
+    void OCLRelease ();
 
 protected:
     IDirect3DDevice9Ex *m_pD3DDevice;

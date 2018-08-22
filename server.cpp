@@ -49,7 +49,7 @@ void initDone ()
 
 // Return a reasonable mime type based on the extension of a file.
 boost::beast::string_view
-mime_type(boost::beast::string_view path)
+mime_type (boost::beast::string_view path)
 {
     using boost::beast::iequals;
     auto const ext = [&path]
@@ -86,7 +86,7 @@ mime_type(boost::beast::string_view path)
 // Append an HTTP rel-path to a local filesystem path.
 // The returned path is normalized for the platform.
 std::string
-path_cat(
+path_cat (
         boost::beast::string_view base,
         boost::beast::string_view path)
 {
@@ -118,14 +118,14 @@ template<
         class Body, class Allocator,
         class Send>
 void
-handle_request(
+handle_request (
         boost::beast::string_view doc_root,
         http::request<Body, http::basic_fields<Allocator>> &&req,
         Send &&send)
 {
     // Returns a bad request response
     auto const bad_request =
-            [&req](boost::beast::string_view why)
+            [&req] (boost::beast::string_view why)
             {
                 http::response<http::string_body> res{http::status::bad_request, req.version()};
                 res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
@@ -138,7 +138,7 @@ handle_request(
 
     // Returns a not found response
     auto const not_found =
-            [&req](boost::beast::string_view target)
+            [&req] (boost::beast::string_view target)
             {
                 http::response<http::string_body> res{http::status::not_found, req.version()};
                 res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
@@ -151,7 +151,7 @@ handle_request(
 
     // Returns a server error response
     auto const server_error =
-            [&req](boost::beast::string_view what)
+            [&req] (boost::beast::string_view what)
             {
                 http::response<http::string_body> res{http::status::internal_server_error, req.version()};
                 res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
@@ -182,7 +182,8 @@ handle_request(
 
     if (! req.target().compare("/InitEncoder/"))
     {
-        std::cout << "--------------" << req.body() << std::endl;
+        std::cout << "receive request: InitEncoder" << std::endl;
+        std::cout << "InitEncoder body content:" << req.body() << std::endl;
         initParams p;
         jsonParser(req.body(), p);
 
@@ -215,18 +216,69 @@ handle_request(
             res.prepare_payload();
             return send(std::move(res));
         }
-
-
     }
+
 
     if (! req.target().compare("/UpdateIFrame/"))
     {
         std::cout << "receive request: UpdateIFrame" << std::endl;
     }
 
-    if (! req.target().compare("/CloseEncoder/"))
+    if (! req.target().compare("/UpdateBitrate/"))
     {
-        std::cout << "receive request: CloseEncoder" << std::endl;
+        std::cout << "receive request: UpdateBitrate" << std::endl;
+        std::cout << "UpdateBitrate body content:" << req.body() << std::endl;
+
+        initParams p;
+        if (! jsonParserUpdateBitrate(req.body(), p))
+        {
+            if (g_conductor.updateBitrate(p))
+            {
+                http::response<http::string_body> res{http::status::ok, req.version()};
+                res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+                res.set(http::field::content_type, "text/html");
+                res.keep_alive(req.keep_alive());
+
+                return send(std::move(res));
+            } else
+            {
+                return send(server_error("server error"));
+            }
+        } else
+        {
+            return send(server_error("server error"));
+        }
+
+    }
+
+    if (! req.target().compare("/DestroyEncoder/"))
+    {
+        std::cout << "receive request: DestroyEncoder" << std::endl;
+        std::cout << "DestroyEncoder body content:" << req.body() << std::endl;
+        destroyParams p;
+        jsonParserDestroy(req.body(), p);
+        if (p.success)
+        {
+            //destroy success
+            if (g_conductor.destroyEncoder(p))
+            {
+                http::response<http::string_body> res{http::status::ok, req.version()};
+                res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+                res.set(http::field::content_type, "text/html");
+                res.keep_alive(req.keep_alive());
+
+                return send(std::move(res));
+                std::cout << "after DestroyEncoder, the vector size is :" << g_conductor.getSize() << std::endl;
+            }
+                //destroy fail
+            else
+            {
+                return send(server_error("server error"));
+            }
+        } else
+        {
+            return send(server_error("server error"));
+        }
     }
 
     // Attempt to open the file
@@ -272,7 +324,7 @@ handle_request(
 
 // Report a failure
 void
-fail(boost::system::error_code ec, char const *what)
+fail (boost::system::error_code ec, char const *what)
 {
     std::cerr << what << ": " << ec.message() << "\n";
 }
@@ -290,7 +342,7 @@ class websocket_session : public std::enable_shared_from_this<websocket_session>
 public:
     // Take ownership of the socket
     explicit
-    websocket_session(tcp::socket socket)
+    websocket_session (tcp::socket socket)
             : ws_(std::move(socket)), strand_(ws_.get_executor()), timer_(ws_.get_executor().context(),
                                                                           (std::chrono::steady_clock::time_point::max) ())
     {
@@ -299,7 +351,7 @@ public:
     // Start the asynchronous operation
     template<class Body, class Allocator>
     void
-    do_accept(http::request<Body, http::basic_fields<Allocator>> req)
+    do_accept (http::request<Body, http::basic_fields<Allocator>> req)
     {
         // Set the control callback. This will be called
         // on every incoming ping, pong, and close frame.
@@ -329,7 +381,7 @@ public:
     }
 
     void
-    on_accept(boost::system::error_code ec)
+    on_accept (boost::system::error_code ec)
     {
         // Happens when the timer closes the socket
         if (ec == boost::asio::error::operation_aborted)
@@ -344,7 +396,7 @@ public:
 
     // Called when the timer expires.
     void
-    on_timer(boost::system::error_code ec)
+    on_timer (boost::system::error_code ec)
     {
         if (ec && ec != boost::asio::error::operation_aborted)
             return fail(ec, "timer");
@@ -396,7 +448,7 @@ public:
 
     // Called to indicate activity from the remote peer
     void
-    activity()
+    activity ()
     {
         // Note that the connection is alive
         ping_state_ = 0;
@@ -407,7 +459,7 @@ public:
 
     // Called after a ping is sent.
     void
-    on_ping(boost::system::error_code ec)
+    on_ping (boost::system::error_code ec)
     {
         // Happens when the timer closes the socket
         if (ec == boost::asio::error::operation_aborted)
@@ -430,7 +482,7 @@ public:
     }
 
     void
-    on_control_callback(
+    on_control_callback (
             websocket::frame_type kind,
             boost::beast::string_view payload)
     {
@@ -441,7 +493,7 @@ public:
     }
 
     void
-    do_read()
+    do_read ()
     {
         // Read a message into our buffer
         ws_.async_read(
@@ -456,7 +508,7 @@ public:
     }
 
     void
-    on_read(
+    on_read (
             boost::system::error_code ec,
             std::size_t bytes_transferred)
     {
@@ -490,7 +542,7 @@ public:
     }
 
     void
-    on_write(
+    on_write (
             boost::system::error_code ec,
             std::size_t bytes_transferred)
     {
@@ -526,9 +578,9 @@ class http_session : public std::enable_shared_from_this<http_session>
         // The type-erased, saved work item
         struct work
         {
-            virtual ~work() = default;
+            virtual ~work () = default;
 
-            virtual void operator()() = 0;
+            virtual void operator() () = 0;
         };
 
         http_session &self_;
@@ -536,7 +588,7 @@ class http_session : public std::enable_shared_from_this<http_session>
 
     public:
         explicit
-        queue(http_session &self)
+        queue (http_session &self)
                 : self_(self)
         {
             static_assert(limit > 0, "queue limit must be positive");
@@ -545,7 +597,7 @@ class http_session : public std::enable_shared_from_this<http_session>
 
         // Returns `true` if we have reached the queue limit
         bool
-        is_full() const
+        is_full () const
         {
             return items_.size() >= limit;
         }
@@ -553,7 +605,7 @@ class http_session : public std::enable_shared_from_this<http_session>
         // Called when a message finishes sending
         // Returns `true` if the caller should initiate a read
         bool
-        on_write()
+        on_write ()
         {
             BOOST_ASSERT(! items_.empty());
             auto const was_full = is_full();
@@ -566,7 +618,7 @@ class http_session : public std::enable_shared_from_this<http_session>
         // Called by the HTTP handler to send a response.
         template<bool isRequest, class Body, class Fields>
         void
-        operator()(http::message<isRequest, Body, Fields> &&msg)
+        operator() (http::message<isRequest, Body, Fields> &&msg)
         {
             // This holds a work item
             struct work_impl : work
@@ -574,7 +626,7 @@ class http_session : public std::enable_shared_from_this<http_session>
                 http_session &self_;
                 http::message<isRequest, Body, Fields> msg_;
 
-                work_impl(
+                work_impl (
                         http_session &self,
                         http::message<isRequest, Body, Fields> &&msg)
                         : self_(self), msg_(std::move(msg))
@@ -582,7 +634,7 @@ class http_session : public std::enable_shared_from_this<http_session>
                 }
 
                 void
-                operator()()
+                operator() ()
                 {
                     http::async_write(
                             self_.socket_,
@@ -619,7 +671,7 @@ class http_session : public std::enable_shared_from_this<http_session>
 public:
     // Take ownership of the socket
     explicit
-    http_session(
+    http_session (
             tcp::socket socket,
             std::string const &doc_root)
             : socket_(std::move(socket)), strand_(socket_.get_executor()), timer_(socket_.get_executor().context(),
@@ -630,7 +682,7 @@ public:
 
     // Start the asynchronous operation
     void
-    run()
+    run ()
     {
         // Run the timer. The timer is operated
         // continuously, this simplifies the code.
@@ -640,7 +692,7 @@ public:
     }
 
     void
-    do_read()
+    do_read ()
     {
         // Set the timer
         timer_.expires_after(std::chrono::seconds(15));
@@ -661,7 +713,7 @@ public:
 
     // Called when the timer expires.
     void
-    on_timer(boost::system::error_code ec)
+    on_timer (boost::system::error_code ec)
     {
         if (ec && ec != boost::asio::error::operation_aborted)
             return fail(ec, "timer");
@@ -687,7 +739,7 @@ public:
     }
 
     void
-    on_read(boost::system::error_code ec)
+    on_read (boost::system::error_code ec)
     {
         // Happens when the timer closes the socket
         if (ec == boost::asio::error::operation_aborted)
@@ -718,7 +770,7 @@ public:
     }
 
     void
-    on_write(boost::system::error_code ec, bool close)
+    on_write (boost::system::error_code ec, bool close)
     {
         // Happens when the timer closes the socket
         if (ec == boost::asio::error::operation_aborted)
@@ -743,7 +795,7 @@ public:
     }
 
     void
-    do_close()
+    do_close ()
     {
         // Send a TCP shutdown
         boost::system::error_code ec;
@@ -763,7 +815,7 @@ class listener : public std::enable_shared_from_this<listener>
     std::string const &doc_root_;
 
 public:
-    listener(
+    listener (
             boost::asio::io_context &ioc,
             tcp::endpoint endpoint,
             std::string const &doc_root)
@@ -807,7 +859,7 @@ public:
 
     // Start accepting incoming connections
     void
-    run()
+    run ()
     {
         if (! acceptor_.is_open())
             return;
@@ -815,7 +867,7 @@ public:
     }
 
     void
-    do_accept()
+    do_accept ()
     {
         acceptor_.async_accept(
                 socket_,
@@ -826,7 +878,7 @@ public:
     }
 
     void
-    on_accept(boost::system::error_code ec)
+    on_accept (boost::system::error_code ec)
     {
         if (ec)
         {
@@ -846,7 +898,7 @@ public:
 
 //------------------------------------------------------------------------------
 
-int main(int argc, char *argv[])
+int main (int argc, char *argv[])
 {
     // Check command line arguments.
     if (argc != 5)
@@ -879,7 +931,7 @@ int main(int argc, char *argv[])
     // Capture SIGINT and SIGTERM to perform a clean shutdown
     boost::asio::signal_set signals(ioc, SIGINT, SIGTERM);
     signals.async_wait(
-            [&](boost::system::error_code const &, int)
+            [&] (boost::system::error_code const &, int)
             {
                 // Stop the `io_context`. This will cause `run()`
                 // to return immediately, eventually destroying the

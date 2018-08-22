@@ -43,7 +43,7 @@ const struct
 // DirectX functionality required to manage DX11 device and surfaces
 //
 
-IDXGIAdapter *GetIntelDeviceAdapterHandle(mfxSession session)
+IDXGIAdapter *GetIntelDeviceAdapterHandle (mfxSession session)
 {
     mfxU32 adapterNum = 0;
     mfxIMPL impl;
@@ -73,7 +73,7 @@ IDXGIAdapter *GetIntelDeviceAdapterHandle(mfxSession session)
 }
 
 // Create HW device context
-mfxStatus CreateHWDevice(mfxSession session, mfxHDL *deviceHandle, HWND hWnd, bool bCreateSharedHandles)
+mfxStatus CreateHWDevice (mfxSession session, mfxHDL *deviceHandle, HWND hWnd, bool bCreateSharedHandles)
 {
     //Note: not using bCreateSharedHandles for DX11 -- for API consistency only
     hWnd; // Window handle not required by DX11 since we do not showcase rendering.
@@ -121,29 +121,29 @@ mfxStatus CreateHWDevice(mfxSession session, mfxHDL *deviceHandle, HWND hWnd, bo
 }
 
 
-void SetHWDeviceContext(CComPtr <ID3D11DeviceContext> devCtx)
+void SetHWDeviceContext (CComPtr <ID3D11DeviceContext> devCtx)
 {
     g_pD3D11Ctx = devCtx;
     devCtx->GetDevice(&g_pD3D11Device);
 }
 
 // Free HW device context
-void CleanupHWDevice()
+void CleanupHWDevice ()
 {
     g_pAdapter->Release();
 }
 
-CComPtr <ID3D11DeviceContext> GetHWDeviceContext()
+CComPtr <ID3D11DeviceContext> GetHWDeviceContext ()
 {
     return g_pD3D11Ctx;
 }
 
-void ClearYUVSurfaceD3D(mfxMemId memId)
+void ClearYUVSurfaceD3D (mfxMemId memId)
 {
     // TBD
 }
 
-void ClearRGBSurfaceD3D(mfxMemId memId)
+void ClearRGBSurfaceD3D (mfxMemId memId)
 {
     // TBD
 }
@@ -151,7 +151,7 @@ void ClearRGBSurfaceD3D(mfxMemId memId)
 //
 // Intel Media SDK memory allocator entrypoints....
 //
-mfxStatus _simple_alloc(mfxFrameAllocRequest *request, mfxFrameAllocResponse *response)
+mfxStatus _simple_alloc (mfxFrameAllocRequest *request, mfxFrameAllocResponse *response)
 {
     HRESULT hRes;
 
@@ -283,7 +283,7 @@ mfxStatus _simple_alloc(mfxFrameAllocRequest *request, mfxFrameAllocResponse *re
     return MFX_ERR_NONE;
 }
 
-mfxStatus simple_alloc(mfxHDL pthis, mfxFrameAllocRequest *request, mfxFrameAllocResponse *response)
+mfxStatus simple_alloc (mfxHDL pthis, mfxFrameAllocRequest *request, mfxFrameAllocResponse *response)
 {
     mfxStatus sts = MFX_ERR_NONE;
 
@@ -323,7 +323,7 @@ mfxStatus simple_alloc(mfxHDL pthis, mfxFrameAllocRequest *request, mfxFrameAllo
     return sts;
 }
 
-mfxStatus simple_lock(mfxHDL pthis, mfxMemId mid, mfxFrameData *ptr)
+mfxStatus simple_lock (mfxHDL pthis, mfxMemId mid, mfxFrameData *ptr)
 {
     pthis; // To suppress warning for this unused parameter
 
@@ -396,7 +396,7 @@ mfxStatus simple_lock(mfxHDL pthis, mfxMemId mid, mfxFrameData *ptr)
     return MFX_ERR_NONE;
 }
 
-mfxStatus simple_unlock(mfxHDL pthis, mfxMemId mid, mfxFrameData *ptr)
+mfxStatus simple_unlock (mfxHDL pthis, mfxMemId mid, mfxFrameData *ptr)
 {
     pthis; // To suppress warning for this unused parameter
 
@@ -425,7 +425,7 @@ mfxStatus simple_unlock(mfxHDL pthis, mfxMemId mid, mfxFrameData *ptr)
     return MFX_ERR_NONE;
 }
 
-mfxStatus simple_gethdl(mfxHDL pthis, mfxMemId mid, mfxHDL *handle)
+mfxStatus simple_gethdl (mfxHDL pthis, mfxMemId mid, mfxHDL *handle)
 {
     pthis; // To suppress warning for this unused parameter
 
@@ -442,7 +442,7 @@ mfxStatus simple_gethdl(mfxHDL pthis, mfxMemId mid, mfxHDL *handle)
 }
 
 
-mfxStatus _simple_free(mfxFrameAllocResponse *response)
+mfxStatus _simple_free (mfxFrameAllocResponse *response)
 {
     if (response->mids)
     {
@@ -469,7 +469,7 @@ mfxStatus _simple_free(mfxFrameAllocResponse *response)
     return MFX_ERR_NONE;
 }
 
-mfxStatus simple_free(mfxHDL pthis, mfxFrameAllocResponse *response)
+mfxStatus simple_free (mfxHDL pthis, mfxFrameAllocResponse *response)
 {
     if (NULL == response)
         return MFX_ERR_NULL_PTR;

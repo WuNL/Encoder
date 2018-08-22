@@ -35,7 +35,7 @@ EXT_DECLARE(clCreateFromDX9MediaSurfaceKHR);
 EXT_DECLARE(clEnqueueAcquireDX9MediaSurfacesKHR);
 EXT_DECLARE(clEnqueueReleaseDX9MediaSurfacesKHR);
 
-inline int InitDX9MediaFunctions(cl_platform_id platform) // get DX9 sharing functions
+inline int InitDX9MediaFunctions (cl_platform_id platform) // get DX9 sharing functions
 {
     bool res = true;
     EXT_INIT(platform, clGetDeviceIDsFromDX9MediaAdapterKHR);
@@ -46,16 +46,16 @@ inline int InitDX9MediaFunctions(cl_platform_id platform) // get DX9 sharing fun
 }
 
 
-OCLProcess::OCLProcess()
+OCLProcess::OCLProcess ()
         : m_pD3DDevice(NULL)
 {
 }
 
-OCLProcess::~OCLProcess()
+OCLProcess::~OCLProcess ()
 {
 }
 
-cl_int OCLProcess::OCLInit(IDirect3DDevice9Ex *pD3DDevice)
+cl_int OCLProcess::OCLInit (IDirect3DDevice9Ex *pD3DDevice)
 {
     m_pD3DDevice = pD3DDevice;
 
@@ -224,12 +224,12 @@ cl_int OCLProcess::OCLInit(IDirect3DDevice9Ex *pD3DDevice)
     return clSts;
 }
 
-cl_int OCLProcess::OCLPrepare(int width,
-                              int height,
-                              mfxMemId *midsIn,
-                              mfxU16 numSurfacesIn,
-                              mfxMemId *midsOut,
-                              mfxU16 numSurfacesOut)
+cl_int OCLProcess::OCLPrepare (int width,
+                               int height,
+                               mfxMemId *midsIn,
+                               mfxU16 numSurfacesIn,
+                               mfxMemId *midsOut,
+                               mfxU16 numSurfacesOut)
 {
     cl_int clSts = CL_SUCCESS;
     cl_dx9_surface_info_khr info;
@@ -298,9 +298,9 @@ cl_int OCLProcess::OCLPrepare(int width,
     return clSts;
 }
 
-cl_int OCLProcess::OCLProcessSurface(int midIdxIn,
-                                     int midIdxOut,
-                                     cl_event *pclEventDone)
+cl_int OCLProcess::OCLProcessSurface (int midIdxIn,
+                                      int midIdxOut,
+                                      cl_event *pclEventDone)
 {
     cl_int clSts = CL_SUCCESS;
 
@@ -354,7 +354,7 @@ cl_int OCLProcess::OCLProcessSurface(int midIdxIn,
     return clSts;
 }
 
-void OCLProcess::OCLRelease()
+void OCLProcess::OCLRelease ()
 {
     for (int i = 0; i < 2; i ++)
     {

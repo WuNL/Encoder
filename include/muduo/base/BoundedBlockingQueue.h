@@ -19,7 +19,7 @@ namespace muduo
     class BoundedBlockingQueue : noncopyable
     {
     public:
-        explicit BoundedBlockingQueue(int maxSize)
+        explicit BoundedBlockingQueue (int maxSize)
                 : mutex_(),
                   notEmpty_(mutex_),
                   notFull_(mutex_),
@@ -27,7 +27,7 @@ namespace muduo
         {
         }
 
-        void put(const T &x)
+        void put (const T &x)
         {
             MutexLockGuard lock(mutex_);
             while (queue_.full())
@@ -39,7 +39,7 @@ namespace muduo
             notEmpty_.notify();
         }
 
-        T take()
+        T take ()
         {
             MutexLockGuard lock(mutex_);
             while (queue_.empty())
@@ -53,25 +53,25 @@ namespace muduo
             return front;
         }
 
-        bool empty() const
+        bool empty () const
         {
             MutexLockGuard lock(mutex_);
             return queue_.empty();
         }
 
-        bool full() const
+        bool full () const
         {
             MutexLockGuard lock(mutex_);
             return queue_.full();
         }
 
-        size_t size() const
+        size_t size () const
         {
             MutexLockGuard lock(mutex_);
             return queue_.size();
         }
 
-        size_t capacity() const
+        size_t capacity () const
         {
             MutexLockGuard lock(mutex_);
             return queue_.capacity();

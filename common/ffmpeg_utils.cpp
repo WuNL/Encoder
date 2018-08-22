@@ -399,7 +399,7 @@ static bool encode_close_audio(muxControl* audioCtrl)
 }
 #endif
 
-mfxStatus openDemuxControl(demuxControl *ffmpegCtrl, const char *filename)
+mfxStatus openDemuxControl (demuxControl *ffmpegCtrl, const char *filename)
 {
     MSDK_CHECK_POINTER(ffmpegCtrl, MFX_ERR_NULL_PTR);
     MSDK_CHECK_POINTER(filename, MFX_ERR_NULL_PTR);
@@ -504,7 +504,7 @@ mfxStatus openDemuxControl(demuxControl *ffmpegCtrl, const char *filename)
     return MFX_ERR_NONE;
 }
 
-mfxStatus closeDemuxControl(demuxControl *ffmpegCtrl)
+mfxStatus closeDemuxControl (demuxControl *ffmpegCtrl)
 {
     av_bsf_free(&ffmpegCtrl->bsfCtx);
     avformat_close_input(&ffmpegCtrl->avfCtx);
@@ -516,7 +516,7 @@ mfxStatus closeDemuxControl(demuxControl *ffmpegCtrl)
     return MFX_ERR_NONE;
 }
 
-mfxStatus openMuxControl(muxControl *ffmpegCtrl, const char *filename)
+mfxStatus openMuxControl (muxControl *ffmpegCtrl, const char *filename)
 {
     MSDK_CHECK_POINTER(ffmpegCtrl, MFX_ERR_NULL_PTR);
     MSDK_CHECK_POINTER(filename, MFX_ERR_NULL_PTR);
@@ -632,7 +632,7 @@ mfxStatus openMuxControl(muxControl *ffmpegCtrl, const char *filename)
     return MFX_ERR_NONE;
 }
 
-mfxStatus closeMuxControl(muxControl *ffmpegCtrl)
+mfxStatus closeMuxControl (muxControl *ffmpegCtrl)
 {
     ffmpegCtrl->nProcessedFramesNum = 0;
 
@@ -662,7 +662,7 @@ mfxStatus closeMuxControl(muxControl *ffmpegCtrl)
     return MFX_ERR_NONE;
 }
 
-mfxStatus ffmpegWriteFrame(mfxBitstream *pMfxBitstream, muxControl *muxCtrl)
+mfxStatus ffmpegWriteFrame (mfxBitstream *pMfxBitstream, muxControl *muxCtrl)
 {
     MSDK_CHECK_POINTER(pMfxBitstream, MFX_ERR_NULL_PTR);
 
@@ -709,7 +709,7 @@ mfxStatus ffmpegWriteFrame(mfxBitstream *pMfxBitstream, muxControl *muxCtrl)
     return MFX_ERR_NONE;
 }
 
-mfxStatus ffmpegReadFrame(mfxBitstream *pBS, demuxControl *filterCtrl)
+mfxStatus ffmpegReadFrame (mfxBitstream *pBS, demuxControl *filterCtrl)
 {
     MSDK_CHECK_POINTER(pBS, MFX_ERR_NULL_PTR);
 
