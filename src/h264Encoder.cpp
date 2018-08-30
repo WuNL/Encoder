@@ -78,15 +78,15 @@ int h264Encoder::initEncoder ()
 
     mfxEncParams.mfx.CodecId = MFX_CODEC_AVC;
 
-//    mfxEncParams.mfx.GopOptFlag = MFX_GOP_STRICT;
-//    mfxEncParams.mfx.GopPicSize = (mfxU16) 120;
-//    mfxEncParams.mfx.IdrInterval = (mfxU16) 1;
-//    mfxEncParams.mfx.GopRefDist = (mfxU16) 1;
-//
-//
-//    mfxEncParams.mfx.GopRefDist = 1;
-//    mfxEncParams.AsyncDepth = 1;
-//    mfxEncParams.mfx.NumRefFrame = 1;
+    mfxEncParams.mfx.GopOptFlag = MFX_GOP_STRICT;
+    mfxEncParams.mfx.GopPicSize = (mfxU16) 120;
+    mfxEncParams.mfx.IdrInterval = (mfxU16) 1;
+    mfxEncParams.mfx.GopRefDist = (mfxU16) 1;
+
+
+    mfxEncParams.mfx.GopRefDist = 1;
+    mfxEncParams.AsyncDepth = 1;
+    mfxEncParams.mfx.NumRefFrame = 1;
 
     //取消每帧附带的sei。实际发现取消后容易花屏
     std::vector<mfxExtBuffer *> m_InitExtParams_ENC;
@@ -96,8 +96,8 @@ int h264Encoder::initEncoder ()
     pCodingOption->Header.BufferSz = sizeof(mfxExtCodingOption);
     pCodingOption->RefPicMarkRep = MFX_CODINGOPTION_OFF;
     pCodingOption->SingleSeiNalUnit = MFX_CODINGOPTION_OFF;
-    pCodingOption->NalHrdConformance = MFX_CODINGOPTION_OFF;
-    pCodingOption->VuiVclHrdParameters = MFX_CODINGOPTION_OFF;
+    pCodingOption->NalHrdConformance = MFX_CODINGOPTION_ON;
+    pCodingOption->VuiVclHrdParameters = MFX_CODINGOPTION_ON;
     pCodingOption->AUDelimiter = MFX_CODINGOPTION_OFF;
 
     mfxExtCodingOption2 *pCodingOption2 = new mfxExtCodingOption2;
@@ -128,8 +128,6 @@ int h264Encoder::initEncoder ()
 
     if (mfxEncParams.mfx.CodecId == MFX_CODEC_AVC)
     {
-//        mfxEncParams.mfx.BufferSizeInKB = 4800;
-//        mfxEncParams.mfx.InitialDelayInKB = 4800;
 //        MFX_TARGETUSAGE_BALANCED
 //        MFX_TARGETUSAGE_BEST_QUALITY
         mfxEncParams.mfx.TargetUsage = MFX_TARGETUSAGE_BALANCED;

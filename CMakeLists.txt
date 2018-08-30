@@ -25,7 +25,7 @@ link_libraries(libmuduo_base.a libmuduo_net.a libmuduo_http.a)
 
 option(USE_INTEL "option if use intel media sdk" ON)
 option(SAVE_RAW "option if save raw file" Off)
-option(SAVE_CODECED "option if save 264/265 file" Off)
+option(SAVE_CODECED "option if save 264/265 file" OFF)
 
 if (${USE_INTEL} STREQUAL "ON")
 
