@@ -43,7 +43,7 @@ encoder::encoder (initParams p) : errHandleCallback_(nullptr), notifyCloseCallba
 
     // 创建共享内存相关内容
     raw_video_fifo_ = shmfifo_init(raw_shm_id, sizeof(raw_video_buffer), 30);
-    std::cout << raw_video_fifo_->sem_mutex << std::endl;
+//    std::cout << raw_video_fifo_->sem_mutex << std::endl;
     raw_shm_id_local = raw_shm_id;
     raw_shm_id += 10;
     assert(raw_shm_id < 2000);

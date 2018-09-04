@@ -201,7 +201,6 @@ handle_request (
             sprintf(strbuf, R"({"encoder_name": "%s", "raw_shm_id": "%d", "codeced_shm_id": "%d"})",
                     ret.encoder_name.c_str(), ret.yuv_shmID, ret.out_shmID);
 
-
             res.body() = strbuf;
             res.prepare_payload();
             return send(std::move(res));

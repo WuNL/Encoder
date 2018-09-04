@@ -14,7 +14,7 @@ const initParamsRet conductor::initEncoder (initParams &p)
     if (index != - 1)
     {
         encoderVec_[index]->waitForInitFinish();
-        std::cout << "initEncoder waitForInitFinish done" << std::endl;
+//        std::cout << "initEncoder waitForInitFinish done" << std::endl;
 //        encoderVec_[index]->stop();
         encoderVec_.erase(encoderVec_.begin() + index);
 
@@ -48,7 +48,7 @@ int conductor::findEncoderByName (std::string &name)
 {
     for (int i = 0; i < encoderVec_.size(); ++ i)
     {
-        std::cout << "encoderVec name:" << encoderVec_[i]->getName() << std::endl;
+//        std::cout << "encoderVec name:" << encoderVec_[i]->getName() << std::endl;
         if (encoderVec_[i]->getName() == name)
             return i;
     }
@@ -65,7 +65,7 @@ const bool conductor::destroyEncoder (destroyParams &p)
     if (- 1 != index)
     {
         encoderVec_[index]->waitForInitFinish();
-        std::cout << "destroyEncoder waitForInitFinish done" << std::endl;
+//        std::cout << "destroyEncoder waitForInitFinish done" << std::endl;
         encoderVec_.erase(encoderVec_.begin() + index);
     } else
     {
@@ -81,7 +81,7 @@ const bool conductor::updateBitrate (initParams &p)
     if (- 1 != index)
     {
         encoderVec_[index]->waitForInitFinish();
-        std::cout << "updateBitrate waitForInitFinish done" << std::endl;
+//        std::cout << "updateBitrate waitForInitFinish done" << std::endl;
         encoderVec_[index]->updateBitrate(p.bitrate);
     } else
     {

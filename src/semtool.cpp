@@ -38,7 +38,7 @@ int getSemaphore (key_t semkey)
         }
     }
 
-    printf("semid: %d\n", semid);
+//    printf("semid: %d\n", semid);
 
     return semid;
 }
@@ -100,7 +100,7 @@ int sem_setval (int semid, int val)
     if (ret == - 1)
         ERR_EXIT("semctl");
 
-    printf("value updated...\n");
+//    printf("value updated...\n");
     return ret;
 }
 

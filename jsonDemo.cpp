@@ -30,6 +30,8 @@ int main (int argc, const char *argv[])
     root.add_child("object", object);
     root.put("string", "Hello World");
 
+    root.get<int>("number");
+
     //write_json("out.json", root);
     stringstream s;
     write_json(s, root, false);

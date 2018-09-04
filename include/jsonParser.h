@@ -29,14 +29,18 @@ int jsonParser (std::string &rawJson, initParams &params)
     try
     {
         params.encoder_name = pt.get<std::string>(
-                "encoder_name");// + "_" + pt.get<std::string>("v_width") + "_" + pt.get<std::string>("v_height");
-        params.codec = pt.get<std::string>("codec");
-        params.v_width = pt.get<int>("v_width");
-        params.v_height = pt.get<int>("v_height");
-        params.v_gop = pt.get<int>("v_gop");
-        params.packetMode = pt.get<int>("packetMode");
-        params.framerate = 30;
-        params.bitrate = pt.get<int>("target_kbps");
+                "encoder_name", "");// + "_" + pt.get<std::string>("v_width") + "_" + pt.get<std::string>("v_height");
+        params.codec = pt.get<std::string>("codec", "h264");
+        params.v_width = pt.get<int>("v_width", 640);
+        params.v_height = pt.get<int>("v_height", 480);
+        params.v_gop = pt.get<int>("v_gop", 300);
+        params.packetMode = pt.get<int>("packetMode", 0);
+        params.framerate = static_cast< int>(pt.get<float>("max_fps", 30));
+        params.bitrate = pt.get<int>("target_kbps", 3000);
+
+        if (params.encoder_name == std::string(""))
+            return 1;
+        return 0;
     }
     catch (...)
     {

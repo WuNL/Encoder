@@ -58,9 +58,7 @@ void h264Encoder::encodeBuffer ()
 
         shmfifo_put(coded_video_fifo_, &coded_video_buffer_);
     }
-    std::cout << "--------------test------------" << std::endl;
     pthread_cond_signal(&finish_threshold_cv);
-    std::cout << "--------------test1------------" << std::endl;
 
 }
 
@@ -90,7 +88,7 @@ int h264Encoder::initEncoder ()
 
     //取消每帧附带的sei。实际发现取消后容易花屏
     std::vector<mfxExtBuffer *> m_InitExtParams_ENC;
-    mfxExtCodingOption *pCodingOption = new mfxExtCodingOption;
+    auto *pCodingOption = new mfxExtCodingOption;
     MSDK_ZERO_MEMORY(*pCodingOption);
     pCodingOption->Header.BufferId = MFX_EXTBUFF_CODING_OPTION;
     pCodingOption->Header.BufferSz = sizeof(mfxExtCodingOption);
@@ -100,7 +98,7 @@ int h264Encoder::initEncoder ()
     pCodingOption->VuiVclHrdParameters = MFX_CODINGOPTION_ON;
     pCodingOption->AUDelimiter = MFX_CODINGOPTION_OFF;
 
-    mfxExtCodingOption2 *pCodingOption2 = new mfxExtCodingOption2;
+    auto *pCodingOption2 = new mfxExtCodingOption2;
     MSDK_ZERO_MEMORY(*pCodingOption2);
     pCodingOption2->Header.BufferId = MFX_EXTBUFF_CODING_OPTION2;
     pCodingOption2->Header.BufferSz = sizeof(mfxExtCodingOption2);
@@ -146,11 +144,11 @@ int h264Encoder::initEncoder ()
         mfxEncParams.mfx.FrameInfo.CropH = static_cast<mfxU16>(params.v_height);
         // Width must be a multiple of 16
         // Height must be a multiple of 16 in case of frame picture and a multiple of 32 in case of field picture
-        mfxEncParams.mfx.FrameInfo.Width = MSDK_ALIGN16(params.v_width);
+        mfxEncParams.mfx.FrameInfo.Width = static_cast<mfxU16>(params.v_width);
         mfxEncParams.mfx.FrameInfo.Height =
-                (MFX_PICSTRUCT_PROGRESSIVE == mfxEncParams.mfx.FrameInfo.PicStruct) ?
-                MSDK_ALIGN16(params.v_height) :
-                MSDK_ALIGN32(params.v_height);
+                static_cast<mfxU16>((MFX_PICSTRUCT_PROGRESSIVE == mfxEncParams.mfx.FrameInfo.PicStruct) ?
+                                    MSDK_ALIGN16(params.v_height) :
+                                    MSDK_ALIGN32(params.v_height));
 
         mfxEncParams.IOPattern = MFX_IOPATTERN_IN_SYSTEM_MEMORY;
     }
@@ -170,11 +168,11 @@ int h264Encoder::initEncoder ()
     VPPParams.vpp.In.FrameRateExtD = 1;
     // width must be a multiple of 16
     // height must be a multiple of 16 in case of frame picture and a multiple of 32 in case of field picture
-    VPPParams.vpp.In.Width = MSDK_ALIGN16(static_cast<mfxU16>(params.v_width));
+    VPPParams.vpp.In.Width = static_cast<mfxU16>(params.v_width);
     VPPParams.vpp.In.Height =
-            (MFX_PICSTRUCT_PROGRESSIVE == VPPParams.vpp.In.PicStruct) ?
-            MSDK_ALIGN16(params.v_height) :
-            MSDK_ALIGN32(params.v_height);
+            static_cast<mfxU16>((MFX_PICSTRUCT_PROGRESSIVE == VPPParams.vpp.In.PicStruct) ?
+                                MSDK_ALIGN16(params.v_height) :
+                                MSDK_ALIGN32(params.v_height));
     // Output data
     VPPParams.vpp.Out.FourCC = MFX_FOURCC_NV12;
     VPPParams.vpp.Out.ChromaFormat = MFX_CHROMAFORMAT_YUV420;
@@ -187,11 +185,11 @@ int h264Encoder::initEncoder ()
     VPPParams.vpp.Out.FrameRateExtD = 1;
     // width must be a multiple of 16
     // height must be a multiple of 16 in case of frame picture and a multiple of 32 in case of field picture
-    VPPParams.vpp.Out.Width = MSDK_ALIGN16(VPPParams.vpp.Out.CropW);
+    VPPParams.vpp.Out.Width = static_cast<mfxU16>(params.v_width);
     VPPParams.vpp.Out.Height =
-            (MFX_PICSTRUCT_PROGRESSIVE == VPPParams.vpp.Out.PicStruct) ?
-            MSDK_ALIGN16(VPPParams.vpp.Out.CropH) :
-            MSDK_ALIGN32(VPPParams.vpp.Out.CropH);
+            static_cast<mfxU16>((MFX_PICSTRUCT_PROGRESSIVE == VPPParams.vpp.Out.PicStruct) ?
+                                MSDK_ALIGN16(VPPParams.vpp.Out.CropH) :
+                                MSDK_ALIGN32(VPPParams.vpp.Out.CropH));
 
     VPPParams.IOPattern = MFX_IOPATTERN_IN_SYSTEM_MEMORY | MFX_IOPATTERN_OUT_SYSTEM_MEMORY;
 
@@ -227,8 +225,8 @@ int h264Encoder::initEncoder ()
     width = (mfxU16) MSDK_ALIGN32(MAX_WIDTH);
     height = (mfxU16) MSDK_ALIGN32(MAX_HEIGHT);
     mfxU8 bitsPerPixel = 12;        // NV12 format is a 12 bits per pixel format
-    mfxU32 surfaceSize = width * height * bitsPerPixel / 8;
-    mfxU8 *surfaceBuffersIn = (mfxU8 *) new mfxU8[surfaceSize * nSurfNumVPPIn];
+    auto surfaceSize = static_cast<mfxU32>(width * height * bitsPerPixel / 8);
+    auto *surfaceBuffersIn = (mfxU8 *) new mfxU8[surfaceSize * nSurfNumVPPIn];
 
     pVPPSurfacesIn = new mfxFrameSurface1 *[nSurfNumVPPIn];
     MSDK_CHECK_POINTER(pVPPSurfacesIn, MFX_ERR_MEMORY_ALLOC);
@@ -251,8 +249,8 @@ int h264Encoder::initEncoder ()
     // Allocate surfaces for VPP: Out
     width = (mfxU16) MSDK_ALIGN32(MAX_WIDTH);
     height = (mfxU16) MSDK_ALIGN32(MAX_HEIGHT);
-    surfaceSize = width * height * bitsPerPixel / 8;
-    mfxU8 *surfaceBuffersOut = (mfxU8 *) new mfxU8[surfaceSize * nSurfNumVPPOutEnc];
+    surfaceSize = static_cast<mfxU32>(width * height * bitsPerPixel / 8);
+    auto *surfaceBuffersOut = (mfxU8 *) new mfxU8[surfaceSize * nSurfNumVPPOutEnc];
 
     pVPPSurfacesOut = new mfxFrameSurface1 *[nSurfNumVPPOutEnc];
     MSDK_CHECK_POINTER(pVPPSurfacesOut, MFX_ERR_MEMORY_ALLOC);
@@ -346,7 +344,7 @@ int h264Encoder::encodeBuffer (raw_video_buffer &raw, coded_video_buffer &codece
     for (;;)
     {
         // Process a frame asychronously (returns immediately)
-        sts = mfxVPP->RunFrameVPPAsync(pVPPSurfacesIn[nSurfIdxIn], pVPPSurfacesOut[nSurfIdxOut], NULL, &syncp);
+        sts = mfxVPP->RunFrameVPPAsync(pVPPSurfacesIn[nSurfIdxIn], pVPPSurfacesOut[nSurfIdxOut], nullptr, &syncp);
 
         //skip a frame
 
@@ -389,7 +387,7 @@ int h264Encoder::encodeBuffer (raw_video_buffer &raw, coded_video_buffer &codece
             insertIDR = false;
         } else
         {
-            sts = mfxENC->EncodeFrameAsync(NULL, pVPPSurfacesOut[nSurfIdxOut], &mfxBS, &syncp);
+            sts = mfxENC->EncodeFrameAsync(nullptr, pVPPSurfacesOut[nSurfIdxOut], &mfxBS, &syncp);
         }
 
         //printf("********************\n");
@@ -424,8 +422,6 @@ int h264Encoder::encodeBuffer (raw_video_buffer &raw, coded_video_buffer &codece
         fflush(stdout);
 #endif
     }
-
-
 }
 
 void h264Encoder::getDataAndSetMfxBSLengthZero (coded_video_buffer &codeced)
@@ -463,13 +459,13 @@ int h264Encoder::updateBitrate (int target_kbps)
     memset(&param, 0, sizeof(param));
     mfxStatus status;
     mfxENC->GetVideoParam(&param);
-    std::cout << "before reset, query kbps:" << param.mfx.TargetKbps << "   " << param.mfx.BufferSizeInKB << "   "
-              << param.mfx.InitialDelayInKB << std::endl;
+//    std::cout << "before reset, query kbps:" << param.mfx.TargetKbps << "   " << param.mfx.BufferSizeInKB << "   "
+//              << param.mfx.InitialDelayInKB << std::endl;
 
     if (target_kbps > 100)
     {
         std::vector<mfxExtBuffer *> m_InitExtParams_ENC;
-        mfxExtCodingOption *pCodingOption = new mfxExtCodingOption;
+        auto *pCodingOption = new mfxExtCodingOption;
         MSDK_ZERO_MEMORY(*pCodingOption);
         pCodingOption->Header.BufferId = MFX_EXTBUFF_CODING_OPTION;
         pCodingOption->Header.BufferSz = sizeof(mfxExtCodingOption);
@@ -479,7 +475,7 @@ int h264Encoder::updateBitrate (int target_kbps)
         pCodingOption->VuiVclHrdParameters = MFX_CODINGOPTION_OFF;
         pCodingOption->AUDelimiter = MFX_CODINGOPTION_OFF;
 
-        mfxExtCodingOption2 *pCodingOption2 = new mfxExtCodingOption2;
+        auto *pCodingOption2 = new mfxExtCodingOption2;
         MSDK_ZERO_MEMORY(*pCodingOption2);
         pCodingOption2->Header.BufferId = MFX_EXTBUFF_CODING_OPTION2;
         pCodingOption2->Header.BufferSz = sizeof(mfxExtCodingOption2);
@@ -497,13 +493,13 @@ int h264Encoder::updateBitrate (int target_kbps)
         status = mfxENC->Reset(&param);
 //        MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
 
-        std::cout << status << "  " << (status == MFX_ERR_INCOMPATIBLE_VIDEO_PARAM) << std::endl;
+//        std::cout << status << "  " << (status == MFX_ERR_INCOMPATIBLE_VIDEO_PARAM) << std::endl;
     }
     mfxVideoParam param1;
     memset(&param1, 0, sizeof(param1));
     mfxENC->GetVideoParam(&param1);
-    std::cout << "after reset, query kbps:" << param1.mfx.TargetKbps << "   " << param1.mfx.BufferSizeInKB << "   "
-              << param1.mfx.InitialDelayInKB << std::endl;
+//    std::cout << "after reset, query kbps:" << param1.mfx.TargetKbps << "   " << param1.mfx.BufferSizeInKB << "   "
+//              << param1.mfx.InitialDelayInKB << std::endl;
 
     return 0;
 }

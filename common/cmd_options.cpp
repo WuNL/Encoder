@@ -108,7 +108,7 @@ void ParseOptions (int argc, char **argv, CmdOptions *cmd_options)
             cmd_options->values.CodecId = MFX_CODEC_HEVC;
         } else if ((cmd_options->ctx.options & OPTION_IMPL) && ! strcmp(argv[i], "-v4l2"))
         {
-            cmd_options->values.CaptureDevice = MFX_CAPTURE_DEVICE_V4L2;
+//            cmd_options->values.CaptureDevice = MFX_CAPTURE_DEVICE_V4L2;
         } else if ((cmd_options->ctx.options & OPTION_GEOMETRY) && ! strcmp(argv[i], "-g"))
         {
             int width = 0, height = 0, bits, r;

@@ -176,7 +176,7 @@ handle_request (
     // Build the path to the requested file
     std::string path = path_cat(doc_root, req.target());
     if (req.target().back() != '/')
-        return send(not_found(req.target()));
+        return send(bad_request("Illegal request-target"));
 
 //    std::cout<<req.target().data()<<std::endl;
 
@@ -185,7 +185,8 @@ handle_request (
         std::cout << "receive request: InitEncoder" << std::endl;
         std::cout << "InitEncoder body content:" << req.body() << std::endl;
         initParams p;
-        jsonParser(req.body(), p);
+        if (jsonParser(req.body(), p))
+            return send(bad_request("Illegal Init Param"));
 
         initParamsRet ret = g_conductor.initEncoder(p);
         std::cout << "after init, the vector size is :" << g_conductor.getSize() << std::endl;

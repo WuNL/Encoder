@@ -5,7 +5,7 @@
 
 shmfifo_t *shmfifo_init (int key, int blksize, int blocks)
 {
-    shmfifo_t *fifo = (shmfifo_t *) malloc(sizeof(shmfifo_t));
+    auto *fifo = (shmfifo_t *) malloc(sizeof(shmfifo_t));
     assert(fifo != NULL);
     memset(fifo, 0, sizeof(shmfifo_t));
 
@@ -14,18 +14,18 @@ shmfifo_t *shmfifo_init (int key, int blksize, int blocks)
     int size = sizeof(shmhead_t) + blksize * blocks;
     if (shmid == - 1)
     {
-        fifo->shmid = shmget(key, size, IPC_CREAT | 0666);
+        fifo->shmid = shmget(key, static_cast<size_t>(size), IPC_CREAT | 0666);
         if (fifo->shmid == - 1)
             ERR_EXIT("shmget");
 
-        fifo->p_shm = (shmhead_t *) shmat(fifo->shmid, NULL, 0);
+        fifo->p_shm = (shmhead_t *) shmat(fifo->shmid, nullptr, 0);
         if (fifo->p_shm == (shmhead_t *) - 1)
             ERR_EXIT("shmat");
 
         fifo->p_payload = (char *) (fifo->p_shm + 1);
 
-        fifo->p_shm->blksize = blksize;
-        fifo->p_shm->blocks = blocks;
+        fifo->p_shm->blksize = static_cast<unsigned int>(blksize);
+        fifo->p_shm->blocks = static_cast<unsigned int>(blocks);
         fifo->p_shm->rd_index = 0;
         fifo->p_shm->wr_index = 0;
 
@@ -46,7 +46,7 @@ shmfifo_t *shmfifo_init (int key, int blksize, int blocks)
     } else
     {
         fifo->shmid = shmid;
-        fifo->p_shm = (shmhead_t *) shmat(fifo->shmid, NULL, 0);
+        fifo->p_shm = (shmhead_t *) shmat(fifo->shmid, nullptr, 0);
         if (fifo->p_shm == (shmhead_t *) - 1)
             ERR_EXIT("shmat");
 
@@ -101,7 +101,7 @@ void shmfifo_destroy (shmfifo_t *fifo)
 //    sem_d(fifo->sem_empty);
 
     shmdt(fifo->p_shm);
-    shmctl(fifo->shmid, IPC_RMID, 0);
+    shmctl(fifo->shmid, IPC_RMID, nullptr);
     free(fifo);
-    fifo = NULL;
+    fifo = nullptr;
 }
