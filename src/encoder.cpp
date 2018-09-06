@@ -37,9 +37,9 @@ encoder::encoder (initParams p) : errHandleCallback_(nullptr), notifyCloseCallba
                                   coded_video_fifo_(nullptr)
 {
     /*初始化互斥量和条件变量对象*/
-    pthread_mutex_init(&count_mutex, NULL);
-    pthread_cond_init(&count_threshold_cv, NULL);
-    pthread_cond_init(&finish_threshold_cv, NULL);
+    pthread_mutex_init(&count_mutex, nullptr);
+    pthread_cond_init(&count_threshold_cv, nullptr);
+    pthread_cond_init(&finish_threshold_cv, nullptr);
 
     // 创建共享内存相关内容
     raw_video_fifo_ = shmfifo_init(raw_shm_id, sizeof(raw_video_buffer), 30);

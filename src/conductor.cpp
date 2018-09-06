@@ -81,8 +81,8 @@ const bool conductor::updateBitrate (initParams &p)
     if (- 1 != index)
     {
         encoderVec_[index]->waitForInitFinish();
-//        std::cout << "updateBitrate waitForInitFinish done" << std::endl;
-        encoderVec_[index]->updateBitrate(p.bitrate);
+        std::cout << "updateBitrate waitForInitFinish done" << std::endl;
+        encoderVec_[index]->updateBitrate(p.bitrate, p.framerate);
     } else
     {
         std::cout << "updateBitrate not find encoder" << std::endl;

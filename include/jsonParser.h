@@ -92,8 +92,9 @@ int jsonParserUpdateBitrate (std::string &rawJson, initParams &params)
     try
     {
         params.encoder_name = pt.get<std::string>(
-                "encoder_name");// + "_" + pt.get<std::string>("v_width") + "_" + pt.get<std::string>("v_height");
-        params.bitrate = pt.get<int>("target_kbps");
+                "encoder_name", "");// + "_" + pt.get<std::string>("v_width") + "_" + pt.get<std::string>("v_height");
+        params.bitrate = pt.get<int>("target_kbps", 3000);
+        params.framerate = static_cast< int>(pt.get<float>("max_fps", 30));
         return 0;
     }
     catch (...)

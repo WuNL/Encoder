@@ -13,8 +13,15 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <pthread.h>
-
 #include "config.h"
+
+#ifdef USE_INTEL
+
+#include "../common/common_utils.h"
+#include "../common/cmd_options.h"
+
+#endif
+
 #include "shmfifo.h"
 
 #define BUFFERLEN 1920*1080*3/2
@@ -135,7 +142,7 @@ public:
 
     virtual int initEncoder () {};
 
-    virtual int updateBitrate (int target_kbps) {};
+    virtual int updateBitrate (int target_kbps, int target_fps) {};
 
     virtual int getRawId ()
     {

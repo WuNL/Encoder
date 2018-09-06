@@ -69,7 +69,7 @@ int h264Encoder::initEncoder ()
 
     impl = MFX_IMPL_HARDWARE;
     ver = {{0, 1}};
-    sts = Initialize(impl, ver, &session, NULL);
+    sts = Initialize(impl, ver, &session, nullptr);
     MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
 
     memset(&mfxEncParams, 0, sizeof(mfxEncParams));
@@ -239,7 +239,7 @@ int h264Encoder::initEncoder ()
         pVPPSurfacesIn[i]->Data.U = pVPPSurfacesIn[i]->Data.Y + width * height;
         pVPPSurfacesIn[i]->Data.V = pVPPSurfacesIn[i]->Data.U + 1;
         pVPPSurfacesIn[i]->Data.Pitch = width;
-        if (1)
+        if (true)
         {
             ClearYUVSurfaceSysMem(pVPPSurfacesIn[i], width, height);
         }
@@ -453,7 +453,7 @@ h264Encoder::~h264Encoder ()
         fclose(fRawSink);
 }
 
-int h264Encoder::updateBitrate (int target_kbps)
+int h264Encoder::updateBitrate (int target_kbps, int target_fps)
 {
     mfxVideoParam param;
     memset(&param, 0, sizeof(param));
@@ -462,8 +462,28 @@ int h264Encoder::updateBitrate (int target_kbps)
 //    std::cout << "before reset, query kbps:" << param.mfx.TargetKbps << "   " << param.mfx.BufferSizeInKB << "   "
 //              << param.mfx.InitialDelayInKB << std::endl;
 
-    if (target_kbps > 100)
+    if (params.framerate != target_fps && target_fps > 10 && target_fps < 60)
     {
+        params.framerate = target_fps;
+
+        mfxVideoParam vppParam;
+        memset(&vppParam, 0, sizeof(vppParam));
+        mfxVPP->GetVideoParam(&vppParam);
+
+        vppParam.vpp.In.FrameRateExtN = static_cast<mfxU16>(params.framerate);
+        vppParam.vpp.In.FrameRateExtD = 1;
+
+        vppParam.vpp.Out.FrameRateExtN = static_cast<mfxU16>(params.framerate);
+        vppParam.vpp.Out.FrameRateExtD = 1;
+
+        status = mfxVPP->Reset(&vppParam);
+        MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
+    }
+
+    if (params.bitrate != target_kbps && target_kbps > 100)
+    {
+        params.bitrate = target_kbps;
+
         std::vector<mfxExtBuffer *> m_InitExtParams_ENC;
         auto *pCodingOption = new mfxExtCodingOption;
         MSDK_ZERO_MEMORY(*pCodingOption);
@@ -489,17 +509,16 @@ int h264Encoder::updateBitrate (int target_kbps)
         param.NumExtParam = (mfxU16) m_InitExtParams_ENC.size();
 
         param.mfx.TargetKbps = static_cast<mfxU16>(target_kbps);
+        if (target_fps > 10 && target_fps < 60)
+        {
+            param.mfx.FrameInfo.FrameRateExtN = static_cast<mfxU16>(params.framerate);
+            param.mfx.FrameInfo.FrameRateExtD = 1;
+        }
 
         status = mfxENC->Reset(&param);
-//        MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
-
-//        std::cout << status << "  " << (status == MFX_ERR_INCOMPATIBLE_VIDEO_PARAM) << std::endl;
+        MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
     }
-    mfxVideoParam param1;
-    memset(&param1, 0, sizeof(param1));
-    mfxENC->GetVideoParam(&param1);
-//    std::cout << "after reset, query kbps:" << param1.mfx.TargetKbps << "   " << param1.mfx.BufferSizeInKB << "   "
-//              << param1.mfx.InitialDelayInKB << std::endl;
+
 
     return 0;
 }

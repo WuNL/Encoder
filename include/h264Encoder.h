@@ -8,29 +8,23 @@
 #include "encoder.h"
 #include "config.h"
 
-#ifdef USE_INTEL
-
-#include "../common/common_utils.h"
-#include "../common/cmd_options.h"
-
-#endif
 
 class h264Encoder : public encoder
 {
 public:
-    virtual void run () override;
+    void run () override;
 
     explicit h264Encoder (initParams p);
 
-    virtual int join () override;
+    int join () override;
 
-    virtual int initEncoder () override;
+    int initEncoder () override;
 
-    virtual ~h264Encoder ();
+    ~h264Encoder () override;
 
     void getDataAndSetMfxBSLengthZero (coded_video_buffer &codeced);
 
-    virtual int updateBitrate (int target_kbps) override;
+    int updateBitrate (int target_kbps, int target_fps) override;
 
 private:
     int encodeBuffer (void *in, void *out) override {}
