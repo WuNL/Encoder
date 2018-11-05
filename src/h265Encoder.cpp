@@ -114,7 +114,7 @@ int h265Encoder::initEncoder ()
     if (mfxEncParams.mfx.CodecId == MFX_CODEC_HEVC)
     {
         char filename[200];
-        sprintf(filename, "/home/sdt/Videos/%d_%d", params.v_width, params.v_height);
+        sprintf(filename, "/home/sdt/Videos/Encoder_%d_%d", params.v_width, params.v_height);
 #ifdef SAVE_CODECED
         MSDK_FOPEN(fSink, (filename + std::string(".265")).c_str(), "wb");
 #endif
@@ -245,8 +245,8 @@ int h265Encoder::initEncoder ()
     //4. Allocate surfaces for VPP: In
     // - Width and height of buffer must be aligned, a multiple of 32
     // - Frame surface array keeps pointers all surface planes and general frame info
-    width = (mfxU16) MSDK_ALIGN32(MAX_WIDTH);
-    height = (mfxU16) MSDK_ALIGN32(MAX_HEIGHT);
+    width = (mfxU16) MSDK_ALIGN32(params.v_width);
+    height = (mfxU16) MSDK_ALIGN32(params.v_height);
     mfxU8 bitsPerPixel = 12;        // NV12 format is a 12 bits per pixel format
     auto surfaceSize = static_cast<mfxU32>(width * height * bitsPerPixel / 8);
     auto *surfaceBuffersIn = (mfxU8 *) new mfxU8[surfaceSize * nSurfNumVPPIn];
@@ -349,7 +349,7 @@ int h265Encoder::initEncoder ()
 int h265Encoder::encodeBuffer (raw_video_buffer &raw, coded_video_buffer &codeced)
 {
 #ifdef SAVE_RAW
-    fwrite(raw.buffer, 1, raw.size, fRawSink);
+    fwrite(raw.buffer, sizeof(char), static_cast<size_t>(raw.size), fRawSink);
 #endif
     int nSurfIdxIn = 0, nSurfIdxOut = 0;
     static mfxU32 nFrame = 0;
@@ -474,6 +474,7 @@ h265Encoder::~h265Encoder ()
         fclose(fSink);
     if (fRawSink)
         fclose(fRawSink);
+    Release();
 }
 
 int h265Encoder::updateBitrate (int target_kbps, int target_fps)

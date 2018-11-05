@@ -36,6 +36,8 @@ typedef struct videoBuffer
 typedef struct yuvBuffer
 {
     int size;
+    int width;
+    int height;
     char buffer[BUFFERLEN];
 } raw_video_buffer;
 
