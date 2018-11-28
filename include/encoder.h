@@ -75,6 +75,11 @@ typedef struct DestroyParams
     bool success;
 } destroyParams;
 
+typedef struct ForceKeyFrameParams {
+    std::string encoder_name;
+    bool success;
+} forceKeyFrameParams;
+
 class encoder : public boost::noncopyable
 {
 public:
@@ -145,6 +150,8 @@ public:
     virtual int initEncoder () {};
 
     virtual int updateBitrate (int target_kbps, int target_fps) {};
+
+    virtual int forceKeyFrame(bool insertKeyFrame) = 0;
 
     virtual int getRawId ()
     {

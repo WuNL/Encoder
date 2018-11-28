@@ -522,3 +522,8 @@ int h264Encoder::updateBitrate (int target_kbps, int target_fps)
 
     return 0;
 }
+
+int h264Encoder::forceKeyFrame(bool insertKeyFrame) {
+    insertIDR = true;
+    return 0;
+}

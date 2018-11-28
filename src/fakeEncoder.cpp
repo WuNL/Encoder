@@ -41,3 +41,7 @@ void fakeEncoder::encodeBuffer ()
         std::cout << "sleeping!" << std::endl;
     }
 }
+
+int fakeEncoder::forceKeyFrame(bool insertKeyFrame) {
+    return 0;
+}

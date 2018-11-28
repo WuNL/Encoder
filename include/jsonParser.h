@@ -74,8 +74,26 @@ int jsonParserDestroy (std::string &rawJson, destroyParams &params)
         params.success = false;
         return 1;
     }
+}
 
-
+int jsonParserForceKeyFrame(std::string &rawJson, forceKeyFrameParams &params) {
+    ptree pt;                       //define property_tree object
+    std::stringstream ss(rawJson);
+    try {
+        read_json(ss, pt);          //parse json
+    } catch (ptree_error &e) {
+        return 1;
+    }
+    try {
+        params.encoder_name = pt.get<std::string>(
+                "encoder_name");// + "_" + pt.get<std::string>("v_width") + "_" + pt.get<std::string>("v_height");
+        params.success = true;
+    }
+    catch (...) {
+        printf("json parser error!\n");
+        params.success = false;
+        return 1;
+    }
 }
 
 int jsonParserUpdateBitrate (std::string &rawJson, initParams &params)

@@ -90,3 +90,15 @@ const bool conductor::updateBitrate (initParams &p)
     std::cout << "updateBitrate finish" << std::endl;
     return true;
 }
+
+void conductor::forceKeyFrame(forceKeyFrameParams &p) {
+    int index = findEncoderByName(p.encoder_name);
+    if (-1 != index) {
+        encoderVec_[index]->waitForInitFinish();
+        std::cout << "forceKeyFrame waitForInitFinish done" << std::endl;
+        encoderVec_[index]->forceKeyFrame(true);
+    } else {
+        std::cout << "forceKeyFrame not find encoder" << std::endl;
+    }
+    std::cout << "forceKeyFrame finish" << std::endl;
+}

@@ -26,6 +26,8 @@ public:
 
     int updateBitrate (int target_kbps, int target_fps) override;
 
+    virtual int forceKeyFrame(bool insertKeyFrame) override;
+
 private:
     int encodeBuffer (void *in, void *out) override {}
 

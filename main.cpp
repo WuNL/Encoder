@@ -223,6 +223,23 @@ handle_request (
     if (! req.target().compare("/UpdateIFrame/"))
     {
         std::cout << "receive request: UpdateIFrame" << std::endl;
+
+        forceKeyFrameParams p;
+        jsonParserForceKeyFrame(req.body(), p);
+        if (p.success) {
+            //insert success
+            g_conductor.forceKeyFrame(p);
+
+            http::response<http::string_body> res{http::status::ok, req.version()};
+            res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+            res.set(http::field::content_type, "text/html");
+            res.keep_alive(req.keep_alive());
+
+            return send(std::move(res));
+
+        } else {
+            return send(server_error("server error"));
+        }
     }
 
     if (! req.target().compare("/UpdateBitrate/"))
@@ -261,21 +278,21 @@ handle_request (
         if (p.success)
         {
             //destroy success
-            if (g_conductor.destroyEncoder(p))
-            {
-                http::response<http::string_body> res{http::status::ok, req.version()};
-                res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-                res.set(http::field::content_type, "text/html");
-                res.keep_alive(req.keep_alive());
-
-                return send(std::move(res));
-                std::cout << "after DestroyEncoder, the vector size is :" << g_conductor.getSize() << std::endl;
-            }
-                //destroy fail
-            else
-            {
-                return send(server_error("server error"));
-            }
+//            if (g_conductor.destroyEncoder(p))
+//            {
+//                http::response<http::string_body> res{http::status::ok, req.version()};
+//                res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+//                res.set(http::field::content_type, "text/html");
+//                res.keep_alive(req.keep_alive());
+//
+//                return send(std::move(res));
+//                std::cout << "after DestroyEncoder, the vector size is :" << g_conductor.getSize() << std::endl;
+//            }
+//                //destroy fail
+//            else
+//            {
+//                return send(server_error("server error"));
+//            }
         } else
         {
             return send(server_error("server error"));

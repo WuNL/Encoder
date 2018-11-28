@@ -16,6 +16,8 @@ public:
 
     virtual int join () override;
 
+    virtual int forceKeyFrame(bool insertKeyFrame) override;
+
 private:
     int encodeBuffer (void *in, void *out) override {}
 

@@ -39,6 +39,8 @@ public:
 
     const bool updateBitrate (initParams &p);
 
+    void forceKeyFrame(forceKeyFrameParams &p);
+
     const int getSize ()
     {
         return static_cast<const int>(encoderVec_.size());
