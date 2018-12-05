@@ -112,7 +112,7 @@ int h265Encoder::initEncoder ()
     if (mfxEncParams.mfx.CodecId == MFX_CODEC_HEVC)
     {
         char filename[200];
-        sprintf(filename, "/home/sdt/Videos/Encoder_%d_%d", params.v_width, params.v_height);
+        sprintf(filename, "/home/wunl/Videos/Encoder_%d_%d", params.v_width, params.v_height);
 #ifdef SAVE_CODECED
         MSDK_FOPEN(fSink, (filename + std::string(".265")).c_str(), "wb");
 #endif
@@ -130,7 +130,7 @@ int h265Encoder::initEncoder ()
         mfxEncParams.mfx.TargetUsage = MFX_TARGETUSAGE_BALANCED;
 
         mfxEncParams.mfx.TargetKbps = static_cast<mfxU16>(params.bitrate);
-//        mfxEncParams.mfx.MaxKbps = static_cast<mfxU16>(params.bitrate * 2);
+        mfxEncParams.mfx.MaxKbps = static_cast<mfxU16>(params.bitrate * 1.2);
         mfxEncParams.mfx.RateControlMethod = MFX_RATECONTROL_VBR;
         mfxEncParams.mfx.FrameInfo.FrameRateExtN = static_cast<mfxU16>(params.framerate);
         mfxEncParams.mfx.FrameInfo.FrameRateExtD = 1;
@@ -490,6 +490,7 @@ int h265Encoder::updateBitrate (int target_kbps, int target_fps)
         params.bitrate = target_kbps;
 
         param.mfx.TargetKbps = static_cast<mfxU16>(target_kbps);
+        param.mfx.MaxKbps = static_cast<mfxU16>(target_kbps * 1.2);
 
         status = mfxENC->Reset(&param);
         MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);

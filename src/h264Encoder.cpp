@@ -92,11 +92,11 @@ int h264Encoder::initEncoder ()
     MSDK_ZERO_MEMORY(*pCodingOption);
     pCodingOption->Header.BufferId = MFX_EXTBUFF_CODING_OPTION;
     pCodingOption->Header.BufferSz = sizeof(mfxExtCodingOption);
-    pCodingOption->RefPicMarkRep = MFX_CODINGOPTION_OFF;
-    pCodingOption->SingleSeiNalUnit = MFX_CODINGOPTION_OFF;
+//    pCodingOption->RefPicMarkRep = MFX_CODINGOPTION_OFF;
+//    pCodingOption->SingleSeiNalUnit = MFX_CODINGOPTION_OFF;
     pCodingOption->NalHrdConformance = MFX_CODINGOPTION_ON;
     pCodingOption->VuiVclHrdParameters = MFX_CODINGOPTION_ON;
-    pCodingOption->AUDelimiter = MFX_CODINGOPTION_OFF;
+//    pCodingOption->AUDelimiter = MFX_CODINGOPTION_OFF;
 
     auto *pCodingOption2 = new mfxExtCodingOption2;
     MSDK_ZERO_MEMORY(*pCodingOption2);
@@ -131,7 +131,7 @@ int h264Encoder::initEncoder ()
         mfxEncParams.mfx.TargetUsage = MFX_TARGETUSAGE_BALANCED;
 
         mfxEncParams.mfx.TargetKbps = static_cast<mfxU16>(params.bitrate);
-//        mfxEncParams.mfx.MaxKbps = static_cast<mfxU16>(params.bitrate * 2);
+        mfxEncParams.mfx.MaxKbps = static_cast<mfxU16>(params.bitrate * 1.2);
         mfxEncParams.mfx.RateControlMethod = MFX_RATECONTROL_VBR;
         mfxEncParams.mfx.FrameInfo.FrameRateExtN = static_cast<mfxU16>(params.framerate);
         mfxEncParams.mfx.FrameInfo.FrameRateExtD = 1;
@@ -459,41 +459,42 @@ int h264Encoder::updateBitrate (int target_kbps, int target_fps)
     memset(&param, 0, sizeof(param));
     mfxStatus status;
     mfxENC->GetVideoParam(&param);
-//    std::cout << "before reset, query kbps:" << param.mfx.TargetKbps << "   " << param.mfx.BufferSizeInKB << "   "
-//              << param.mfx.InitialDelayInKB << std::endl;
+    std::cout << "before reset, query kbps:" << param.mfx.TargetKbps << "   " << param.mfx.BufferSizeInKB << "   "
+              << param.mfx.InitialDelayInKB << std::endl;
 
-    if (params.framerate != target_fps && target_fps > 10 && target_fps < 60)
-    {
-        params.framerate = target_fps;
-
-        mfxVideoParam vppParam;
-        memset(&vppParam, 0, sizeof(vppParam));
-        mfxVPP->GetVideoParam(&vppParam);
-
-        vppParam.vpp.In.FrameRateExtN = static_cast<mfxU16>(params.framerate);
-        vppParam.vpp.In.FrameRateExtD = 1;
-
-        vppParam.vpp.Out.FrameRateExtN = static_cast<mfxU16>(params.framerate);
-        vppParam.vpp.Out.FrameRateExtD = 1;
-
-        status = mfxVPP->Reset(&vppParam);
-        MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
-    }
+//    if (params.framerate != target_fps && target_fps > 10 && target_fps < 60)
+//    {
+//        params.framerate = target_fps;
+//
+//        mfxVideoParam vppParam;
+//        memset(&vppParam, 0, sizeof(vppParam));
+//        mfxVPP->GetVideoParam(&vppParam);
+//
+//        vppParam.vpp.In.FrameRateExtN = static_cast<mfxU16>(params.framerate);
+//        vppParam.vpp.In.FrameRateExtD = 1;
+//
+//        vppParam.vpp.Out.FrameRateExtN = static_cast<mfxU16>(params.framerate);
+//        vppParam.vpp.Out.FrameRateExtD = 1;
+//
+//        status = mfxVPP->Reset(&vppParam);
+//        MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
+//    }
 
     if (params.bitrate != target_kbps && target_kbps > 100)
     {
         params.bitrate = target_kbps;
 
         std::vector<mfxExtBuffer *> m_InitExtParams_ENC;
+
         auto *pCodingOption = new mfxExtCodingOption;
         MSDK_ZERO_MEMORY(*pCodingOption);
         pCodingOption->Header.BufferId = MFX_EXTBUFF_CODING_OPTION;
         pCodingOption->Header.BufferSz = sizeof(mfxExtCodingOption);
-        pCodingOption->RefPicMarkRep = MFX_CODINGOPTION_OFF;
-        pCodingOption->SingleSeiNalUnit = MFX_CODINGOPTION_OFF;
-        pCodingOption->NalHrdConformance = MFX_CODINGOPTION_OFF;
-        pCodingOption->VuiVclHrdParameters = MFX_CODINGOPTION_OFF;
-        pCodingOption->AUDelimiter = MFX_CODINGOPTION_OFF;
+//    pCodingOption->RefPicMarkRep = MFX_CODINGOPTION_OFF;
+//    pCodingOption->SingleSeiNalUnit = MFX_CODINGOPTION_OFF;
+        pCodingOption->NalHrdConformance = MFX_CODINGOPTION_ON;
+        pCodingOption->VuiVclHrdParameters = MFX_CODINGOPTION_ON;
+//    pCodingOption->AUDelimiter = MFX_CODINGOPTION_OFF;
 
         auto *pCodingOption2 = new mfxExtCodingOption2;
         MSDK_ZERO_MEMORY(*pCodingOption2);
@@ -509,16 +510,15 @@ int h264Encoder::updateBitrate (int target_kbps, int target_fps)
         param.NumExtParam = (mfxU16) m_InitExtParams_ENC.size();
 
         param.mfx.TargetKbps = static_cast<mfxU16>(target_kbps);
-        if (target_fps > 10 && target_fps < 60)
-        {
-            param.mfx.FrameInfo.FrameRateExtN = static_cast<mfxU16>(params.framerate);
-            param.mfx.FrameInfo.FrameRateExtD = 1;
-        }
+        param.mfx.MaxKbps = static_cast<mfxU16>(target_kbps*1.2);
 
         status = mfxENC->Reset(&param);
         MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
     }
-
+    memset(&param, 0, sizeof(param));
+    mfxENC->GetVideoParam(&param);
+    std::cout << "after reset, query kbps:" << param.mfx.TargetKbps << "   " << param.mfx.BufferSizeInKB << "   "
+              << param.mfx.InitialDelayInKB << std::endl;
 
     return 0;
 }

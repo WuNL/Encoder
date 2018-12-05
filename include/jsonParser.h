@@ -37,6 +37,8 @@ int jsonParser (std::string &rawJson, initParams &params)
         params.packetMode = pt.get<int>("packetMode", 0);
         params.framerate = static_cast< int>(pt.get<float>("max_fps", 30));
         params.bitrate = pt.get<int>("target_kbps", 3000);
+        if(params.bitrate<1000)
+            params.bitrate = 1000;
 
         if (params.encoder_name == std::string(""))
             return 1;
@@ -112,6 +114,8 @@ int jsonParserUpdateBitrate (std::string &rawJson, initParams &params)
         params.encoder_name = pt.get<std::string>(
                 "encoder_name", "");// + "_" + pt.get<std::string>("v_width") + "_" + pt.get<std::string>("v_height");
         params.bitrate = pt.get<int>("target_kbps", 3000);
+        if(params.bitrate<1000)
+            params.bitrate=1000;
         params.framerate = static_cast< int>(pt.get<float>("max_fps", 30));
         return 0;
     }
