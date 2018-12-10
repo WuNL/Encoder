@@ -103,7 +103,7 @@ int h264Encoder::initEncoder ()
     pCodingOption2->Header.BufferId = MFX_EXTBUFF_CODING_OPTION2;
     pCodingOption2->Header.BufferSz = sizeof(mfxExtCodingOption2);
     pCodingOption2->RepeatPPS = MFX_CODINGOPTION_ON;
-    pCodingOption2->MaxSliceSize = (size_t) 1400;
+    pCodingOption2->MaxSliceSize = (size_t) 1100;
 
     m_InitExtParams_ENC.push_back(reinterpret_cast<mfxExtBuffer *>(pCodingOption));
     m_InitExtParams_ENC.push_back(reinterpret_cast<mfxExtBuffer *>(pCodingOption2));
@@ -455,6 +455,8 @@ h264Encoder::~h264Encoder ()
 
 int h264Encoder::updateBitrate (int target_kbps, int target_fps)
 {
+    if(abs(params.bitrate - target_kbps)<100)
+        return 0;
     mfxVideoParam param;
     memset(&param, 0, sizeof(param));
     mfxStatus status;
@@ -501,7 +503,7 @@ int h264Encoder::updateBitrate (int target_kbps, int target_fps)
         pCodingOption2->Header.BufferId = MFX_EXTBUFF_CODING_OPTION2;
         pCodingOption2->Header.BufferSz = sizeof(mfxExtCodingOption2);
         pCodingOption2->RepeatPPS = MFX_CODINGOPTION_ON;
-        pCodingOption2->MaxSliceSize = (size_t) 1400;
+        pCodingOption2->MaxSliceSize = (size_t) 1100;
 
         m_InitExtParams_ENC.push_back(reinterpret_cast<mfxExtBuffer *>(pCodingOption));
         m_InitExtParams_ENC.push_back(reinterpret_cast<mfxExtBuffer *>(pCodingOption2));

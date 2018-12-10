@@ -76,8 +76,8 @@ int h265Encoder::initEncoder ()
 
     mfxEncParams.mfx.CodecId = MFX_CODEC_HEVC;
 
-    mfxEncParams.mfx.GopOptFlag = MFX_GOP_STRICT;
-    mfxEncParams.mfx.GopPicSize = (mfxU16) 3000;
+    mfxEncParams.mfx.GopOptFlag = MFX_GOP_CLOSED;
+    mfxEncParams.mfx.GopPicSize = (mfxU16) 120;
     mfxEncParams.mfx.IdrInterval = (mfxU16) 1;
     mfxEncParams.mfx.GopRefDist = (mfxU16) 1;
 
@@ -92,22 +92,22 @@ int h265Encoder::initEncoder ()
     pCodingOption->Header.BufferSz = sizeof(mfxExtCodingOption);
 //    pCodingOption->RefPicMarkRep = MFX_CODINGOPTION_OFF;
 //    pCodingOption->SingleSeiNalUnit = MFX_CODINGOPTION_OFF;
-//    pCodingOption->NalHrdConformance = MFX_CODINGOPTION_ON;
-//    pCodingOption->VuiVclHrdParameters = MFX_CODINGOPTION_ON;
+    pCodingOption->NalHrdConformance = MFX_CODINGOPTION_ON;
+    pCodingOption->VuiVclHrdParameters = MFX_CODINGOPTION_ON;
 //    pCodingOption->AUDelimiter = MFX_CODINGOPTION_OFF;
-//
+
     auto *pCodingOption2 = new mfxExtCodingOption2;
     MSDK_ZERO_MEMORY(*pCodingOption2);
     pCodingOption2->Header.BufferId = MFX_EXTBUFF_CODING_OPTION2;
     pCodingOption2->Header.BufferSz = sizeof(mfxExtCodingOption2);
-//    pCodingOption2->RepeatPPS = MFX_CODINGOPTION_ON;
-//    pCodingOption2->MaxSliceSize = (size_t) 1400;
-//
+    pCodingOption2->RepeatPPS = MFX_CODINGOPTION_ON;
+
     m_InitExtParams_ENC.push_back(reinterpret_cast<mfxExtBuffer *>(pCodingOption));
     m_InitExtParams_ENC.push_back(reinterpret_cast<mfxExtBuffer *>(pCodingOption2));
-//
+
     mfxEncParams.ExtParam = m_InitExtParams_ENC.data();
     mfxEncParams.NumExtParam = (mfxU16) m_InitExtParams_ENC.size();
+
 
     if (mfxEncParams.mfx.CodecId == MFX_CODEC_HEVC)
     {
@@ -130,7 +130,7 @@ int h265Encoder::initEncoder ()
         mfxEncParams.mfx.TargetUsage = MFX_TARGETUSAGE_BALANCED;
 
         mfxEncParams.mfx.TargetKbps = static_cast<mfxU16>(params.bitrate);
-        mfxEncParams.mfx.MaxKbps = static_cast<mfxU16>(params.bitrate * 1.2);
+        mfxEncParams.mfx.MaxKbps = static_cast<mfxU16>(params.bitrate*1.2);
         mfxEncParams.mfx.RateControlMethod = MFX_RATECONTROL_VBR;
         mfxEncParams.mfx.FrameInfo.FrameRateExtN = static_cast<mfxU16>(params.framerate);
         mfxEncParams.mfx.FrameInfo.FrameRateExtD = 1;
@@ -491,11 +491,34 @@ int h265Encoder::updateBitrate (int target_kbps, int target_fps)
 
         param.mfx.TargetKbps = static_cast<mfxU16>(target_kbps);
         param.mfx.MaxKbps = static_cast<mfxU16>(target_kbps * 1.2);
+//
+//        std::vector<mfxExtBuffer *> m_InitExtParams_ENC;
+//
+//        auto *pCodingOption = new mfxExtCodingOption;
+//        MSDK_ZERO_MEMORY(*pCodingOption);
+//        pCodingOption->Header.BufferId = MFX_EXTBUFF_CODING_OPTION;
+//        pCodingOption->Header.BufferSz = sizeof(mfxExtCodingOption);
+//        pCodingOption->NalHrdConformance = MFX_CODINGOPTION_ON;
+//        pCodingOption->VuiVclHrdParameters = MFX_CODINGOPTION_ON;
+//
+//        auto *pCodingOption2 = new mfxExtCodingOption2;
+//        MSDK_ZERO_MEMORY(*pCodingOption2);
+//        pCodingOption2->Header.BufferId = MFX_EXTBUFF_CODING_OPTION2;
+//        pCodingOption2->Header.BufferSz = sizeof(mfxExtCodingOption2);
+//        pCodingOption2->RepeatPPS = MFX_CODINGOPTION_ON;
+//
+//        m_InitExtParams_ENC.push_back(reinterpret_cast<mfxExtBuffer *>(pCodingOption));
+//        m_InitExtParams_ENC.push_back(reinterpret_cast<mfxExtBuffer *>(pCodingOption2));
+//
+//        param.ExtParam = m_InitExtParams_ENC.data();
+//        param.NumExtParam = (mfxU16) m_InitExtParams_ENC.size();
 
         status = mfxENC->Reset(&param);
         MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
 
-        std::cout << "after reset, Target Kbps:" << param.mfx.TargetKbps << std::endl;
+        memset(&param, 0, sizeof(param));
+        mfxENC->GetVideoParam(&param);
+        std::cout << "after reset, Target Kbps:" << param.mfx.TargetKbps<<"  "<<param.mfx.MaxKbps << std::endl;
     }
 
     return 0;
